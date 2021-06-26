@@ -7,4 +7,10 @@ type Query{
 
 type Mutation{
     imgUpload(file: FileUpload): Boolean!
+
+    register(
+        id: String!
+        pw: String!
+        username: String!
+    ): Boolean!
 }

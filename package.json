@@ -4,7 +4,7 @@
   "description": "graphql-ts-boilerplate",
   "main": "src/index.ts",
   "scripts": {
-    "test": "NODE_PATH=src/ ts-mocha -p ./tsconfig.json src/test/*.test.ts --exit",
+    "test": "NODE_PATH=src/ ts-mocha -p ./tsconfig.json src/test/*.test.ts --exit && NODE_PATH=src/ ts-mocha -p ./tsconfig.json src/resolvers/app/*/test.ts --exit",
     "build": "tsc -p .",
     "start": "NODE_PATH=src/ nodemon --exec ts-node src/index.ts",
     "on": "NODE_PATH=dist/ node dist/index.js",
@@ -36,6 +36,7 @@
     "graphql-middleware": "^6.0.10",
     "graphql-playground-middleware-express": "^1.7.22",
     "graphql-query-complexity": "^0.7.2",
+    "graphql-scalars": "^1.10.0",
     "graphql-shield": "^7.5.0",
     "graphql-voyager": "^1.0.0-rc.31",
     "http": "0.0.1-security",
