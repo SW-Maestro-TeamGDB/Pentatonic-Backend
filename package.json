@@ -1,0 +1,60 @@
+{
+  "name": "graphql-ts-boilerplate",
+  "version": "1.0.0",
+  "description": "graphql-ts-boilerplate",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "NODE_PATH=src/ ts-mocha -p ./tsconfig.json src/test/*.test.ts --exit",
+    "build": "tsc -p .",
+    "start": "NODE_PATH=src/ nodemon --exec ts-node src/index.ts",
+    "on": "NODE_PATH=dist/ node dist/index.js",
+    "gen-docs": "rm -rf docs && graphdoc -s ./src/typeDefs.graphql -o ./docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pukuba/graphql-ts-boilerplate.git"
+  },
+  "keywords": [
+    "boilerplate"
+  ],
+  "author": "pukuba",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pukuba/graphql-ts-boilerplate/issues"
+  },
+  "homepage": "https://github.com/pukuba/graphql-ts-boilerplate#readme",
+  "dependencies": {
+    "@graphql-tools/schema": "^7.1.5",
+    "@types/mime-types": "^2.1.0",
+    "@types/supertest": "^2.0.11",
+    "apollo-server-express": "^2.19.2",
+    "body-parser-graphql": "^1.1.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "graphql-depth-limit": "^1.1.0",
+    "graphql-middleware": "^6.0.10",
+    "graphql-playground-middleware-express": "^1.7.22",
+    "graphql-query-complexity": "^0.7.2",
+    "graphql-shield": "^7.5.0",
+    "graphql-voyager": "^1.0.0-rc.31",
+    "http": "0.0.1-security",
+    "mime-types": "^2.1.30",
+    "mocha": "^8.2.1",
+    "mongodb": "^3.6.3",
+    "nodemon": "^2.0.7",
+    "pm2": "^4.5.6",
+    "supertest": "^6.1.3",
+    "ts-mocha": "^8.0.0",
+    "typescript": "^4.1.3"
+  },
+  "resolutions": {
+    "**/**/fs-capacitor": "^6.2.0",
+    "graphql-upload": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/graphql-depth-limit": "^1.1.2",
+    "@types/mocha": "^8.2.0",
+    "@types/mongodb": "^3.6.3"
+  }
+}

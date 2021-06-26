@@ -1,0 +1,10 @@
+# FileUpload Type
+scalar FileUpload
+
+type Query{
+    test: String!
+}
+
+type Mutation{
+    imgUpload(file: FileUpload): Boolean!
+}
