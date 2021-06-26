@@ -8,7 +8,9 @@ import { createServer } from "http"
 import queryComplexity, { simpleEstimator } from "graphql-query-complexity"
 import depthLimit from "graphql-depth-limit"
 import DB from "config/connectDB"
+
 import { makeExecutableSchema } from "@graphql-tools/schema"
+import * as graphqlScalars from 'graphql-scalars'
 import { applyMiddleware } from "graphql-middleware"
 import { permissions } from "lib/permissions"
 import express from "express"
@@ -16,7 +18,7 @@ import expressPlayground from "graphql-playground-middleware-express"
 import { bodyParserGraphQL } from "body-parser-graphql"
 
 import resolvers from "resolvers"
-const typeDefs = readFileSync("src/typeDefs.graphql", "utf-8")
+const typeDefsGraphQL = readFileSync("src/typeDefs.graphql", "utf-8")
 
 const app = express()
 app.use(bodyParserGraphQL())
@@ -25,10 +27,15 @@ app.use("/graphql", expressPlayground({ endpoint: "/api" }))
 app.use("/api-docs", express.static("docs"))
 
 const schema = makeExecutableSchema({
-    typeDefs,
-    resolvers
+    typeDefs: `
+        ${typeDefsGraphQL}
+        ${graphqlScalars.typeDefs.join('\n')}
+    `,
+    resolvers: {
+        ...resolvers,
+        ...graphqlScalars.resolvers
+    }
 })
-
 
 const server = new ApolloServer({
     schema: applyMiddleware(schema, permissions),
