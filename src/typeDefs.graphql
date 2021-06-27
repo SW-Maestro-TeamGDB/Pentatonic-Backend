@@ -25,29 +25,26 @@ type Mutation{
 
     """ 회원가입 뮤테이션 이며 회원가입의 성공 여부를 1, 0으로 반환합니다. """
     register(
-        """ id는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다. """
+        """ id 는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다. """
         id: String!
 
-        """ pw는 길이가 6 이상이여야하며 영문과 숫자 특수문자가 가능합니다. """
+        """ pw 는 길이가 6 이상이여야하며 영문과 숫자 특수문자가 가능합니다. """
         pw: String!
 
-        """ username은 길이가 2 이상이여야 합니다. """
+        """ username 은 길이가 2 이상이여야 합니다. """
         username: String!
 
-        """ phoneNumber은 +821012345678 와 같은 형식이여야 합니다. """
+        """ phoneNumber 은 +821012345678 와 같은 형식이여야 합니다. """
         phoneNumber: PhoneNumber!
 
-        """
-        wheelHouse는 유저가 어떤 포지션이고 얼마나 잘하는지를 나타냅니다.
-        {
-            "position": "piano",
-            "level": 3
-        }
-        다음과 같은 꼴이여야 합니다. level은 (1~5)
-        """
-        wheelHouse: JSONObject!
 
-        """type은 유저의 유형을 나타냅니다. (1: 취미, 2: 본업, 3: 리스너)"""
+        """ position 은 유저가 어떤 악기를 연주하는지를 나타냅니다."""
+        position: String!
+        
+        """level 은 유저가 얼마나 연주를 잘하는지를 나타냅니다 (1~5)"""
+        level: Int!
+
+        """type 은 유저의 유형을 나타냅니다. (1: 취미, 2: 본업, 3: 리스너)"""
         type: Int!
 
     ): Boolean!
@@ -67,7 +64,7 @@ type Mutation{
         """ phoneNumber은 +821012345678 와 같은 형식이여야 합니다. """
         phoneNumber: PhoneNumber!
 
-        """ authenticationNumber는 999999 와 같은 100000~999999 사이의 숫자 입니다. """
+        """ authenticationNumber 는 999999 와 같은 100000~999999 사이의 숫자 입니다. """
         authenticationNumber: Int!
     ): Boolean!
 

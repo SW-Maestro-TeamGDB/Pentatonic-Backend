@@ -1,6 +1,5 @@
 import dotenv from "dotenv"
 dotenv.config()
-
 import { express as voyagerMiddleware } from "graphql-voyager/middleware"
 import { ApolloServer, ApolloError } from "apollo-server-express"
 import { readFileSync } from "fs"

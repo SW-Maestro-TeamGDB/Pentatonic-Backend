@@ -50,3 +50,5 @@ export const smsRequest = async (smsNumber: string) => {
         return false
     }
 }
+
+export const changePhoneNumber = (phoneNumber: string) => `010${phoneNumber.slice(5, phoneNumber.length)}`

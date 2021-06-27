@@ -17,7 +17,7 @@ export const setex = promisify(redisClient.setex).bind(redisClient)
 export const del = promisify(redisClient.del).bind(redisClient)
 
 export interface Redis {
-    get(arg1: string): Promise<string | null>
-    setex(args1: string, args2: number, args3: string | number): Promise<string | number>
+    get(arg1: string): Promise<string | null | number>
+    setex(args1: string, args2: number, args3: string | number): Promise<string>
     del(args1: string): Promise<number>
 }
