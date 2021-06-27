@@ -5,9 +5,11 @@ import env from "config/env"
 import { deepStrictEqual as equal } from "assert"
 import * as redis from "config/connectRedis"
 import { Redis } from "config/connectRedis"
+import DB from "config/connectDB"
+
 const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
-describe("Auth service test", () => {
-    describe("SMS test", () => {
+describe("User auth service test", () => {
+    describe("SMS service test", () => {
         describe("Send SMS test", () => {
             // describe("Success", () => {
             //     it("Submit SMS", async () => {
@@ -126,6 +128,147 @@ describe("Auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(400)
+                })
+            })
+        })
+    })
+    describe("Register & Login services test", () => {
+        after(async () => {
+            const db = await DB.get()
+            await db.collection("user").deleteOne({ phoneNumber })
+        })
+        describe("Register test", async () => {
+            describe("Success", () => {
+                it("User register", async () => {
+                    const query = `
+                        mutation{
+                            register(
+                                id: "test1234",
+                                pw: "test1234",
+                                username: "pukuba",
+                                phoneNumber: "${phoneNumber}",
+                                position: "Piano",
+                                level: 2,
+                                type: 1
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.register, true)
+                })
+            })
+            describe("Failure", () => {
+                before(async () => {
+                    await (redis as Redis).setex(phoneNumber, 600, "")
+                })
+                it("id already exists", async () => {
+                    const query = `
+                        mutation{
+                            register(
+                                id: "test1234",
+                                pw: "test1234",
+                                username: "erolf0123",
+                                phoneNumber: "${phoneNumber}",
+                                position: "Piano",
+                                level: 2,
+                                type: 1
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다.")
+                })
+                it("Username already exists", async () => {
+                    const query = `
+                        mutation{
+                            register(
+                                id: "erolf0123",
+                                pw: "test1234",
+                                username: "pukuba",
+                                phoneNumber: "${phoneNumber}",
+                                position: "Piano",
+                                level: 2,
+                                type: 1
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다.")
+                })
+                it("Phone Number Authentication Expired", async () => {
+                    const query = `
+                        mutation{
+                            register(
+                                id: "kkzkk1234",
+                                pw: "test1234",
+                                username: "kkzkk1234",
+                                phoneNumber: "+821000000000",
+                                position: "Piano",
+                                level: 2,
+                                type: 1
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "휴대번호 인증을 다시해야합니다.")
+                })
+                it("Invalid Input id", async () => {
+                    const query = `
+                        mutation{
+                            register(
+                                id: "test",
+                                pw: "test1234",
+                                username: "kkzkk1234",
+                                phoneNumber: "${phoneNumber}",
+                                position: "Piano",
+                                level: 2,
+                                type: 1
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다.")
+                })
+                it("Invalid Input password", async () => {
+                    const query = `
+                        mutation{
+                            register(
+                                id: "kkzkk1234",
+                                pw: "test",
+                                username: "kkzkk1234",
+                                phoneNumber: "${phoneNumber}",
+                                position: "Piano",
+                                level: 2,
+                                type: 1
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "pw 가 조건에 맞지 않습니다.")
                 })
             })
         })

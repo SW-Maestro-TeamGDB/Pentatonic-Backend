@@ -44,19 +44,7 @@ const server = new ApolloServer({
         return { db, redis }
     },
     validationRules: [
-        depthLimit(8),
-        queryComplexity({
-            estimators: [
-                simpleEstimator({ defaultComplexity: 1 })
-            ],
-            maximumComplexity: 1000,
-            onComplete: (complexity: number) => {
-                console.log(`Query Complexity: ${complexity}`)
-            },
-            createError: (max: number, actual: number) => {
-                return new ApolloError(`Query is too complex: ${actual}. Maximum allowed complexity: ${max}`);
-            },
-        })
+        depthLimit(8)
     ]
 })
 

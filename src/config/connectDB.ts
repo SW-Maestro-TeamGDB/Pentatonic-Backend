@@ -24,9 +24,7 @@ const connectDB = () => {
 
     const get = async () => {
         try {
-            ++instance
-            console.log(`DB called ${instance} times`)
-            if (db != null) {
+            if (db !== null) {
                 return db
             } else {
                 console.log(`getting new db connection`)

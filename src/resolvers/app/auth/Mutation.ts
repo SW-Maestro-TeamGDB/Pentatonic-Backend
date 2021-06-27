@@ -21,6 +21,7 @@ const checkPassword = (password: string, hashedPassword: string) => {
 
 const specialCharacters = "\"'\\!@#$%^&*()_-=+/?.><,[{]}|;:"
 const isValidPw = (pw: string) => {
+    if (pw.length < 6) return false
     for (const c of pw) {
         if ('a' <= c && c <= 'z') continue
         if ('A' <= c && c <= 'Z') continue
@@ -57,7 +58,7 @@ export const register = async (
     }
 ) => {
     if (isValidPw(pw) === false) {
-        return new ApolloError("pw 이 조건에 맞지 않습니다.")
+        return new ApolloError("pw 가 조건에 맞지 않습니다.")
     }
     const validArgs = await Promise.all([
         redis.get(phoneNumber),
@@ -71,7 +72,7 @@ export const register = async (
         return new ApolloError("id 혹은 username 이 조건에 맞지 않습니다.")
     }
     const hash = createHashedPassword(pw)
-    return await db.collection("user").insertOne({
+    const result = await db.collection("user").insertOne({
         id,
         hash,
         username,
@@ -80,6 +81,11 @@ export const register = async (
         level,
         type
     }).then(({ result }) => result.n === 1)
+    if (result === false) {
+        return false
+    }
+    await redis.del(phoneNumber)
+    return true
 }
 
 
