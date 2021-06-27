@@ -6,3 +6,4 @@ export interface File {
     encoding: string
     createReadStream: () => ReadStream
 }
+

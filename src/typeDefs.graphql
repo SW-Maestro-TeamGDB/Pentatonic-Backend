@@ -52,20 +52,26 @@ type Mutation{
 
     ): Boolean!
 
+
+
     """인증번호를 전송하는 뮤테이션 입니다."""
     sendSMS(
         """ phoneNumber은 +821012345678 와 같은 형식이여야 합니다. """
         phoneNumber: PhoneNumber!
     ): Boolean!
 
+
+
     """SMS 인증번호를 확인하는 뮤테이션 입니다."""
     checkSMS(
         """ phoneNumber은 +821012345678 와 같은 형식이여야 합니다. """
         phoneNumber: PhoneNumber!
 
-        """ authenticationNumber는 9999 와 같은 1000~9999 사이의 숫자 입니다. """
+        """ authenticationNumber는 999999 와 같은 100000~999999 사이의 숫자 입니다. """
         authenticationNumber: Int!
     ): Boolean!
+
+
 
     test(data: PhoneNumber!): Boolean!
 } 

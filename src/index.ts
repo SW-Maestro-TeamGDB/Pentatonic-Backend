@@ -9,6 +9,7 @@ import { createServer } from "http"
 import queryComplexity, { simpleEstimator } from "graphql-query-complexity"
 import depthLimit from "graphql-depth-limit"
 import DB from "config/connectDB"
+import * as redis from "config/connectRedis"
 
 import { makeExecutableSchema } from "@graphql-tools/schema"
 import * as graphqlScalars from 'graphql-scalars'
@@ -42,7 +43,7 @@ const start = async () => {
     const server = new ApolloServer({
         schema: applyMiddleware(schema, permissions),
         context: () => {
-            return { db }
+            return { db, redis }
         },
         validationRules: [
             depthLimit(8),
