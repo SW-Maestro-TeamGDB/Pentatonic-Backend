@@ -15,7 +15,7 @@ type Mutation{
         """ pw는 길이가 6 이상이여야하며 영문과 숫자 특수문자가 가능합니다. """
         pw: String!
 
-        """ username은 길이가 1 이상이여야 합니다. """
+        """ username은 길이가 2 이상이여야 합니다. """
         username: String!
 
         """ phoneNumber은 +821012345678 와 같은 형식이여야 합니다. """
@@ -48,7 +48,7 @@ type Mutation{
 
     """ id가 조건에 맞는지 확인하는 뮤테이션 입니다. """
     checkUsername(
-        """username은 길이가 1 이상이여야 합니다. """
+        """username은 길이가 2 이상이여야 합니다. """
         username: String!
     ): Boolean!
 
