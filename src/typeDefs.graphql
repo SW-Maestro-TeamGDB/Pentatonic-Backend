@@ -3,6 +3,22 @@ scalar FileUpload
 
 type Query{
     test: String!
+
+    """ id가 조건에 맞는지 확인하는 쿼리 입니다. """
+    checkId(
+        """id는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다. """
+        id: String!
+    ): Boolean!
+
+
+
+    """ username이 조건에 맞는지 확인하는 쿼리 입니다. """
+    checkUsername(
+        """username은 길이가 2 이상이여야 합니다. """
+        username: String!
+    ): Boolean!
+
+
 }
 
 type Mutation{
@@ -36,31 +52,11 @@ type Mutation{
 
     ): Boolean!
 
-
-
-    """ id가 조건에 맞는지 확인하는 뮤테이션 입니다. """
-    checkId(
-        """id는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다. """
-        id: String!
-    ): Boolean!
-
-
-
-    """ id가 조건에 맞는지 확인하는 뮤테이션 입니다. """
-    checkUsername(
-        """username은 길이가 2 이상이여야 합니다. """
-        username: String!
-    ): Boolean!
-
-
-
     """인증번호를 전송하는 뮤테이션 입니다."""
     sendSMS(
         """ phoneNumber은 +821012345678 와 같은 형식이여야 합니다. """
         phoneNumber: PhoneNumber!
     ): Boolean!
-
-
 
     """SMS 인증번호를 확인하는 뮤테이션 입니다."""
     checkSMS(
@@ -72,5 +68,4 @@ type Mutation{
     ): Boolean!
 
     test(data: PhoneNumber!): Boolean!
-
 } 
