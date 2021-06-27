@@ -47,12 +47,12 @@ describe(`Server Init Test`, () => {
         assert.strictEqual(body.errors[0].message, 'Cannot query field "test1" on type "Query". Did you mean "test"?')
     })
 
-    it(`Server Running Test-3`, async () => {
-        const { body } = await graphql(`
-            mutation($file: FileUpload){
-                imgUpload(file: $file)
-            }
-        `, { file: __dirname + '/github_profile.jpeg' })
-        assert.strictEqual(body.data.imgUpload, true)
-    })
+    // it(`Server Running Test-3`, async () => {
+    //     const { body } = await graphql(`
+    //         mutation($file: FileUpload){
+    //             imgUpload(file: $file)
+    //         }
+    //     `, { file: __dirname + '/github_profile.jpeg' })
+    //     assert.strictEqual(body.data.imgUpload, true)
+    // })
 })

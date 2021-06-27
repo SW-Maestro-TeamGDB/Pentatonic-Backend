@@ -68,7 +68,7 @@ const start = async () => {
 
     const httpServer = createServer(app)
     httpServer.timeout = 5000
-    httpServer.listen({ port: env.PORT || 3000 }, () => {
+    httpServer.listen({ port: env.PORT }, () => {
         console.log(`GraphQL API Running at http://localhost:${env.PORT || 3000}/api`)
         console.log(`GraphQL Docs Running at http://localhost:${env.PORT || 3000}/api-docs`)
     })

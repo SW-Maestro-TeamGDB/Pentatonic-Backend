@@ -6,11 +6,71 @@ type Query{
 }
 
 type Mutation{
-    imgUpload(file: FileUpload): Boolean!
 
+    """ 회원가입 뮤테이션 이며 회원가입의 성공 여부를 1, 0으로 반환합니다. """
     register(
+        """ id는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다. """
         id: String!
+
+        """ pw는 길이가 6 이상이여야하며 영문과 숫자 특수문자가 가능합니다. """
         pw: String!
+
+        """ username은 길이가 1 이상이여야 합니다. """
+        username: String!
+
+        """ phoneNumber은 +821012345678 와 같은 형식이여야 합니다. """
+        phoneNumber: PhoneNumber!
+
+        """
+        wheelHouse는 유저가 어떤 포지션이고 얼마나 잘하는지를 나타냅니다.
+        {
+            "position": "piano",
+            "level": 3
+        }
+        다음과 같은 꼴이여야 합니다. level은 (1~5)
+        """
+        wheelHouse: JSONObject!
+
+        """type은 유저의 유형을 나타냅니다. (1: 취미, 2: 본업, 3: 리스너)"""
+        type: Int!
+
+    ): Boolean!
+
+
+
+    """ id가 조건에 맞는지 확인하는 뮤테이션 입니다. """
+    checkId(
+        """id는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다. """
+        id: String!
+    ): Boolean!
+
+
+
+    """ id가 조건에 맞는지 확인하는 뮤테이션 입니다. """
+    checkUsername(
+        """username은 길이가 1 이상이여야 합니다. """
         username: String!
     ): Boolean!
-}
+
+
+
+    """인증번호를 전송하는 뮤테이션 입니다."""
+    sendSMS(
+        """ phoneNumber은 +821012345678 와 같은 형식이여야 합니다. """
+        phoneNumber: PhoneNumber!
+    ): Boolean!
+
+
+
+    """SMS 인증번호를 확인하는 뮤테이션 입니다."""
+    checkSMS(
+        """ phoneNumber은 +821012345678 와 같은 형식이여야 합니다. """
+        phoneNumber: PhoneNumber!
+
+        """ authenticationNumber는 9999 와 같은 1000~9999 사이의 숫자 입니다. """
+        authenticationNumber: Int!
+    ): Boolean!
+
+    test(data: PhoneNumber!): Boolean!
+
+} 
