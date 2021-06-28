@@ -22,5 +22,6 @@ describe("Server Health Check", () => {
         const { body } = await request(app)
             .get(`/api?query=${query}`)
             .expect(400)
+        equal(body.errors[0].message, 'Cannot query field "test1" on type "Query". Did you mean "test"?')
     })
 })
