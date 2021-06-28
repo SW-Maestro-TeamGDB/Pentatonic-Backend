@@ -13,22 +13,22 @@ const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUM
 describe("User auth service test", () => {
     describe("SMS service test", () => {
         describe("Send SMS test", () => {
-            // describe("Success", () => {
-            //     it("Submit SMS", async () => {
-            //         const query = `
-            //             mutation{ 
-            //                 sendSMS(
-            //                     phoneNumber: "${phoneNumber}"
-            //                 )
-            //             }`
-            //         const { body } = await request(app)
-            //             .post("/api")
-            //             .set({ "Content-Type": "application/json" })
-            //             .send(JSON.stringify({ query }))
-            //             .expect(200)
-            //         equal(body.data.sendSMS, true)
-            //     })
-            // })
+            describe("Success", () => {
+                it("Submit SMS", async () => {
+                    const query = `
+                        mutation{ 
+                            sendSMS(
+                                phoneNumber: "${phoneNumber}"
+                            )
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.sendSMS, true)
+                })
+            })
             describe("Failure", () => {
                 it("PhoneNumber Format Error", async () => {
                     const query = `
@@ -146,7 +146,7 @@ describe("User auth service test", () => {
                         mutation{
                             register(
                                 id: "test1234",
-                                pw: "test1234",
+                                pw: "test1234AA@@",
                                 username: "pukuba",
                                 phoneNumber: "${phoneNumber}",
                                 position: "Piano",
@@ -172,7 +172,7 @@ describe("User auth service test", () => {
                         mutation{
                             register(
                                 id: "test1234",
-                                pw: "test1234",
+                                pw: "test1234AA@@",
                                 username: "erolf0123",
                                 phoneNumber: "${phoneNumber}",
                                 position: "Piano",
@@ -193,7 +193,7 @@ describe("User auth service test", () => {
                         mutation{
                             register(
                                 id: "erolf0123",
-                                pw: "test1234",
+                                pw: "test1234AA@2",
                                 username: "pukuba",
                                 phoneNumber: "${phoneNumber}",
                                 position: "Piano",
@@ -214,7 +214,7 @@ describe("User auth service test", () => {
                         mutation{
                             register(
                                 id: "kkzkk1234",
-                                pw: "test1234",
+                                pw: "test1234AA@@",
                                 username: "kkzkk1234",
                                 phoneNumber: "+821000000000",
                                 position: "Piano",
@@ -230,12 +230,33 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "휴대번호 인증을 다시해야합니다.")
                 })
-                it("Invalid Input id", async () => {
+                it("Invalid Input username", async () => {
+                    const query = `
+                        mutation{
+                            register(
+                                id: "testtest",
+                                pw: "test1234AA@@",
+                                username: "X",
+                                phoneNumber: "${phoneNumber}",
+                                position: "Piano",
+                                level: 2,
+                                type: 1
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다.")
+                })
+                it("Invalid Input id - 1", async () => {
                     const query = `
                         mutation{
                             register(
                                 id: "test",
-                                pw: "test1234",
+                                pw: "test1234AA@@",
                                 username: "kkzkk1234",
                                 phoneNumber: "${phoneNumber}",
                                 position: "Piano",
@@ -251,12 +272,54 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다.")
                 })
-                it("Invalid Input password", async () => {
+                it("Invalid Input id - 2", async () => {
+                    const query = `
+                        mutation{
+                            register(
+                                id: "testTEST!@#$하와와",
+                                pw: "test1234AA@@",
+                                username: "kkzkk1234",
+                                phoneNumber: "${phoneNumber}",
+                                position: "Piano",
+                                level: 2,
+                                type: 1
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다.")
+                })
+                it("Invalid Input password - 1", async () => {
                     const query = `
                         mutation{
                             register(
                                 id: "kkzkk1234",
                                 pw: "test",
+                                username: "kkzkk1234",
+                                phoneNumber: "${phoneNumber}",
+                                position: "Piano",
+                                level: 2,
+                                type: 1
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "pw 가 조건에 맞지 않습니다.")
+                })
+                it("Invalid Input password - 2", async () => {
+                    const query = `
+                        mutation{
+                            register(
+                                id: "kkzkk1234",
+                                pw: "하와와와와와와",
                                 username: "kkzkk1234",
                                 phoneNumber: "${phoneNumber}",
                                 position: "Piano",
@@ -282,7 +345,7 @@ describe("User auth service test", () => {
                         mutation{
                             login(
                                 id:"test1234",
-                                pw:"test1234"
+                                pw:"test1234AA@@"
                             )
                         }
                     `
@@ -293,12 +356,9 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(typeof body.data.login, "string")
                     token.push(body.data.login)
-                    try {
-                        const user = jwt.verify(token[0], env.JWT_SECRET) as TokenInterface
-                        equal(user.username, "pukuba")
-                    } catch (e) {
-                        console.log(e)
-                    }
+                    const user = jwt.verify(token[0], env.JWT_SECRET) as TokenInterface
+                    equal(user.username, "pukuba")
+
                 })
             })
             describe("Failure", () => {
@@ -307,7 +367,7 @@ describe("User auth service test", () => {
                         mutation{
                             login(
                                 id:"kkzkk1234",
-                                pw:"test1234"
+                                pw:"test1234AA@@"
                             )
                         }
                     `

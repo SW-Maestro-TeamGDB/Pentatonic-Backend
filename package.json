@@ -4,11 +4,13 @@
   "description": "graphql-ts-boilerplate",
   "main": "src/index.ts",
   "scripts": {
-    "test": "NODE_PATH=src/ ts-mocha -p ./tsconfig.json src/test/*.test.ts --exit; NODE_PATH=src/ ts-mocha -p ./tsconfig.json src/resolvers/app/*/test.ts --exit",
+    "test": "NODE_PATH=src/ ts-mocha -p ./tsconfig.json src/resolvers/app/*/test.ts --exit",
     "build": "tsc -p .",
     "start": "NODE_PATH=src/ nodemon --exec ts-node src/index.ts",
     "on": "NODE_PATH=dist/ node dist/index.js",
-    "gen-docs": "rm -rf docs && graphdoc -s ./src/typeDefs.graphql -o ./docs"
+    "gen-docs": "rm -rf docs && graphdoc -s ./src/typeDefs.graphql -o ./docs",
+    "coverage": "nyc --reporter=html yarn test",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -34,6 +36,7 @@
     "apollo-server-express": "^2.19.2",
     "bcrypt": "^5.0.1",
     "body-parser-graphql": "^1.1.0",
+    "coveralls": "^3.1.0",
     "crypto-js": "^4.0.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
@@ -52,6 +55,7 @@
     "mongodb": "^3.6.3",
     "node-fetch": "^2.6.1",
     "nodemon": "^2.0.7",
+    "nyc": "^15.1.0",
     "path": "^0.12.7",
     "pm2": "^4.5.6",
     "redis": "^3.1.2",

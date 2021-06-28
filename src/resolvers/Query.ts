@@ -1,6 +1,6 @@
 import { Query as auth } from "resolvers/app/auth"
-
+import { Query as health } from "resolvers/app/health"
 export default {
-    test: () => "Server On",
+    ...health,
     ...auth
 }

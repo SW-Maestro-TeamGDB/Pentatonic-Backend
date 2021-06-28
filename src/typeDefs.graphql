@@ -70,6 +70,8 @@ type Mutation{
 
     test(data: PhoneNumber!): Boolean!
 
+
+
     """Login을 하는 뮤테이션 입니다. JWT 토큰을 반환합니다. """
     login(
         """계정의 id 입니다."""
