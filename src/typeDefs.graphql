@@ -51,7 +51,7 @@ type Mutation{
 
 
 
-    """인증번호를 전송하는 뮤테이션 입니다."""
+    """인증번호를 전송하는 뮤테이션 입니다. (발송성공 ? 1 : 0)"""
     sendSMS(
         """ phoneNumber은 +821012345678 와 같은 형식이여야 합니다. """
         phoneNumber: PhoneNumber!
@@ -59,7 +59,7 @@ type Mutation{
 
 
 
-    """SMS 인증번호를 확인하는 뮤테이션 입니다."""
+    """SMS 인증번호를 확인하는 뮤테이션 입니다. (본인확인 완료 ? 1 : 0)"""
     checkSMS(
         """ phoneNumber은 +821012345678 와 같은 형식이여야 합니다. """
         phoneNumber: PhoneNumber!
