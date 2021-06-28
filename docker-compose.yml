@@ -15,10 +15,14 @@ services:
     volumes:
       - ./proxy/nginx.conf:/etc/nginx/nginx.conf
     restart: "unless-stopped"
+  redis_db:
+    image: redis:latest
+    container_name: redis_db
   express:
+    depends_on:
+      - mongodb
+      - redis_db
     container_name: express
     build:
       context: ./
-    volumes:
-      - ./file:/server/file
     restart: "unless-stopped"
