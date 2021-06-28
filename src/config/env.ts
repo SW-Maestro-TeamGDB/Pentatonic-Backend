@@ -5,7 +5,8 @@ const config = {
     SMS_KEY: process.env.SMS_KEY,
     NCP_ACCESS_KEY: process.env.NCP_ACCESS_KEY,
     NCP_SECRET_KEY: process.env.NCP_SECRET_KEY,
-    PHONE_NUMBER: process.env.PHONE_NUMBER
+    PHONE_NUMBER: process.env.PHONE_NUMBER,
+    JWT_SECRET: process.env.JWT_SECRET || "applebanana"
 }
 
 export default config

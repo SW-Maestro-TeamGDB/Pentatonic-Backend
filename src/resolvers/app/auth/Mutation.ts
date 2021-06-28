@@ -3,7 +3,8 @@ import { ApolloError } from "apollo-server-express"
 import { Redis } from "config/connectRedis"
 import { smsRequest, changePhoneNumber } from "lib"
 import { genSaltSync, hashSync, compareSync } from "bcrypt"
-import { WheelHouse } from "resolvers/app/auth/models"
+import jwt from "jsonwebtoken"
+import env from "config/env"
 
 import { checkUsername, checkId } from "resolvers/app/auth/Query"
 
@@ -14,10 +15,7 @@ const createHashedPassword = (password: string) => {
     return hashedPassword
 }
 
-const checkPassword = (password: string, hashedPassword: string) => {
-    const isPasswordCorrect = compareSync(password, hashedPassword)
-    return isPasswordCorrect
-}
+const checkPassword = (password: string, hashedPassword: string) => compareSync(password, hashedPassword)
 
 const specialCharacters = "\"'\\!@#$%^&*()_-=+/?.><,[{]}|;:"
 const isValidPw = (pw: string) => {
@@ -88,7 +86,28 @@ export const register = async (
     return true
 }
 
-
+export const login = async (
+    parent: void, {
+        id,
+        pw
+    }: {
+        id: string,
+        pw: string
+    }, {
+        db
+    }: {
+        db: Db
+    }
+) => {
+    const user = await db.collection("user").findOne({ id })
+    if (user !== null && checkPassword(pw, user.hash)) {
+        return jwt.sign({
+            id: user.id,
+            username: user.username
+        }, env.JWT_SECRET)
+    }
+    return new ApolloError("잘못된 아이디 또는 비밀번호를 입력하셨습니다.")
+}
 export const sendSMS = async (
     parent: void, {
         phoneNumber

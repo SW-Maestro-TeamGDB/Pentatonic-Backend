@@ -6,6 +6,8 @@ import { deepStrictEqual as equal } from "assert"
 import * as redis from "config/connectRedis"
 import { Redis } from "config/connectRedis"
 import DB from "config/connectDB"
+import jwt from "jsonwebtoken"
+import { TokenInterface } from "resolvers/app/auth/models"
 
 const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
 describe("User auth service test", () => {
@@ -137,7 +139,7 @@ describe("User auth service test", () => {
             const db = await DB.get()
             await db.collection("user").deleteOne({ phoneNumber })
         })
-        describe("Register test", async () => {
+        describe("Register", async () => {
             describe("Success", () => {
                 it("User register", async () => {
                     const query = `
@@ -269,6 +271,68 @@ describe("User auth service test", () => {
                         .send(JSON.stringify({ query }))
                         .expect(200)
                     equal(body.errors[0].message, "pw 가 조건에 맞지 않습니다.")
+                })
+            })
+        })
+        describe("Login", () => {
+            describe("Success", () => {
+                const token: string[] = []
+                it("User login", async () => {
+                    const query = `
+                        mutation{
+                            login(
+                                id:"test1234",
+                                pw:"test1234"
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(typeof body.data.login, "string")
+                    token.push(body.data.login)
+                    try {
+                        const user = jwt.verify(token[0], env.JWT_SECRET) as TokenInterface
+                        equal(user.username, "pukuba")
+                    } catch (e) {
+                        console.log(e)
+                    }
+                })
+            })
+            describe("Failure", () => {
+                it("ID without", async () => {
+                    const query = `
+                        mutation{
+                            login(
+                                id:"kkzkk1234",
+                                pw:"test1234"
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "잘못된 아이디 또는 비밀번호를 입력하셨습니다.")
+                })
+                it("PW without", async () => {
+                    const query = `
+                        mutation{
+                            login(
+                                id:"test1234",
+                                pw:"kkzkk1234"
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "잘못된 아이디 또는 비밀번호를 입력하셨습니다.")
                 })
             })
         })
