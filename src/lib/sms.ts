@@ -18,7 +18,7 @@ const makeSignature = (timeStamp: string) => {
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min)) + min
 
 export const smsRequest = async (smsNumber: string) => {
-    const randNumber = rand(100000, 999999)
+    const randNumber = rand(100000, 999999).toString()
     const timeStamp = Date.now().toString()
     const result = await fetch(`https://sens.apigw.ntruss.com/sms/v2/services/${env.SMS_KEY}/messages`, {
         method: "POST",

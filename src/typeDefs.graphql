@@ -4,39 +4,65 @@ scalar FileUpload
 type Query{
     test: String!
 
-    """ id가 조건에 맞는지 확인하는 쿼리 입니다. """
+    """ id가 조건에 맞는지 확인하는 쿼리 입니다"""
     checkId(
-        "id는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다. "
+        "id는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다"
         id: String!
     ): Boolean!
 
 
 
-    """ username이 조건에 맞는지 확인하는 쿼리 입니다. """
+    """ username이 조건에 맞는지 확인하는 쿼리 입니다"""
     checkUsername(
-        "username은 길이가 2 이상이여야 합니다. "
+        "username은 길이가 2 이상이여야 합니다"
         username: String!
     ): Boolean!
 
 
 }
 
+"""결과에 대한 기본 반환갑입니다"""
+interface ResultInterface{
+    "해당 요청에 대한 메세지 입니다"
+    message: String!
+}
+
+"""아이디 비밀번호 찾기와 비밀번호 재설정에 대한 리턴 타입입니다"""
+type IdPwSearchResult implements ResultInterface{
+    message: String!
+    id: String
+    password: String
+}
+
+"""본인확인 문자발송 input"""
+input SMSSend{
+    "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
+    phoneNumber: PhoneNumber!
+}
+
+"""본인확인 인증번호 확인 input"""
+input SMSCheck{
+    "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
+    phoneNumber: PhoneNumber!
+
+    "authenticationNumber 는 999999 와 같은 100000~999999 사이의 숫자 입니다"
+    authenticationNumber: Int!
+}
+
 type Mutation{
 
-    """ 회원가입 뮤테이션 이며 회원가입의 성공 여부를 1, 0으로 반환합니다. """
+    """회원가입 뮤테이션 이며 회원가입의 성공 여부를 1, 0으로 반환합니다. """
     register(
         "id 는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다. "
         id: String!
 
-        "pw 는 길이가 6 이상이여야하며 영문과 숫자 특수문자가 가능합니다. "
-        pw: String!
+        "password 는 길이가 6 이상이여야하며 영문과 숫자 특수문자가 가능합니다. "
+        password: String!
 
         "username 은 길이가 2 이상이여야 합니다. "
         username: String!
 
-        "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다. "
-        phoneNumber: PhoneNumber!
-
+        phone: SMSSend!
 
         "position 은 유저가 어떤 악기를 연주하는지를 나타냅니다."
         position: String!
@@ -52,20 +78,16 @@ type Mutation{
 
 
     """인증번호를 전송하는 뮤테이션 입니다. (발송성공 ? 1 : 0)"""
-    sendSMS(
-        " phoneNumber은 +821012345678 와 같은 형식이여야 합니다. "
-        phoneNumber: PhoneNumber!
+    registerSMSSend(
+       phone: SMSSend!
+
     ): Boolean!
 
 
 
     "SMS 인증번호를 확인하는 뮤테이션 입니다. (본인확인 완료 ? 1 : 0)"
-    checkSMS(
-        " phoneNumber은 +821012345678 와 같은 형식이여야 합니다. "
-        phoneNumber: PhoneNumber!
-
-        "authenticationNumber 는 999999 와 같은 100000~999999 사이의 숫자 입니다. "
-        authenticationNumber: Int!
+    registerSMSCheck(
+        phone: SMSCheck!
     ): Boolean!
 
     test(data: PhoneNumber!): Boolean!
@@ -78,7 +100,28 @@ type Mutation{
         "계정의 id 입니다."
         id: String!,
 
-        "계정의 pw 입니다."
-        pw: String!
+        "계정의 password 입니다."
+        password: String!
     ): JWT!
+
+
+    findIdSMSSend(
+        phoneNumber: PhoneNumber!
+    ): IdPwSearchResult!
+
+    findIdSMSCheck(
+        phoneNumber: PhoneNumber!,
+        authenticationNumber: Int!
+    ): IdPwSearchResult!
+    
+
+    findPassword(
+        id: String!,
+        phoneNumber: PhoneNumber!
+    ): IdPwSearchResult!
+
+    resetPassword(
+        password: String!
+        rePassword: String!
+    ): IdPwSearchResult! 
 } 

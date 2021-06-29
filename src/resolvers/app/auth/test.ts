@@ -17,8 +17,10 @@ describe("User auth service test", () => {
                 it("Submit SMS", async () => {
                     const query = `
                         mutation{ 
-                            sendSMS(
-                                phoneNumber: "${phoneNumber}"
+                            registerSMSSend(
+                                phone:{
+                                    phoneNumber: "${phoneNumber}"
+                                }
                             )
                         }`
                     const { body } = await request(app)
@@ -26,15 +28,25 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.data.sendSMS, true)
+                    equal(body.data.registerSMSSend, true)
                 })
             })
             describe("Failure", () => {
+                before(async () => {
+                    const db = await DB.get()
+                    await db.collection("user").insertOne({ phoneNumber: "+821000000000" })
+                })
+                after(async () => {
+                    const db = await DB.get()
+                    await db.collection("user").deleteOne({ phoneNumber: "+821000000000" })
+                })
                 it("PhoneNumber Format Error", async () => {
                     const query = `
                         mutation{
-                            sendSMS(
-                                phoneNumber:"01000000000"
+                            registerSMSSend(
+                                phone:{
+                                    phoneNumber:"01000000000"
+                                }
                             )
                         }
                     `
@@ -47,8 +59,10 @@ describe("User auth service test", () => {
                 it("not a Korean mobile number", async () => {
                     const query = `
                         mutation{
-                            sendSMS(
-                                phoneNumber:"+12319235123"
+                            registerSMSSend(
+                                phone:{
+                                    phoneNumber:"+12319235123"
+                                }
                             )
                         }
                     `
@@ -58,6 +72,23 @@ describe("User auth service test", () => {
                         .send(JSON.stringify({ query }))
                         .expect(200)
                     equal(body.errors[0].message, "한국 번호가 아닙니다")
+                })
+                it("Phone number already exists", async () => {
+                    const query = `
+                        mutation{
+                            registerSMSSend(
+                                phone:{
+                                    phoneNumber:"+821000000000"
+                                }
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "이미 해당 전화번호로 가입한 유저가 있습니다")
                 })
             })
         })
@@ -69,9 +100,11 @@ describe("User auth service test", () => {
                 it("Valid Authentication Number", async () => {
                     const query = `
                         mutation{
-                            checkSMS(
-                                phoneNumber:"${phoneNumber}",
-                                authenticationNumber: 123432
+                            registerSMSCheck(
+                                phone:{
+                                    phoneNumber:"${phoneNumber}",
+                                    authenticationNumber: 123432
+                                }
                             )
                         }
                     `
@@ -80,16 +113,18 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.data.checkSMS, true)
+                    equal(body.data.registerSMSCheck, true)
                 })
             })
             describe("Failure", () => {
                 it("Invalid authentication number", async () => {
                     const query = `
                         mutation{
-                            checkSMS(
-                                phoneNumber:"${phoneNumber}",
-                                authenticationNumber: 123432
+                            registerSMSCheck(
+                                phone:{
+                                    phoneNumber:"${phoneNumber}",
+                                    authenticationNumber: 123432
+                                }
                             )
                         }
                     `
@@ -98,14 +133,16 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.data.checkSMS, false)
+                    equal(body.data.registerSMSCheck, false)
                 })
                 it("Unauthenticated Phone Number", async () => {
                     const query = `
                         mutation{
-                            checkSMS(
-                                phoneNumber:"+821000000000",
-                                authenticationNumber: 123432
+                            registerSMSCheck(
+                                phone:{
+                                    phoneNumber:"+821000000000",
+                                    authenticationNumber: 123432
+                                }
                             )
                         }
                     `
@@ -114,14 +151,16 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.data.checkSMS, false)
+                    equal(body.data.registerSMSCheck, false)
                 })
                 it("Invalid Type", async () => {
                     const query = `
                         mutation{
-                            checkSMS(
-                                phoneNumber:"+821000000000",
-                                authenticationNumber: "123432"
+                            registerSMSCheck(
+                                phone:{
+                                    phoneNumber:"+821000000000",
+                                    authenticationNumber: "123432"
+                                }
                             )
                         }
                     `
@@ -146,9 +185,11 @@ describe("User auth service test", () => {
                         mutation{
                             register(
                                 id: "test1234",
-                                pw: "test1234AA@@",
+                                password: "test1234AA@@",
                                 username: "pukuba",
-                                phoneNumber: "${phoneNumber}",
+                                phone: {
+                                    phoneNumber: "${phoneNumber}"
+                                },
                                 position: "Piano",
                                 level: 2,
                                 type: 1
@@ -172,9 +213,11 @@ describe("User auth service test", () => {
                         mutation{
                             register(
                                 id: "test1234",
-                                pw: "test1234AA@@",
+                                password: "test1234AA@@",
                                 username: "erolf0123",
-                                phoneNumber: "${phoneNumber}",
+                                phone: {
+                                    phoneNumber: "${phoneNumber}",
+                                },
                                 position: "Piano",
                                 level: 2,
                                 type: 1
@@ -193,9 +236,11 @@ describe("User auth service test", () => {
                         mutation{
                             register(
                                 id: "erolf0123",
-                                pw: "test1234AA@2",
+                                password: "test1234AA@2",
                                 username: "pukuba",
-                                phoneNumber: "${phoneNumber}",
+                                phone: {
+                                    phoneNumber: "${phoneNumber}",
+                                },
                                 position: "Piano",
                                 level: 2,
                                 type: 1
@@ -214,9 +259,11 @@ describe("User auth service test", () => {
                         mutation{
                             register(
                                 id: "kkzkk1234",
-                                pw: "test1234AA@@",
+                                password: "test1234AA@@",
                                 username: "kkzkk1234",
-                                phoneNumber: "+821000000000",
+                                phone: { 
+                                    phoneNumber: "+821000000000",
+                                },
                                 position: "Piano",
                                 level: 2,
                                 type: 1
@@ -235,9 +282,11 @@ describe("User auth service test", () => {
                         mutation{
                             register(
                                 id: "testtest",
-                                pw: "test1234AA@@",
+                                password: "test1234AA@@",
                                 username: "X",
-                                phoneNumber: "${phoneNumber}",
+                                phone: { 
+                                    phoneNumber: "${phoneNumber}",
+                                },
                                 position: "Piano",
                                 level: 2,
                                 type: 1
@@ -256,9 +305,11 @@ describe("User auth service test", () => {
                         mutation{
                             register(
                                 id: "test",
-                                pw: "test1234AA@@",
+                                password: "test1234AA@@",
                                 username: "kkzkk1234",
-                                phoneNumber: "${phoneNumber}",
+                                phone: { 
+                                    phoneNumber: "${phoneNumber}",
+                                },
                                 position: "Piano",
                                 level: 2,
                                 type: 1
@@ -277,9 +328,11 @@ describe("User auth service test", () => {
                         mutation{
                             register(
                                 id: "testTEST!@#$하와와",
-                                pw: "test1234AA@@",
+                                password: "test1234AA@@",
                                 username: "kkzkk1234",
-                                phoneNumber: "${phoneNumber}",
+                                phone: {
+                                    phoneNumber: "${phoneNumber}",
+                                },
                                 position: "Piano",
                                 level: 2,
                                 type: 1
@@ -298,9 +351,11 @@ describe("User auth service test", () => {
                         mutation{
                             register(
                                 id: "kkzkk1234",
-                                pw: "test",
+                                password: "test",
                                 username: "kkzkk1234",
-                                phoneNumber: "${phoneNumber}",
+                                phone: {
+                                    phoneNumber: "${phoneNumber}",
+                                },
                                 position: "Piano",
                                 level: 2,
                                 type: 1
@@ -312,16 +367,18 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "pw 가 조건에 맞지 않습니다.")
+                    equal(body.errors[0].message, "비밀번호가 조건에 맞지 않습니다.")
                 })
                 it("Invalid Input password - 2", async () => {
                     const query = `
                         mutation{
                             register(
                                 id: "kkzkk1234",
-                                pw: "하와와와와와와",
+                                password: "하와와와와와와",
                                 username: "kkzkk1234",
-                                phoneNumber: "${phoneNumber}",
+                                phone: {
+                                    phoneNumber: "${phoneNumber}",
+                                },
                                 position: "Piano",
                                 level: 2,
                                 type: 1
@@ -333,7 +390,7 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "pw 가 조건에 맞지 않습니다.")
+                    equal(body.errors[0].message, "비밀번호가 조건에 맞지 않습니다.")
                 })
             })
         })
@@ -345,7 +402,7 @@ describe("User auth service test", () => {
                         mutation{
                             login(
                                 id:"test1234",
-                                pw:"test1234AA@@"
+                                password:"test1234AA@@"
                             )
                         }
                     `
@@ -367,7 +424,7 @@ describe("User auth service test", () => {
                         mutation{
                             login(
                                 id:"kkzkk1234",
-                                pw:"test1234AA@@"
+                                password:"test1234AA@@"
                             )
                         }
                     `
@@ -378,12 +435,12 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "잘못된 아이디 또는 비밀번호를 입력하셨습니다.")
                 })
-                it("PW without", async () => {
+                it("password without", async () => {
                     const query = `
                         mutation{
                             login(
                                 id:"test1234",
-                                pw:"kkzkk1234"
+                                password:"kkzkk1234"
                             )
                         }
                     `
