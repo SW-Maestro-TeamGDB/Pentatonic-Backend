@@ -11,6 +11,10 @@ import { TokenInterface } from "resolvers/app/auth/models"
 
 const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
 describe("User auth service test", () => {
+    after(async () => {
+        const db = await DB.get()
+        await db.collection("user").deleteOne({ phoneNumber })
+    })
     describe("SMS service test", () => {
         describe("Send SMS test", () => {
             describe("Success", () => {
@@ -93,10 +97,10 @@ describe("User auth service test", () => {
             })
         })
         describe("Check SMS", () => {
-            before("Set SMS authenticationNumber", async () => {
-                await (redis as Redis).setex(env.PHONE_NUMBER as string, 180, 123432)
-            })
             describe("Success", () => {
+                before("Set SMS authenticationNumber", async () => {
+                    await (redis as Redis).setex(env.PHONE_NUMBER as string, 180, 123432)
+                })
                 it("Valid Authentication Number", async () => {
                     const query = `
                         mutation{
@@ -174,10 +178,6 @@ describe("User auth service test", () => {
         })
     })
     describe("Register & Login services test", () => {
-        after(async () => {
-            const db = await DB.get()
-            await db.collection("user").deleteOne({ phoneNumber })
-        })
         describe("Register", async () => {
             describe("Success", () => {
                 it("User register", async () => {
@@ -450,6 +450,141 @@ describe("User auth service test", () => {
                         .send(JSON.stringify({ query }))
                         .expect(200)
                     equal(body.errors[0].message, "잘못된 아이디 또는 비밀번호를 입력하셨습니다.")
+                })
+            })
+        })
+    })
+    describe("Find user information", () => {
+        describe("Find Id", () => {
+            describe("Success", () => {
+                it("Request findIdSMSSend", async () => {
+                    const query = ` 
+                    mutation{ 
+                        findIdSMSSend(
+                            phone:{
+                                phoneNumber:"${phoneNumber}"
+                            }
+                        )
+                    }
+                `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.findIdSMSSend, true)
+                })
+            })
+            describe("Failure", () => {
+                it("Information that does not exist", async () => {
+                    const query = ` 
+                    mutation{ 
+                        findIdSMSSend(
+                            phone:{
+                                phoneNumber:"+82100000000000"
+                            }
+                        )
+                    }
+                `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "해당 번호로 가입한 유저가 존재하지 않습니다")
+                })
+            })
+        })
+        describe("Get Id", () => {
+            describe("Success", () => {
+                before(async () => {
+                    await (redis as Redis).setex(env.PHONE_NUMBER as string, 180, 432123)
+                })
+                it("Request findIdSMSCheck", async () => {
+                    const query = ` 
+                    mutation{ 
+                        findIdSMSCheck(
+                            phone:{
+                                phoneNumber: "${phoneNumber}",
+                                authenticationNumber: 432123
+                            }
+                        ){
+                            message
+                            id
+                        }
+                    }
+                `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+
+                    equal(body.data.findIdSMSCheck.message, "아이디 찾기 성공")
+                    equal(body.data.findIdSMSCheck.id, "test1234")
+                })
+            })
+            describe("Failure", () => {
+                it("Authentication request not valid", async () => {
+                    const query = ` 
+                    mutation{ 
+                        findIdSMSCheck(
+                            phone:{
+                                phoneNumber:"${phoneNumber}",
+                                authenticationNumber: 444444
+                            }
+                        ){
+                            message
+                        }
+                    }
+                `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "인증 요청이 유효하지 않습니다")
+                })
+                it("The authentication number is invalid", async () => {
+                    await (redis as Redis).setex(env.PHONE_NUMBER as string, 180, 432123)
+                    const query = ` 
+                    mutation{ 
+                        findIdSMSCheck(
+                            phone:{
+                                phoneNumber:"${phoneNumber}",
+                                authenticationNumber: 444444
+                            }
+                        ){
+                            message
+                        }
+                    }
+                `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "인증번호가 유효하지 않습니다")
+                })
+                it("Information that does not exist", async () => {
+                    const query = ` 
+                    mutation{ 
+                        findIdSMSCheck(
+                            phone:{
+                                phoneNumber:"+82100000000000",
+                                authenticationNumber: 123422
+                            }
+                        ){
+                            message
+                        }
+                    }
+                `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "해당 번호로 가입한 유저가 존재하지 않습니다")
                 })
             })
         })

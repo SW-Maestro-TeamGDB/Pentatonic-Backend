@@ -21,14 +21,8 @@ type Query{
 
 }
 
-"""결과에 대한 기본 반환갑입니다"""
-interface ResultInterface{
-    "해당 요청에 대한 메세지 입니다"
-    message: String!
-}
-
 """아이디 비밀번호 찾기와 비밀번호 재설정에 대한 리턴 타입입니다"""
-type IdPwSearchResult implements ResultInterface{
+type IdPwSearchResult{
     message: String!
     id: String
     password: String
@@ -106,22 +100,21 @@ type Mutation{
 
 
     findIdSMSSend(
-        phoneNumber: PhoneNumber!
-    ): IdPwSearchResult!
+        phone: SMSSend!
+    ): Boolean!
 
     findIdSMSCheck(
-        phoneNumber: PhoneNumber!,
-        authenticationNumber: Int!
+        phone: SMSCheck!
     ): IdPwSearchResult!
     
 
     findPassword(
-        id: String!,
-        phoneNumber: PhoneNumber!
-    ): IdPwSearchResult!
+        id: String!
+        phone: SMSSend!
+    ): Boolean!
 
     resetPassword(
         password: String!
-        rePassword: String!
+        rePasssword: String!
     ): IdPwSearchResult! 
 } 

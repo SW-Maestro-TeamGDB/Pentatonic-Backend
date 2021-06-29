@@ -2,7 +2,7 @@ import { Db } from "mongodb"
 import { ApolloError } from "apollo-server-express"
 import { Redis } from "config/connectRedis"
 import { smsRequest, changePhoneNumber } from "lib"
-import { SMSCheck, SMSSend } from "resolvers/app/auth/models"
+import { SMSCheck, SMSSend, IdPwSearchResult } from "resolvers/app/auth/models"
 
 export const registerSMSSend = async (
     parent: void, {
@@ -27,9 +27,7 @@ export const registerSMSSend = async (
     }
     const smsNumber = changePhoneNumber(phoneNumber)
     const result = await smsRequest(smsNumber)
-    if (result === false) {
-        return false
-    }
+    if (result === false) return false
     await redis.setex(smsNumber, 180, result)
     return true
 }
@@ -56,4 +54,61 @@ export const registerSMSCheck = async (
         return true
     }
     return false
+}
+
+export const findIdSMSSend = async (
+    parent: void, {
+        phone
+    }: {
+        phone: SMSSend
+    }, {
+        db,
+        redis
+    }: {
+        db: Db
+        redis: Redis
+    }
+) => {
+    const { phoneNumber } = phone
+    const user = await db.collection("user").findOne({ phoneNumber })
+    if (user === null) {
+        return new ApolloError("해당 번호로 가입한 유저가 존재하지 않습니다")
+    }
+    const smsNumber = changePhoneNumber(phoneNumber)
+    const result = await smsRequest(smsNumber)
+    if (result === false) return false
+    await redis.setex(smsNumber, 180, result)
+    return true
+}
+
+export const findIdSMSCheck = async (
+    parent: void, {
+        phone
+    }: {
+        phone: SMSCheck
+    }, {
+        db,
+        redis
+    }: {
+        db: Db
+        redis: Redis
+    }
+): Promise<ApolloError | IdPwSearchResult> => {
+    const { phoneNumber, authenticationNumber } = phone
+    const user = await db.collection("user").findOne({ phoneNumber })
+    if (user === null) {
+        return new ApolloError("해당 번호로 가입한 유저가 존재하지 않습니다")
+    }
+    const smsNumber = changePhoneNumber(phoneNumber)
+    const authNumber = await redis.get(smsNumber)
+    if (authNumber === null) {
+        return new ApolloError("인증 요청이 유효하지 않습니다")
+    } else if (authNumber !== authenticationNumber.toString()) {
+        return new ApolloError("인증번호가 유효하지 않습니다")
+    }
+    await redis.del(smsNumber)
+    return {
+        message: "아이디 찾기 성공",
+        id: user.id
+    }
 }

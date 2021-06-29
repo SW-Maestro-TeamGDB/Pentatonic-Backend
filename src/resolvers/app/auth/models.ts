@@ -15,3 +15,8 @@ export interface SMSCheck {
     phoneNumber: string
     authenticationNumber: number
 }
+
+export interface IdPwSearchResult {
+    message: string
+    [key: string]: string
+}
