@@ -588,5 +588,145 @@ describe("User auth service test", () => {
                 })
             })
         })
+        describe("Find Password", () => {
+            describe("Success", () => {
+                it("Request findPasswordSMSSend", async () => {
+                    const query = `
+                        mutation{
+                            findPasswordSMSSend(
+                                id: "test1234",
+                                phone: {
+                                    phoneNumber: "${phoneNumber}"
+                                }
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.findPasswordSMSSend, true)
+                })
+            })
+            describe("Failure", () => {
+                it("User not found", async () => {
+                    const query = `
+                        mutation{
+                            findPasswordSMSSend(
+                                id: "asdffadsfsad",
+                                phone: {
+                                    phoneNumber: "${phoneNumber}"
+                                }
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "해당 정보로 가입한 유저가 존재하지 않습니다")
+                })
+            })
+        })
+        describe("Get Password", () => {
+            describe("Success", () => {
+                before(async () => {
+                    await (redis as Redis).setex(env.PHONE_NUMBER as string, 180, 111111)
+                })
+                it("Request findPasswordSMSCheck", async () => {
+                    const query = `
+                        mutation{
+                            findPasswordSMSCheck(
+                                id: "test1234",
+                                phone: {
+                                    phoneNumber: "${phoneNumber}",
+                                    authenticationNumber: 111111
+                                }
+                            ){
+                                password,
+                                message
+                            }
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.findPasswordSMSCheck.message, "비밀번호가 재발급 되었습니다")
+                })
+            })
+            describe("Failure", () => {
+                it("No users have signed up to that number", async () => {
+                    const query = `
+                    mutation{
+                        findPasswordSMSCheck(
+                            id: "test123asdfdsa4",
+                            phone: {
+                                phoneNumber: "${phoneNumber}",
+                                authenticationNumber: 123211
+                            }
+                        ){
+                            password,
+                            message
+                        }
+                    }
+                `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "해당 정보의 유저를 찾을 수 없습니다")
+                })
+                it("Authentication request is invalid", async () => {
+                    const query = `
+                    mutation{
+                        findPasswordSMSCheck(
+                            id: "test1234",
+                            phone: {
+                                phoneNumber: "${phoneNumber}",
+                                authenticationNumber: 123211
+                            }
+                        ){
+                            password,
+                            message
+                        }
+                    }
+                `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "인증 요청이 유효하지 않습니다")
+                })
+                it("Authentication number is not valid", async () => {
+                    await (redis as Redis).setex(env.PHONE_NUMBER as string, 180, 222222)
+                    const query = `
+                    mutation{
+                        findPasswordSMSCheck(
+                            id: "test1234",
+                            phone: {
+                                phoneNumber: "${phoneNumber}",
+                                authenticationNumber: 333333
+                            }
+                        ){
+                            password,
+                            message
+                        }
+                    }
+                `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "인증번호가 유효하지 않습니다")
+                })
+            })
+        })
     })
 })

@@ -1,20 +1,13 @@
 import { Db } from "mongodb"
 import { ApolloError } from "apollo-server-express"
 import { Redis } from "config/connectRedis"
-import { genSaltSync, hashSync, compareSync } from "bcrypt"
 import jwt from "jsonwebtoken"
+import { createHashedPassword, checkPassword } from "lib"
 import env from "config/env"
 import { SMSSend } from "resolvers/app/auth/models"
 import { checkUsername, checkId } from "resolvers/app/auth/Query"
 
-const createHashedPassword = (password: string) => {
-    const saltRounds = 10
-    const salt = genSaltSync(saltRounds)
-    const hashedPassword = hashSync(password, salt)
-    return hashedPassword
-}
 
-const checkPassword = (password: string, hashedPassword: string) => compareSync(password, hashedPassword)
 
 const specialCharacters = "\"'\\!@#$%^&*()_-=+/?.><,[{]}|;:"
 const isValidPassword = (password: string) => {
