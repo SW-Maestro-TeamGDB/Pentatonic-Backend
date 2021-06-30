@@ -47,14 +47,17 @@ export const registerSMSCheck = async (
     const { phoneNumber, authenticationNumber } = phone
     const smsNumber = changePhoneNumber(phoneNumber)
     const authNumber = await redis.get(smsNumber)
-    if (authNumber !== null && authNumber === authenticationNumber.toString()) {
-        await Promise.all([
-            redis.del(smsNumber),
-            redis.setex(phoneNumber, 600, "")
-        ])
-        return true
+    if (authNumber === null) {
+        return new ApolloError("인증번호를 다시 요청해야합니다")
     }
-    return false
+    if (authNumber !== authenticationNumber.toString()) {
+        return new ApolloError("인증번호가 일치하지 않습니다")
+    }
+    await Promise.all([
+        redis.del(smsNumber),
+        redis.setex(phoneNumber, 600, "")
+    ])
+    return true
 }
 
 export const findIdSMSSend = async (

@@ -18,9 +18,9 @@ describe("User auth service test", () => {
         await db.collection("user").deleteOne({ phoneNumber })
     })
     describe("SMS service test", () => {
-        describe("Send SMS test", () => {
+        describe("Mutation registerSMSSend", () => {
             describe("Success", () => {
-                it("Submit SMS", async () => {
+                it("If the request was made normally", async () => {
                     const query = `
                         mutation{ 
                             registerSMSSend(
@@ -46,7 +46,7 @@ describe("User auth service test", () => {
                     const db = await DB.get()
                     await db.collection("user").deleteOne({ phoneNumber: "+821000000000" })
                 })
-                it("PhoneNumber Format Error", async () => {
+                it("If the phone number form is not correct", async () => {
                     const query = `
                         mutation{
                             registerSMSSend(
@@ -62,7 +62,7 @@ describe("User auth service test", () => {
                         .send(JSON.stringify({ query }))
                         .expect(400)
                 })
-                it("not a Korean mobile number", async () => {
+                it("If it's not a Korean phone number", async () => {
                     const query = `
                         mutation{
                             registerSMSSend(
@@ -79,7 +79,7 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "한국 번호가 아닙니다")
                 })
-                it("Phone number already exists", async () => {
+                it("If you are already a member", async () => {
                     const query = `
                         mutation{
                             registerSMSSend(
@@ -98,12 +98,12 @@ describe("User auth service test", () => {
                 })
             })
         })
-        describe("Check SMS", () => {
+        describe("Mutation registerSMSCheck", () => {
             describe("Success", () => {
-                before("Set SMS authenticationNumber", async () => {
+                before(async () => {
                     await (redis as Redis).setex(env.PHONE_NUMBER as string, 180, 123432)
                 })
-                it("Valid Authentication Number", async () => {
+                it("If the request was made normally", async () => {
                     const query = `
                         mutation{
                             registerSMSCheck(
@@ -123,7 +123,26 @@ describe("User auth service test", () => {
                 })
             })
             describe("Failure", () => {
-                it("Invalid authentication number", async () => {
+                it("If you need to re-request your authentication number", async () => {
+                    const query = `
+                        mutation{
+                            registerSMSCheck(
+                                phone:{
+                                    phoneNumber:"+82100000000",
+                                    authenticationNumber: 123432
+                                }
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "인증번호를 다시 요청해야합니다")
+                })
+                it("If the authentication number doesn't match", async () => {
+                    await (redis as Redis).setex(env.PHONE_NUMBER as string, 180, 432123)
                     const query = `
                         mutation{
                             registerSMSCheck(
@@ -139,27 +158,9 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.data.registerSMSCheck, false)
+                    equal(body.errors[0].message, "인증번호가 일치하지 않습니다")
                 })
-                it("Unauthenticated Phone Number", async () => {
-                    const query = `
-                        mutation{
-                            registerSMSCheck(
-                                phone:{
-                                    phoneNumber:"+821000000000",
-                                    authenticationNumber: 123432
-                                }
-                            )
-                        }
-                    `
-                    const { body } = await request(app)
-                        .post("/api")
-                        .set({ "Content-Type": "application/json" })
-                        .send(JSON.stringify({ query }))
-                        .expect(200)
-                    equal(body.data.registerSMSCheck, false)
-                })
-                it("Invalid Type", async () => {
+                it("If the phone number doesn't fit the format", async () => {
                     const query = `
                         mutation{
                             registerSMSCheck(
@@ -180,9 +181,9 @@ describe("User auth service test", () => {
         })
     })
     describe("Register & Login services test", () => {
-        describe("Register", async () => {
+        describe("Mutation register", async () => {
             describe("Success", () => {
-                it("User register", async () => {
+                it("If the request was made normally", async () => {
                     const query = `
                         mutation{
                             register(
@@ -210,7 +211,7 @@ describe("User auth service test", () => {
                 before(async () => {
                     await (redis as Redis).setex(phoneNumber, 600, "")
                 })
-                it("id already exists", async () => {
+                it("If the id already exists", async () => {
                     const query = `
                         mutation{
                             register(
@@ -233,7 +234,7 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다.")
                 })
-                it("Username already exists", async () => {
+                it("If there is already a username", async () => {
                     const query = `
                         mutation{
                             register(
@@ -256,7 +257,7 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다.")
                 })
-                it("Phone Number Authentication Expired", async () => {
+                it("If your phone number is already registered", async () => {
                     const query = `
                         mutation{
                             register(
@@ -279,7 +280,7 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "휴대번호 인증을 다시해야합니다.")
                 })
-                it("Invalid Input username", async () => {
+                it("If the username format is invalid", async () => {
                     const query = `
                         mutation{
                             register(
@@ -302,7 +303,7 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다.")
                 })
-                it("Invalid Input id - 1", async () => {
+                it("If the id format is invalid - 1", async () => {
                     const query = `
                         mutation{
                             register(
@@ -325,7 +326,7 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다.")
                 })
-                it("Invalid Input id - 2", async () => {
+                it("If the user name format is invalid - 2", async () => {
                     const query = `
                         mutation{
                             register(
@@ -348,7 +349,7 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다.")
                 })
-                it("Invalid Input password - 1", async () => {
+                it("If the password format is invalid - 1", async () => {
                     const query = `
                         mutation{
                             register(
@@ -371,7 +372,7 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "비밀번호가 조건에 맞지 않습니다.")
                 })
-                it("Invalid Input password - 2", async () => {
+                it("If the password format is invalid - 2", async () => {
                     const query = `
                         mutation{
                             register(
@@ -396,9 +397,9 @@ describe("User auth service test", () => {
                 })
             })
         })
-        describe("Login", () => {
+        describe("Mutation login", () => {
             describe("Success", () => {
-                it("User login", async () => {
+                it("If the request was made normally", async () => {
                     const query = `
                         mutation{
                             login(
@@ -420,7 +421,7 @@ describe("User auth service test", () => {
                 })
             })
             describe("Failure", () => {
-                it("ID without", async () => {
+                it("If incorrectly entered id", async () => {
                     const query = `
                         mutation{
                             login(
@@ -436,7 +437,7 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "잘못된 아이디 또는 비밀번호를 입력하셨습니다.")
                 })
-                it("password without", async () => {
+                it("If incorrectly entered password", async () => {
                     const query = `
                         mutation{
                             login(
@@ -455,10 +456,10 @@ describe("User auth service test", () => {
             })
         })
     })
-    describe("Find user information", () => {
-        describe("Find Id", () => {
+    describe("User information find service", () => {
+        describe("Mutation findIdSMSSend", () => {
             describe("Success", () => {
-                it("Request findIdSMSSend", async () => {
+                it("If the request was made normally", async () => {
                     const query = ` 
                     mutation{ 
                         findIdSMSSend(
@@ -477,7 +478,7 @@ describe("User auth service test", () => {
                 })
             })
             describe("Failure", () => {
-                it("Information that does not exist", async () => {
+                it("If you are looking for a user who does not exist", async () => {
                     const query = ` 
                     mutation{ 
                         findIdSMSSend(
@@ -496,12 +497,12 @@ describe("User auth service test", () => {
                 })
             })
         })
-        describe("Get Id", () => {
+        describe("Mutation findIdSMSCheck", () => {
             describe("Success", () => {
                 before(async () => {
                     await (redis as Redis).setex(env.PHONE_NUMBER as string, 180, 432123)
                 })
-                it("Request findIdSMSCheck", async () => {
+                it("If you successfully find your ID", async () => {
                     const query = ` 
                     mutation{ 
                         findIdSMSCheck(
@@ -526,7 +527,7 @@ describe("User auth service test", () => {
                 })
             })
             describe("Failure", () => {
-                it("Authentication request not valid", async () => {
+                it("If the authentication request is not valid", async () => {
                     const query = ` 
                     mutation{ 
                         findIdSMSCheck(
@@ -546,7 +547,7 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "인증 요청이 유효하지 않습니다")
                 })
-                it("The authentication number is invalid", async () => {
+                it("If the authentication number is not appropriate", async () => {
                     await (redis as Redis).setex(env.PHONE_NUMBER as string, 180, 432123)
                     const query = ` 
                     mutation{ 
@@ -567,7 +568,7 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "인증번호가 유효하지 않습니다")
                 })
-                it("Information that does not exist", async () => {
+                it("If there is no user with the information,", async () => {
                     const query = ` 
                     mutation{ 
                         findIdSMSCheck(
@@ -589,9 +590,9 @@ describe("User auth service test", () => {
                 })
             })
         })
-        describe("Find Password", () => {
+        describe("Mutation findPasswordSMSSend", () => {
             describe("Success", () => {
-                it("Request findPasswordSMSSend", async () => {
+                it("If you entered the information normally", async () => {
                     const query = `
                         mutation{
                             findPasswordSMSSend(
@@ -611,7 +612,7 @@ describe("User auth service test", () => {
                 })
             })
             describe("Failure", () => {
-                it("User not found", async () => {
+                it("If the user does not exist", async () => {
                     const query = `
                         mutation{
                             findPasswordSMSSend(
@@ -631,12 +632,12 @@ describe("User auth service test", () => {
                 })
             })
         })
-        describe("Get Password", () => {
+        describe("Mutation findPasswordSMSCheck", () => {
             describe("Success", () => {
                 before(async () => {
                     await (redis as Redis).setex(env.PHONE_NUMBER as string, 180, 111111)
                 })
-                it("Request findPasswordSMSCheck", async () => {
+                it("If the request was made normally", async () => {
                     const query = `
                         mutation{
                             findPasswordSMSCheck(
@@ -661,7 +662,7 @@ describe("User auth service test", () => {
                 })
             })
             describe("Failure", () => {
-                it("No users have signed up to that number", async () => {
+                it("If there is no user with the information,", async () => {
                     const query = `
                     mutation{
                         findPasswordSMSCheck(
@@ -683,7 +684,7 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "해당 정보의 유저를 찾을 수 없습니다")
                 })
-                it("Authentication request is invalid", async () => {
+                it("If the authentication number request is not valid", async () => {
                     const query = `
                     mutation{
                         findPasswordSMSCheck(
@@ -705,7 +706,7 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "인증 요청이 유효하지 않습니다")
                 })
-                it("Authentication number is not valid", async () => {
+                it("If the authentication number is not correct", async () => {
                     await (redis as Redis).setex(env.PHONE_NUMBER as string, 180, 222222)
                     const query = `
                     mutation{
@@ -731,9 +732,9 @@ describe("User auth service test", () => {
             })
         })
     })
-    describe("Reset Password", () => {
+    describe("Mutation resetPassword", () => {
         describe("Success", () => {
-            it("request resetPassword", async () => {
+            it("If the request was made normally", async () => {
                 const query = `
                     mutation{
                         resetPassword(
@@ -756,7 +757,7 @@ describe("User auth service test", () => {
             })
         })
         describe("Failure", () => {
-            it("Authorization is not significant", async () => {
+            it("If you don't have the authority", async () => {
                 const query = `
                     mutation{
                         resetPassword(
@@ -774,7 +775,7 @@ describe("User auth service test", () => {
                     .expect(200)
                 equal(body.errors[0].message, "Authorization Error")
             })
-            it("User information is not valid", async () => {
+            it("If the user information is not correct", async () => {
                 const query = `
                     mutation{
                         resetPassword(
@@ -795,7 +796,7 @@ describe("User auth service test", () => {
                     .expect(200)
                 equal(body.errors[0].message, "인증 정보가 유효하지 않습니다")
             })
-            it("The password is not valid", async () => {
+            it("If the password is not valid", async () => {
                 const query = `
                     mutation{
                         resetPassword(
