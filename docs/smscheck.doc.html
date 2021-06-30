@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="./styles/graphdoc.css" />
-    <title>Query</title>
+    <title>SMSCheck</title>
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700" rel="stylesheet"><link type="text/css" rel="stylesheet" href="./assets/code.css" /><link type="text/css" rel="stylesheet" href="./assets/require-by.css" />
 </head>
 <body class="slds-scrollable--y">
@@ -25,7 +25,7 @@
 <div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
     <h4 class="slds-text-title--caps slds-p-around--medium">Schema</h4>
     <ul>
-        <li class="slds-is-active" title="Query">
+        <li  title="Query">
             <a href="query.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Query
             </a>
@@ -380,7 +380,7 @@
 <div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
     <h4 class="slds-text-title--caps slds-p-around--medium">Input Objects</h4>
     <ul>
-        <li  title="SMSCheck">
+        <li class="slds-is-active" title="SMSCheck">
             <a href="smscheck.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 SMSCheck
             </a>
@@ -430,9 +430,10 @@
         </div>
     </div>
     <div class="container">
-        <p class="slds-text-title--caps slds-text-color--weak">OBJECT</p>
-        <h1 class="slds-text-heading--large">Query</h1>
-        <div class="slds-text-body--regular"></div>
+        <p class="slds-text-title--caps slds-text-color--weak">INPUT_OBJECT</p>
+        <h1 class="slds-text-heading--large">SMSCheck</h1>
+        <div class="slds-text-body--regular"><p>본인확인 인증번호 확인 input</p>
+</div>
     </div>
 </section>
 <section>
@@ -443,7 +444,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">Query</span> {</li><li></li><li><span class="tab"><span class="meta">test</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="comment line">#    id가 조건에 맞는지 확인하는 쿼리 입니다</span></span></li><li><span class="tab"><span class="comment line"># </span></span></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>id</strong>: id는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다</span></span></li><li><span class="tab"><span class="meta">checkId</span>(<span class="meta">id</span>: <a class="support type" href="string.doc.html">String</a>!): <a class="support type" href="boolean.doc.html">Boolean</a>! </span></li><li></li><li><span class="tab"><span class="comment line">#    username이 조건에 맞는지 확인하는 쿼리 입니다</span></span></li><li><span class="tab"><span class="comment line"># </span></span></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>username</strong>: username은 길이가 2 이상이여야 합니다</span></span></li><li><span class="tab"><span class="meta">checkUsername</span>(<span class="meta">username</span>: <a class="support type" href="string.doc.html">String</a>!): <a class="support type" href="boolean.doc.html">Boolean</a>! </span></li><li>}</li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:28px"><li><span class="keyword operator ts">input</span> <span class="identifier">SMSCheck</span> {</li><li><span class="tab"><li><span class="tab"><span class="comment line">#   phoneNumber 은 +821012345678 와 같은 형식이여야 합니다</span></span></li><li><span class="tab"><span class="meta">phoneNumber</span>: <a class="support type" href="phonenumber.doc.html">PhoneNumber</a>!</span></li></span></li><li><span class="tab"><li><span class="tab"><span class="comment line">#   authenticationNumber 는 999999 와 같은 100000~999999 사이의 숫자 입니다</span></span></li><li><span class="tab"><span class="meta">authenticationNumber</span>: <a class="support type" href="int.doc.html">Int</a>!</span></li></span></li><li>}</li></ul></code>
     </div>
 </section>
 <section>
@@ -454,7 +455,7 @@
             </a>
             Require by
         </h2>
-        <div class="require-by anyone">This element is not required by anyone</div>
+        <ul class="require-by"><li><a href="mutation.doc.html" title="Mutation - ">Mutation<em>null</em></a><li></ul>
     </div>
 </section>
 <footer>
