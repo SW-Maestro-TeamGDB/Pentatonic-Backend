@@ -11,6 +11,8 @@ import { TokenInterface } from "resolvers/app/auth/models"
 
 const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
 describe("User auth service test", () => {
+    const token: string[] = []
+    const passwords: string[] = []
     after(async () => {
         const db = await DB.get()
         await db.collection("user").deleteOne({ phoneNumber })
@@ -396,7 +398,6 @@ describe("User auth service test", () => {
         })
         describe("Login", () => {
             describe("Success", () => {
-                const token: string[] = []
                 it("User login", async () => {
                     const query = `
                         mutation{
@@ -656,6 +657,7 @@ describe("User auth service test", () => {
                         .send(JSON.stringify({ query }))
                         .expect(200)
                     equal(body.data.findPasswordSMSCheck.message, "비밀번호가 재발급 되었습니다")
+                    passwords.push(body.data.findPasswordSMSCheck.password)
                 })
             })
             describe("Failure", () => {
@@ -726,6 +728,93 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "인증번호가 유효하지 않습니다")
                 })
+            })
+        })
+    })
+    describe("Reset Password", () => {
+        describe("Success", () => {
+            it("request resetPassword", async () => {
+                const query = `
+                    mutation{
+                        resetPassword(
+                            password:"${passwords[0]}",
+                            resetPassword: "testtest1234@@"
+                        ){
+                            message
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({
+                        "Content-Type": "application/json",
+                        "Authorization": token[0]
+                    })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.resetPassword.message, "비밀번호가 변경되었습니다")
+            })
+        })
+        describe("Failure", () => {
+            it("Authorization is not significant", async () => {
+                const query = `
+                    mutation{
+                        resetPassword(
+                            password:"testtest1234@@",
+                            resetPassword: "testtest1234!!"
+                        ){
+                            message
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({ "Content-Type": "application/json" })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "Authorization Error")
+            })
+            it("User information is not valid", async () => {
+                const query = `
+                    mutation{
+                        resetPassword(
+                            password:"testtest1234@@",
+                            resetPassword: "testtest1234!!"
+                        ){
+                            message
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({
+                        "Content-Type": "application/json",
+                        "Authorization": jwt.sign({ id: "hack1234", username: "hack1234321" }, env.JWT_SECRET)
+                    })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "인증 정보가 유효하지 않습니다")
+            })
+            it("The password is not valid", async () => {
+                const query = `
+                    mutation{
+                        resetPassword(
+                            password:"xxxxxxxxxxxx",
+                            resetPassword: "testtest1234!!"
+                        ){
+                            message
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({
+                        "Content-Type": "application/json",
+                        "Authorization": token[0]
+                    })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "비밀번호가 올바르지 않습니다")
             })
         })
     })

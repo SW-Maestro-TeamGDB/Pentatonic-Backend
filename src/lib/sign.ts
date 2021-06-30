@@ -1,5 +1,7 @@
 import { genSaltSync, hashSync, compareSync } from "bcrypt"
-
+import jwt from "jsonwebtoken"
+import env from "config/env"
+import { JWTUser } from "config/types"
 export const createHashedPassword = (password: string) => {
     const saltRounds = 10
     const salt = genSaltSync(saltRounds)
@@ -8,3 +10,11 @@ export const createHashedPassword = (password: string) => {
 }
 
 export const checkPassword = (password: string, hashedPassword: string) => compareSync(password, hashedPassword)
+
+export const getUser = (token: string): JWTUser | null => {
+    try {
+        return jwt.verify(token, env.JWT_SECRET) as JWTUser
+    } catch {
+        return null
+    }
+}

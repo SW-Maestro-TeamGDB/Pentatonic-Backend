@@ -6,8 +6,7 @@ import { createHashedPassword, checkPassword } from "lib"
 import env from "config/env"
 import { SMSSend } from "resolvers/app/auth/models"
 import { checkUsername, checkId } from "resolvers/app/auth/Query"
-
-
+import { JWTUser } from "config/types"
 
 const specialCharacters = "\"'\\!@#$%^&*()_-=+/?.><,[{]}|;:"
 const isValidPassword = (password: string) => {
@@ -100,4 +99,32 @@ export const login = async (
         }, env.JWT_SECRET)
     }
     return new ApolloError("잘못된 아이디 또는 비밀번호를 입력하셨습니다.")
+}
+
+export const resetPassword = async (
+    parent: void, {
+        password,
+        resetPassword
+    }: {
+        password: string,
+        resetPassword: string
+    }, {
+        db,
+        user
+    }: {
+        db: Db,
+        user: JWTUser
+    }
+) => {
+    const userResult = await db.collection("user").findOne({ id: user.id, username: user.username })
+    if (userResult === null) {
+        return new ApolloError("인증 정보가 유효하지 않습니다")
+    }
+    if (checkPassword(password, userResult.hash) === false) {
+        return new ApolloError("비밀번호가 올바르지 않습니다")
+    }
+    await db.collection("user").updateOne({ id: user.id, username: user.username }, { $set: { password: createHashedPassword(resetPassword) } })
+    return {
+        message: "비밀번호가 변경되었습니다"
+    }
 }

@@ -6,3 +6,8 @@ export interface File {
     encoding: string
     createReadStream: () => ReadStream
 }
+
+export interface JWTUser {
+    id: string
+    username: string
+}

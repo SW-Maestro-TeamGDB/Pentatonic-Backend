@@ -11,7 +11,7 @@ import * as redis from "config/connectRedis"
 import { makeExecutableSchema } from "@graphql-tools/schema"
 import * as graphqlScalars from 'graphql-scalars'
 import { applyMiddleware } from "graphql-middleware"
-import { permissions } from "lib/permissions"
+import { permissions, getUser } from "lib"
 import express from "express"
 import expressPlayground from "graphql-playground-middleware-express"
 import { bodyParserGraphQL } from "body-parser-graphql"
@@ -38,9 +38,11 @@ const schema = makeExecutableSchema({
 
 const server = new ApolloServer({
     schema: applyMiddleware(schema, permissions),
-    context: async () => {
+    context: async ({ req }) => {
+        const token = req.headers.authorization || ''
+        const user = getUser(token)
         const db = await DB.get()
-        return { db, redis }
+        return { db, redis, user }
     },
     validationRules: [
         depthLimit(8)

@@ -123,6 +123,6 @@ type Mutation{
 
     resetPassword(
         password: String!
-        rePasssword: String!
+        resetPassword: String!
     ): IdPwSearchResult! 
 } 
