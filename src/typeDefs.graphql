@@ -91,10 +91,10 @@ type Mutation{
     """Login을 하는 뮤테이션 입니다. JWT 토큰을 반환합니다"""
     login(
 
-        "계정의 id 입니다."
+        "계정의 id 입니다"
         id: String!,
 
-        "계정의 password 입니다."
+        "계정의 password 입니다"
         password: String!
     ): JWT!
 
@@ -111,24 +111,32 @@ type Mutation{
     
     """Password 를 찾기위해 휴대번호에 인증번호를 발송합니다"""
     findPasswordSMSSend(
+        "계정의 id 입니다"
         id: String!
         phone: SMSSend!
     ): Boolean!
 
-    """Pawword 를 찾기위해 인증번호로 휴대전화 인증을 합니다"""
+    """Password 를 찾기위해 인증번호로 휴대전화 인증을 합니다"""
     findPasswordSMSCheck(
+        "계정의 id 입니다"
         id: String!
         phone: SMSCheck!
     ): IdPwSearchResult!
 
 
+    """비밀번호 찾기에서 비밀번호를 재설정 해주는 뮤테이션 입니다"""
     resetPassword(
+        "휴대전화 인증의 결과값인 토큰 입니다"
         token: String!
+        "재설정할 비밀번호 입니다"
         resetPassword: String!
     ): Boolean!
 
+    """비밀번호를 변경하는 뮤테이션 입니다"""
     changePassword(
+        "기존의 비밀번호 입니다"
         password: String!
+        "재설정할 비밀번호 입니다"
         changePassword: String!
     ): Boolean! 
 } 
