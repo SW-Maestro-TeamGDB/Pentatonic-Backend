@@ -20,7 +20,7 @@ describe("User auth service test", () => {
     describe("SMS service test", () => {
         describe("Mutation registerSMSSend", () => {
             describe("Success", () => {
-                it("If the request was made normally", async () => {
+                it("When you have sent a register authentication number", async () => {
                     const query = `
                         mutation{ 
                             registerSMSSend(
@@ -103,7 +103,7 @@ describe("User auth service test", () => {
                 before(async () => {
                     await (redis as Redis).setex(env.PHONE_NUMBER as string, 180, 123432)
                 })
-                it("If the request was made normally", async () => {
+                it("If the register authentication number is correct", async () => {
                     const query = `
                         mutation{
                             registerSMSCheck(
@@ -183,7 +183,7 @@ describe("User auth service test", () => {
     describe("Register & Login services test", () => {
         describe("Mutation register", async () => {
             describe("Success", () => {
-                it("If the request was made normally", async () => {
+                it("In the case of normal membership registration", async () => {
                     const query = `
                         mutation{
                             register(
@@ -399,7 +399,7 @@ describe("User auth service test", () => {
         })
         describe("Mutation login", () => {
             describe("Success", () => {
-                it("If the request was made normally", async () => {
+                it("If login is successful", async () => {
                     const query = `
                         mutation{
                             login(
@@ -459,7 +459,7 @@ describe("User auth service test", () => {
     describe("User information find service", () => {
         describe("Mutation findIdSMSSend", () => {
             describe("Success", () => {
-                it("If the request was made normally", async () => {
+                it("If you have sent an ID find authentication number", async () => {
                     const query = ` 
                     mutation{ 
                         findIdSMSSend(
@@ -502,7 +502,7 @@ describe("User auth service test", () => {
                 before(async () => {
                     await (redis as Redis).setex(env.PHONE_NUMBER as string, 180, 432123)
                 })
-                it("If you successfully find your ID", async () => {
+                it("If the ID Find Authentication Number is correct", async () => {
                     const query = ` 
                     mutation{ 
                         findIdSMSCheck(
@@ -592,7 +592,7 @@ describe("User auth service test", () => {
         })
         describe("Mutation findPasswordSMSSend", () => {
             describe("Success", () => {
-                it("If you entered the information normally", async () => {
+                it("If you have sent a password-finding authentication number", async () => {
                     const query = `
                         mutation{
                             findPasswordSMSSend(
@@ -637,7 +637,7 @@ describe("User auth service test", () => {
                 before(async () => {
                     await (redis as Redis).setex(env.PHONE_NUMBER as string, 180, 111111)
                 })
-                it("If the request was made normally", async () => {
+                it("Find Password Authentication Number is correct", async () => {
                     const query = `
                         mutation{
                             findPasswordSMSCheck(
@@ -647,8 +647,8 @@ describe("User auth service test", () => {
                                     authenticationNumber: 111111
                                 }
                             ){
-                                password,
-                                message
+                                message,
+                                token
                             }
                         }
                     `
@@ -657,8 +657,8 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.data.findPasswordSMSCheck.message, "비밀번호가 재발급 되었습니다")
-                    passwords.push(body.data.findPasswordSMSCheck.password)
+                    equal(body.data.findPasswordSMSCheck.message, "인증번호가 유효합니다")
+                    token.push(body.data.findPasswordSMSCheck.token)
                 })
             })
             describe("Failure", () => {
@@ -672,7 +672,6 @@ describe("User auth service test", () => {
                                 authenticationNumber: 123211
                             }
                         ){
-                            password,
                             message
                         }
                     }
@@ -694,7 +693,6 @@ describe("User auth service test", () => {
                                 authenticationNumber: 123211
                             }
                         ){
-                            password,
                             message
                         }
                     }
@@ -717,7 +715,6 @@ describe("User auth service test", () => {
                                 authenticationNumber: 333333
                             }
                         ){
-                            password,
                             message
                         }
                     }
@@ -732,17 +729,15 @@ describe("User auth service test", () => {
             })
         })
     })
-    describe("Mutation resetPassword", () => {
+    describe("Mutation changePassword", () => {
         describe("Success", () => {
-            it("If the request was made normally", async () => {
+            it("If successfully changed password", async () => {
                 const query = `
                     mutation{
-                        resetPassword(
-                            password:"${passwords[0]}",
-                            resetPassword: "testtest1234@@"
-                        ){
-                            message
-                        }
+                        changePassword(
+                            password:"test1234AA@@",
+                            changePassword: "testtest1234@@"
+                        )
                     }
                 `
                 const { body } = await request(app)
@@ -753,19 +748,17 @@ describe("User auth service test", () => {
                     })
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.data.resetPassword.message, "비밀번호가 변경되었습니다")
+                equal(body.data.changePassword, true)
             })
         })
         describe("Failure", () => {
             it("If you don't have the authority", async () => {
                 const query = `
                     mutation{
-                        resetPassword(
+                        changePassword(
                             password:"testtest1234@@",
-                            resetPassword: "testtest1234!!"
-                        ){
-                            message
-                        }
+                            changePassword: "testtest1234!!"
+                        )
                     }
                 `
                 const { body } = await request(app)
@@ -778,12 +771,10 @@ describe("User auth service test", () => {
             it("If the user information is not correct", async () => {
                 const query = `
                     mutation{
-                        resetPassword(
+                        changePassword(
                             password:"testtest1234@@",
-                            resetPassword: "testtest1234!!"
-                        ){
-                            message
-                        }
+                            changePassword: "testtest1234!!"
+                        )
                     }
                 `
                 const { body } = await request(app)
@@ -799,12 +790,10 @@ describe("User auth service test", () => {
             it("If the password is not valid", async () => {
                 const query = `
                     mutation{
-                        resetPassword(
+                        changePassword(
                             password:"xxxxxxxxxxxx",
-                            resetPassword: "testtest1234!!"
-                        ){
-                            message
-                        }
+                            changePassword: "testtest1234!!"
+                        )
                     }
                 `
                 const { body } = await request(app)

@@ -11,6 +11,6 @@ const isLogin = rule()((parent: void, args: void, { user }: { user: JWTUser }) =
 
 export const permissions = shield({
     Mutation: {
-        resetPassword: isLogin
+        changePassword: isLogin
     }
 })

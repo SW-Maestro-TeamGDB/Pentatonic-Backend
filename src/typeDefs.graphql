@@ -25,7 +25,7 @@ type Query{
 type IdPwSearchResult{
     message: String!
     id: String
-    password: String
+    token: String
 }
 
 """본인확인 문자발송 input"""
@@ -121,8 +121,10 @@ type Mutation{
         phone: SMSCheck!
     ): IdPwSearchResult!
 
-    resetPassword(
+
+
+    changePassword(
         password: String!
-        resetPassword: String!
-    ): IdPwSearchResult! 
+        changePassword: String!
+    ): Boolean! 
 } 

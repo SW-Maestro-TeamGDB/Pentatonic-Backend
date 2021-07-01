@@ -172,11 +172,10 @@ export const findPasswordSMSCheck = async (
         return new ApolloError("인증번호가 유효하지 않습니다")
     }
     await redis.del(smsNumber)
-    const password = cryptoRandomString({ length: 8, type: 'alphanumeric' })
-    const hash = createHashedPassword(password)
-    await db.collection("user").updateOne({ phoneNumber, id }, { $set: { hash } })
+    const token = cryptoRandomString({ length: 24, type: 'alphanumeric' })
+    await redis.setex(token, 6000, phoneNumber)
     return {
-        message: "비밀번호가 재발급 되었습니다",
-        password
+        message: "인증번호가 유효합니다",
+        token
     }
 }

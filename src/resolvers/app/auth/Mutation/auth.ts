@@ -101,13 +101,13 @@ export const login = async (
     return new ApolloError("잘못된 아이디 또는 비밀번호를 입력하셨습니다.")
 }
 
-export const resetPassword = async (
+export const changePassword = async (
     parent: void, {
         password,
-        resetPassword
+        changePassword
     }: {
         password: string,
-        resetPassword: string
+        changePassword: string
     }, {
         db,
         user
@@ -123,8 +123,6 @@ export const resetPassword = async (
     if (checkPassword(password, userResult.hash) === false) {
         return new ApolloError("비밀번호가 올바르지 않습니다")
     }
-    await db.collection("user").updateOne({ id: user.id, username: user.username }, { $set: { password: createHashedPassword(resetPassword) } })
-    return {
-        message: "비밀번호가 변경되었습니다"
-    }
+    await db.collection("user").updateOne({ id: user.id, username: user.username }, { $set: { password: createHashedPassword(changePassword) } })
+    return true
 }
