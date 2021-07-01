@@ -47,7 +47,7 @@ export const register = async (
     }
 ) => {
     if (isValidPassword(password) === false) {
-        return new ApolloError("비밀번호가 조건에 맞지 않습니다.")
+        return new ApolloError("비밀번호가 조건에 맞지 않습니다")
     }
     const { phoneNumber } = phone
     const validArgs = await Promise.all([
@@ -56,10 +56,10 @@ export const register = async (
         checkId(undefined, { id }, { db })
     ])
     if (validArgs[0] === null) {
-        return new ApolloError("휴대번호 인증을 다시해야합니다.")
+        return new ApolloError("휴대번호 인증을 다시해야합니다")
     }
     if (validArgs[1] !== true || validArgs[2] !== true) {
-        return new ApolloError("id 혹은 username 이 조건에 맞지 않습니다.")
+        return new ApolloError("id 혹은 username 이 조건에 맞지 않습니다")
     }
     const hash = createHashedPassword(password)
     const result = await db.collection("user").insertOne({
@@ -94,11 +94,37 @@ export const login = async (
     const user = await db.collection("user").findOne({ id })
     if (user !== null && checkPassword(password, user.hash)) {
         return jwt.sign({
-            id: user.id,
-            username: user.username
+            id: user.id
         }, env.JWT_SECRET)
     }
-    return new ApolloError("잘못된 아이디 또는 비밀번호를 입력하셨습니다.")
+    return new ApolloError("잘못된 아이디 또는 비밀번호를 입력하셨습니다")
+}
+
+export const resetPassword = async (
+    parent: void, {
+        token,
+        resetPassword
+    }: {
+        token: string,
+        resetPassword: string
+    }, {
+        db,
+        redis
+    }: {
+        db: Db,
+        redis: Redis
+    }
+) => {
+    if (isValidPassword(resetPassword) === false) {
+        return new ApolloError("비밀번호가 조건에 맞지 않습니다")
+    }
+    const user = await redis.get(token)
+    if (user === null) {
+        return new ApolloError("다시 시도해 주세요")
+    }
+    await redis.del(token)
+    await db.collection("user").updateOne({ phoneNumber: user }, { $set: { hash: createHashedPassword(resetPassword) } })
+    return true
 }
 
 export const changePassword = async (
@@ -116,13 +142,16 @@ export const changePassword = async (
         user: JWTUser
     }
 ) => {
-    const userResult = await db.collection("user").findOne({ id: user.id, username: user.username })
+    const userResult = await db.collection("user").findOne({ id: user.id })
     if (userResult === null) {
         return new ApolloError("인증 정보가 유효하지 않습니다")
     }
     if (checkPassword(password, userResult.hash) === false) {
         return new ApolloError("비밀번호가 올바르지 않습니다")
     }
-    await db.collection("user").updateOne({ id: user.id, username: user.username }, { $set: { password: createHashedPassword(changePassword) } })
+    if (isValidPassword(changePassword) === false) {
+        return new ApolloError("새 비밀번호가 양식에 맞지 않습니다")
+    }
+    await db.collection("user").updateOne({ id: user.id }, { $set: { hash: createHashedPassword(changePassword) } })
     return true
 }

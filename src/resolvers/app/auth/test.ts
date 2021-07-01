@@ -8,13 +8,14 @@ import { Redis } from "config/connectRedis"
 import DB from "config/connectDB"
 import jwt from "jsonwebtoken"
 import { TokenInterface } from "resolvers/app/auth/models"
+import { Db } from "mongodb"
 
 const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
 describe("User auth service test", () => {
     const token: string[] = []
     const passwords: string[] = []
     after(async () => {
-        const db = await DB.get()
+        const db = await DB.get() as Db
         await db.collection("user").deleteOne({ phoneNumber })
     })
     describe("SMS service test", () => {
@@ -39,11 +40,11 @@ describe("User auth service test", () => {
             })
             describe("Failure", () => {
                 before(async () => {
-                    const db = await DB.get()
+                    const db = await DB.get() as Db
                     await db.collection("user").insertOne({ phoneNumber: "+821000000000" })
                 })
                 after(async () => {
-                    const db = await DB.get()
+                    const db = await DB.get() as Db
                     await db.collection("user").deleteOne({ phoneNumber: "+821000000000" })
                 })
                 it("If the phone number form is not correct", async () => {
@@ -232,7 +233,7 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다.")
+                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다")
                 })
                 it("If there is already a username", async () => {
                     const query = `
@@ -255,7 +256,7 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다.")
+                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다")
                 })
                 it("If your phone number is already registered", async () => {
                     const query = `
@@ -278,7 +279,7 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "휴대번호 인증을 다시해야합니다.")
+                    equal(body.errors[0].message, "휴대번호 인증을 다시해야합니다")
                 })
                 it("If the username format is invalid", async () => {
                     const query = `
@@ -301,7 +302,7 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다.")
+                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다")
                 })
                 it("If the id format is invalid - 1", async () => {
                     const query = `
@@ -324,7 +325,7 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다.")
+                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다")
                 })
                 it("If the user name format is invalid - 2", async () => {
                     const query = `
@@ -347,7 +348,7 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다.")
+                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다")
                 })
                 it("If the password format is invalid - 1", async () => {
                     const query = `
@@ -370,7 +371,7 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "비밀번호가 조건에 맞지 않습니다.")
+                    equal(body.errors[0].message, "비밀번호가 조건에 맞지 않습니다")
                 })
                 it("If the password format is invalid - 2", async () => {
                     const query = `
@@ -393,7 +394,7 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "비밀번호가 조건에 맞지 않습니다.")
+                    equal(body.errors[0].message, "비밀번호가 조건에 맞지 않습니다")
                 })
             })
         })
@@ -416,8 +417,7 @@ describe("User auth service test", () => {
                     equal(typeof body.data.login, "string")
                     token.push(body.data.login)
                     const user = jwt.verify(token[0], env.JWT_SECRET) as TokenInterface
-                    equal(user.username, "pukuba")
-
+                    equal(user.id, "test1234")
                 })
             })
             describe("Failure", () => {
@@ -435,7 +435,7 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "잘못된 아이디 또는 비밀번호를 입력하셨습니다.")
+                    equal(body.errors[0].message, "잘못된 아이디 또는 비밀번호를 입력하셨습니다")
                 })
                 it("If incorrectly entered password", async () => {
                     const query = `
@@ -451,7 +451,7 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "잘못된 아이디 또는 비밀번호를 입력하셨습니다.")
+                    equal(body.errors[0].message, "잘못된 아이디 또는 비밀번호를 입력하셨습니다")
                 })
             })
         })
@@ -805,6 +805,80 @@ describe("User auth service test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.errors[0].message, "비밀번호가 올바르지 않습니다")
+            })
+            it("If the password doesn't fit the form", async () => {
+                const query = `
+                    mutation{
+                        changePassword(
+                            password:"testtest1234@@",
+                            changePassword: "ㅌㅌ"
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({
+                        "Content-Type": "application/json",
+                        "Authorization": token[0]
+                    })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "새 비밀번호가 양식에 맞지 않습니다")
+            })
+        })
+    })
+    describe("Mutation resetPassword", () => {
+        describe("Success", () => {
+            it("Normally, you have changed your password", async () => {
+                const query = `
+                    mutation{
+                        resetPassword(
+                            token: "${token[1]}",
+                            resetPassword: "exPassword!"
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({ "Content-Type": "application/json" })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.resetPassword, true)
+            })
+        })
+        describe("Failure", () => {
+            it("If the password doesn't fit the form", async () => {
+                const query = `
+                    mutation{
+                        resetPassword(
+                            token: "${token[1]}",
+                            resetPassword: "c"
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({ "Content-Type": "application/json" })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "비밀번호가 조건에 맞지 않습니다")
+            })
+            it("If the tokens are not useful", async () => {
+                const query = `
+                    mutation{
+                        resetPassword(
+                            token: "${token[1]}",
+                            resetPassword: "ccc22211!!"
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({ "Content-Type": "application/json" })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                console.log(body)
+                equal(body.errors[0].message, "다시 시도해 주세요")
             })
         })
     })

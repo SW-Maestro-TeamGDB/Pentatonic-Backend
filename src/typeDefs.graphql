@@ -122,6 +122,10 @@ type Mutation{
     ): IdPwSearchResult!
 
 
+    resetPassword(
+        token: String!
+        resetPassword: String!
+    ): Boolean!
 
     changePassword(
         password: String!

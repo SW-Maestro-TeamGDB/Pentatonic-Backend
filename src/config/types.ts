@@ -9,5 +9,4 @@ export interface File {
 
 export interface JWTUser {
     id: string
-    username: string
 }

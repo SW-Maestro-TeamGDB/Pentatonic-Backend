@@ -23,18 +23,14 @@ const connectDB = () => {
     }
 
     const get = async () => {
-        try {
-            if (db !== null) {
-                return db
-            } else {
-                console.log(`getting new db connection`)
-                db = await connect()
-                return db
-            }
+        if (db !== null) {
+            return db
+        } else {
+            console.log(`getting new db connection`)
+            db = await connect()
+            return db
         }
-        catch (e) {
-            return e
-        }
+
     }
 
     return { get }
