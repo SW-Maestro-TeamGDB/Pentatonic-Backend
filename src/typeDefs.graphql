@@ -143,6 +143,7 @@ type Mutation{
 
     """이미지를 Upload하고 URL을 반환합니다"""
     uploadProfile(
+        ".jpg, .jpeg, .png 파일을 전송해야 합니다"
         file: Upload!
     ): URL!
 

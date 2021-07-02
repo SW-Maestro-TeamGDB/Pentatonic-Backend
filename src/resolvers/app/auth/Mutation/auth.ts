@@ -7,9 +7,6 @@ import env from "config/env"
 import { SMSSend } from "resolvers/app/auth/models"
 import { checkUsername, checkId } from "resolvers/app/auth/Query"
 import { JWTUser } from "config/types"
-import { join } from "path"
-const path = join(__dirname, "..", "..", "..", "..", "..", "file")
-console.log(path)
 const specialCharacters = "\"'\\!@#$%^&*()_-=+/?.><,[{]}|;:"
 const isValidPassword = (password: string) => {
     if (password.length < 6) return false
@@ -178,5 +175,5 @@ export const uploadProfile = async (
     const stream = img.createReadStream()
     const fileName = `${Date.now()}-${img.filename}`
     await uploadS3(stream, fileName, img.mimetype)
-    return `https://penta-tonic.s3.ap-northeast-2.amazonaws.com/${fileName}`
+    return `${env.S3_URI}/${fileName}`
 }

@@ -1,6 +1,7 @@
 import request from "supertest"
 import app from "test"
 
+import fetch from "node-fetch"
 import env from "config/env"
 import { deepStrictEqual as equal } from "assert"
 import * as redis from "config/connectRedis"
@@ -11,6 +12,27 @@ import { TokenInterface } from "resolvers/app/auth/models"
 import { Db } from "mongodb"
 
 const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
+
+import { contentType } from 'mime-types'
+import { extname } from "path"
+const fileUpload = (query: string, variables: { [x: string]: string } = {}) => {
+    const map = Object.assign({}, Object.keys(variables).map(key => [`variables.${key}`]))
+    const response = request(app)
+        .post("/api")
+        .field("operations", JSON.stringify({ query }))
+        .field("map", JSON.stringify(map))
+
+    Object.values(variables).forEach((value, i) => {
+        if (contentType(extname(value))) {
+            response.attach(`${i}`, value)
+        } else {
+            response.field(`${i}`, value)
+        }
+    })
+    return response
+}
+
+
 describe("User auth service test", () => {
     const token: string[] = []
     const passwords: string[] = []
@@ -878,6 +900,70 @@ describe("User auth service test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.errors[0].message, "다시 시도해 주세요")
+            })
+        })
+    })
+
+    describe("Mutation resetPassword", () => {
+        describe("Success", () => {
+            it("If you uploaded files normally .jpg", async () => {
+                const query = `
+                    mutation($file: Upload!){
+                        uploadProfile(
+                            file: $file
+                        )
+                    }`
+                const { body } = await fileUpload(query, {
+                    file: `src/test/test.jpg`
+                })
+                const result = await fetch(body.data.uploadProfile, {
+                    method: "GET"
+                })
+                equal(result.status, 200)
+            })
+            it("If you uploaded files normally .png", async () => {
+                const query = `
+                    mutation($file: Upload!){
+                        uploadProfile(
+                            file: $file
+                        )
+                    }`
+                const { body } = await fileUpload(query, {
+                    file: "src/test/test.png"
+                })
+                const result = await fetch(body.data.uploadProfile, {
+                    method: "GET"
+                })
+                equal(result.status, 200)
+            })
+            it("If you uploaded files normally .jpeg", async () => {
+                const query = `
+                    mutation($file: Upload!){
+                        uploadProfile(
+                            file: $file
+                        )
+                    }`
+                const { body } = await fileUpload(query, {
+                    file: "src/test/test.jpeg"
+                })
+                const result = await fetch(body.data.uploadProfile, {
+                    method: "GET"
+                })
+                equal(result.status, 200)
+            })
+        })
+        describe("Failure", () => {
+            it("If you uploaded a file that wasn't a picture", async () => {
+                const query = `
+                    mutation($file: Upload!){
+                        uploadProfile(
+                            file: $file
+                        )
+                    }`
+                const { body } = await fileUpload(query, {
+                    file: "src/test/test.zip"
+                })
+                equal(body.errors[0].message, "파일 확장자가 올바르지 않습니다")
             })
         })
     })

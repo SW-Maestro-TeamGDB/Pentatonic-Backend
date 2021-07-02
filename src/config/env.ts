@@ -10,7 +10,10 @@ const env = {
     AWS_ID: process.env.AWS_ID,
     AWS_PW: process.env.AWS_PW,
     AWS_REGION: process.env.AWS_REGION,
-    AWS_BUCKET: process.env.NODE_ENV === "test" ? "test" : process.env.AWS_BUCKET
+    AWS_BUCKET: process.env.NODE_ENV === "test" ? process.env.AWS_BUCKET_TEST : process.env.AWS_BUCKET,
+    S3_URI: process.env.NODE_ENV === "test" ?
+        `https://${process.env.AWS_BUCKET_TEST}.s3.${process.env.AWS_REGION}.amazonaws.com`
+        : `https://${process.env.AWS_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com`
 }
 
 export default env
