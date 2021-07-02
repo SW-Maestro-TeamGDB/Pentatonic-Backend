@@ -4,7 +4,7 @@ import app from "test"
 import env from "config/env"
 import { deepStrictEqual as equal } from "assert"
 import * as redis from "config/connectRedis"
-import { Redis } from "config/connectRedis"
+import { Redis } from "config/types"
 import DB from "config/connectDB"
 import jwt from "jsonwebtoken"
 import { TokenInterface } from "resolvers/app/auth/models"
@@ -877,7 +877,6 @@ describe("User auth service test", () => {
                     .set({ "Content-Type": "application/json" })
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                console.log(body)
                 equal(body.errors[0].message, "다시 시도해 주세요")
             })
         })

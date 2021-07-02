@@ -1,5 +1,5 @@
-# FileUpload Type
-scalar FileUpload
+# Upload Type
+scalar Upload
 
 type Query{
     test: String!
@@ -138,5 +138,12 @@ type Mutation{
         password: String!
         "재설정할 비밀번호 입니다"
         changePassword: String!
-    ): Boolean! 
+    ): Boolean!
+
+
+    """이미지를 Upload하고 URL을 반환합니다"""
+    uploadProfile(
+        file: Upload!
+    ): URL!
+
 } 

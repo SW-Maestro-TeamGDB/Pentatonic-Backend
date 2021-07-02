@@ -1,13 +1,15 @@
 import { Db } from "mongodb"
 import { ApolloError } from "apollo-server-express"
-import { Redis } from "config/connectRedis"
 import jwt from "jsonwebtoken"
-import { createHashedPassword, checkPassword } from "lib"
+import { createHashedPassword, checkPassword, isValidImage, uploadS3 } from "lib"
+import { File, Redis } from "config/types"
 import env from "config/env"
 import { SMSSend } from "resolvers/app/auth/models"
 import { checkUsername, checkId } from "resolvers/app/auth/Query"
 import { JWTUser } from "config/types"
-
+import { join } from "path"
+const path = join(__dirname, "..", "..", "..", "..", "..", "file")
+console.log(path)
 const specialCharacters = "\"'\\!@#$%^&*()_-=+/?.><,[{]}|;:"
 const isValidPassword = (password: string) => {
     if (password.length < 6) return false
@@ -154,4 +156,27 @@ export const changePassword = async (
     }
     await db.collection("user").updateOne({ id: user.id }, { $set: { hash: createHashedPassword(changePassword) } })
     return true
+}
+
+export const uploadProfile = async (
+    parent: void, {
+        file
+    }: {
+        file: File
+    }, {
+        db,
+        user
+    }: {
+        db: Db,
+        user: JWTUser
+    }
+) => {
+    const img = await file
+    if (isValidImage(img.filename) === false) {
+        return new ApolloError(`파일 확장자가 올바르지 않습니다`)
+    }
+    const stream = img.createReadStream()
+    const fileName = `${Date.now()}-${img.filename}`
+    await uploadS3(stream, fileName, img.mimetype)
+    return `https://penta-tonic.s3.ap-northeast-2.amazonaws.com/${fileName}`
 }

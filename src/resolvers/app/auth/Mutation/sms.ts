@@ -1,7 +1,7 @@
 import { Db } from "mongodb"
 import { ApolloError } from "apollo-server-express"
-import { Redis } from "config/connectRedis"
-import { smsRequest, changePhoneNumber, createHashedPassword } from "lib"
+import { Redis } from "config/types"
+import { smsRequest, changePhoneNumber } from "lib"
 import { SMSCheck, SMSSend, IdPwSearchResult } from "resolvers/app/auth/models"
 import cryptoRandomString from 'crypto-random-string'
 
