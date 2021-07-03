@@ -215,6 +215,8 @@ export const changeProfile = async (
     if (username !== undefined) {
         if (await checkUsername(undefined, { username }, { db }) === true) {
             updateArgs.username = username
+        } else {
+            return new ApolloError("username 이 올바르지 않습니다")
         }
     }
     await db.collection("user").updateOne({ id: user.id }, { $set: updateArgs })

@@ -1035,10 +1035,7 @@ describe("User auth service test", () => {
             it("If only some of them were updated", async () => {
                 const query = `
                 mutation{
-                    changeProfile(
-                        username: "papagopapago",
-                        type: 3
-                    ){
+                    changeProfile{
                         username
                         introduce
                         type
@@ -1054,8 +1051,8 @@ describe("User auth service test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 const result = body.data.changeProfile
-                equal(result.username, "papagopapago")
-                equal(result.type, 3)
+                equal(result.username, "SeungWon")
+                equal(result.type, 1)
                 equal(result.introduce, "테스트 자기소개 글 입니다!")
             })
         })
@@ -1107,6 +1104,26 @@ describe("User auth service test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.errors[0].message, "인증 정보가 유효하지 않습니다")
+            })
+            it("If you change to a nickname that exists", async () => {
+                const query = `mutation{
+                    changeProfile(
+                        username:"SeungWon"
+                    ){
+                        username
+                        introduce
+                        type
+                    }
+                }`
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({
+                        "Content-Type": "application/json",
+                        "Authorization": token[0]
+                    })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "username 이 올바르지 않습니다")
             })
         })
     })
