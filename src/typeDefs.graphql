@@ -66,8 +66,10 @@ type Mutation{
         "username 은 길이가 2 이상이여야 합니다"
         username: String!
 
+        "휴대전화 정보를 입력해야합니다"
         phone: SMSSend!
 
+        "주 악기와 연주 실력을 입력해야합니다"
         spec: PlaySpec!
 
         "type 은 유저의 유형을 나타냅니다. (1: 취미, 2: 본업, 3: 리스너)"
@@ -79,7 +81,8 @@ type Mutation{
 
     """인증번호를 전송하는 뮤테이션 입니다. (발송성공 ? 1 : 0)"""
     registerSMSSend(
-       phone: SMSSend!
+        "휴대전화 정보를 입력해야합니다"
+        phone: SMSSend!
 
     ): Boolean!
 
@@ -87,6 +90,7 @@ type Mutation{
 
     "SMS 인증번호를 확인하는 뮤테이션 입니다. (본인확인 완료 ? 1 : 0)"
     registerSMSCheck(
+        "휴대전화 정보를 입력해야합니다"
         phone: SMSCheck!
     ): Boolean!
 
@@ -107,11 +111,13 @@ type Mutation{
 
     """Id 를 찾기위해 휴대번호에 인증번호를 발송합니다"""
     findIdSMSSend(
+        "휴대전화 정보를 입력해야합니다"
         phone: SMSSend!
     ): Boolean!
 
     """Id 를 찾기위해 인증번호로 휴대전화 인증을 합니다"""
     findIdSMSCheck(
+        "휴대전화 정보를 입력해야합니다"
         phone: SMSCheck!
     ): IdPwSearchResult!
     
@@ -119,6 +125,8 @@ type Mutation{
     findPasswordSMSSend(
         "계정의 id 입니다"
         id: String!
+
+        "휴대전화 정보를 입력해야합니다"
         phone: SMSSend!
     ): Boolean!
 
@@ -126,6 +134,8 @@ type Mutation{
     findPasswordSMSCheck(
         "계정의 id 입니다"
         id: String!
+
+        "휴대전화 정보를 입력해야합니다"
         phone: SMSCheck!
     ): IdPwSearchResult!
 
@@ -165,8 +175,10 @@ type Mutation{
         "변경할 자기소개 문구 입니다"
         introduce: String
 
+        "주 악기와 연주 실력을 입력해야합니다"
         spec: PlaySpec
         
+        "type 은 유저의 유형을 나타냅니다. (1: 취미, 2: 본업, 3: 리스너)"
         type: Int
     ): PersonalInformation!
 } 
