@@ -59,7 +59,8 @@ export const register = async (
         return new ApolloError("id 혹은 username 이 조건에 맞지 않습니다")
     }
     const hash = createHashedPassword(password)
-    const result = await db.collection("user").insertOne({
+    await redis.del(phoneNumber)
+    return await db.collection("user").insertOne({
         id,
         hash,
         username,
@@ -69,11 +70,6 @@ export const register = async (
         profile: "https://kr.seaicons.com/wp-content/uploads/2016/05/Letter-P-blue-icon.png",
         type
     }).then(({ result }) => result.n === 1)
-    if (result === false) {
-        throw new ApolloError("DB 연결 오류")
-    }
-    await redis.del(phoneNumber)
-    return true
 }
 
 export const login = async (
