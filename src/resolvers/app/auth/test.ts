@@ -15,7 +15,7 @@ const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUM
 
 import { contentType } from 'mime-types'
 import { extname } from "path"
-const fileUpload = (query: string, variables: { [x: string]: string } = {}, token: string) => {
+const fileUpload = (query: string, variables: { [x: string]: string }, token: string) => {
     const map = Object.assign({}, Object.keys(variables).map(key => [`variables.${key}`]))
     const response = request(app)
         .post("/api")
@@ -25,9 +25,7 @@ const fileUpload = (query: string, variables: { [x: string]: string } = {}, toke
         .field("map", JSON.stringify(map))
 
     Object.values(variables).forEach((value, i) => {
-        if (contentType(extname(value))) {
-            response.attach(`${i}`, value)
-        }
+        response.attach(`${i}`, value)
     })
     return response
 }
