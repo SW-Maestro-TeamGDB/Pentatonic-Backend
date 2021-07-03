@@ -43,26 +43,32 @@ input SMSCheck{
     authenticationNumber: Int!
 }
 
+"""유저의 주 악기와, 연주 실력을 입력합니다"""
+input PlaySpec{
+
+    "연주자의 포지션 입니다"
+    position: String!
+
+    "연주자의 실력 입니다 (1 ~ 5)"
+    level: Int!
+}
+
 type Mutation{
 
-    """회원가입 뮤테이션 이며 회원가입의 성공 여부를 1, 0으로 반환합니다. """
+    """회원가입 뮤테이션 이며 회원가입의 성공 여부를 1, 0으로 반환합니다"""
     register(
-        "id 는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다. "
+        "id 는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다"
         id: String!
 
-        "password 는 길이가 6 이상이여야하며 영문과 숫자 특수문자가 가능합니다. "
+        "password 는 길이가 6 이상이여야하며 영문과 숫자 특수문자가 가능합니다"
         password: String!
 
-        "username 은 길이가 2 이상이여야 합니다. "
+        "username 은 길이가 2 이상이여야 합니다"
         username: String!
 
         phone: SMSSend!
 
-        "position 은 유저가 어떤 악기를 연주하는지를 나타냅니다."
-        position: String!
-        
-        "level 은 유저가 얼마나 연주를 잘하는지를 나타냅니다 (1~5)"
-        level: Int!
+        spec: PlaySpec!
 
         "type 은 유저의 유형을 나타냅니다. (1: 취미, 2: 본업, 3: 리스너)"
         type: Int!
@@ -147,4 +153,32 @@ type Mutation{
         file: Upload!
     ): URL!
 
+    """사용자의 프로필을 변경합니다"""
+    changeProfile(
+
+        "변경할 유저 이름 입니다"
+        username: String
+
+        "변경할 프로필의 URL 입니다"
+        profile: URL
+
+        "변경할 자기소개 문구 입니다"
+        introduce: String
+
+        spec: PlaySpec
+        
+        type: Int
+    ): PersonalInformation!
 } 
+
+
+type PersonalInformation{
+    id: String!
+    username: String!
+    profile: URL!
+    phoneNumber: PhoneNumber!
+    introduce: String!
+    position: String!
+    level: Int!
+    type: Int!
+}

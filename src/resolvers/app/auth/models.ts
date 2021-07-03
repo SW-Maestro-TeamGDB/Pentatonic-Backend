@@ -20,3 +20,8 @@ export interface IdPwSearchResult {
     message: string
     [key: string]: string
 }
+
+export interface PlayingSpec {
+    position: String
+    level: Number
+}

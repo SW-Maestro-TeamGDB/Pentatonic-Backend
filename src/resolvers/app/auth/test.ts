@@ -15,18 +15,18 @@ const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUM
 
 import { contentType } from 'mime-types'
 import { extname } from "path"
-const fileUpload = (query: string, variables: { [x: string]: string } = {}) => {
+const fileUpload = (query: string, variables: { [x: string]: string } = {}, token: string) => {
     const map = Object.assign({}, Object.keys(variables).map(key => [`variables.${key}`]))
     const response = request(app)
         .post("/api")
+        .set({ Authorization: token })
+        .set("Content-Type", "multipart/form-data")
         .field("operations", JSON.stringify({ query }))
         .field("map", JSON.stringify(map))
 
     Object.values(variables).forEach((value, i) => {
         if (contentType(extname(value))) {
             response.attach(`${i}`, value)
-        } else {
-            response.field(`${i}`, value)
         }
     })
     return response
@@ -35,7 +35,7 @@ const fileUpload = (query: string, variables: { [x: string]: string } = {}) => {
 
 describe("User auth service test", () => {
     const token: string[] = []
-    const passwords: string[] = []
+    const uri: string[] = []
     after(async () => {
         const db = await DB.get() as Db
         await db.collection("user").deleteOne({ phoneNumber })
@@ -216,8 +216,10 @@ describe("User auth service test", () => {
                                 phone: {
                                     phoneNumber: "${phoneNumber}"
                                 },
-                                position: "Piano",
-                                level: 2,
+                                spec: {
+                                    position: "Piano",
+                                    level: 2
+                                },
                                 type: 1
                             )
                         }
@@ -244,8 +246,10 @@ describe("User auth service test", () => {
                                 phone: {
                                     phoneNumber: "${phoneNumber}",
                                 },
-                                position: "Piano",
-                                level: 2,
+                                spec: {
+                                    position: "Piano",
+                                    level: 2
+                                },
                                 type: 1
                             )
                         }
@@ -267,8 +271,10 @@ describe("User auth service test", () => {
                                 phone: {
                                     phoneNumber: "${phoneNumber}",
                                 },
-                                position: "Piano",
-                                level: 2,
+                                spec: {
+                                    position: "Piano",
+                                    level: 2
+                                },
                                 type: 1
                             )
                         }
@@ -290,8 +296,10 @@ describe("User auth service test", () => {
                                 phone: { 
                                     phoneNumber: "+821000000000",
                                 },
-                                position: "Piano",
-                                level: 2,
+                                spec: {
+                                    position: "Piano",
+                                    level: 2
+                                },
                                 type: 1
                             )
                         }
@@ -313,8 +321,10 @@ describe("User auth service test", () => {
                                 phone: { 
                                     phoneNumber: "${phoneNumber}",
                                 },
-                                position: "Piano",
-                                level: 2,
+                                spec: {
+                                    position: "Piano",
+                                    level: 2
+                                }
                                 type: 1
                             )
                         }
@@ -336,8 +346,10 @@ describe("User auth service test", () => {
                                 phone: { 
                                     phoneNumber: "${phoneNumber}",
                                 },
-                                position: "Piano",
-                                level: 2,
+                                spec: {
+                                    position: "Piano",
+                                    level: 2
+                                },
                                 type: 1
                             )
                         }
@@ -359,8 +371,10 @@ describe("User auth service test", () => {
                                 phone: {
                                     phoneNumber: "${phoneNumber}",
                                 },
-                                position: "Piano",
-                                level: 2,
+                                spec: {
+                                    position: "Piano",
+                                    level: 2
+                                },
                                 type: 1
                             )
                         }
@@ -382,8 +396,10 @@ describe("User auth service test", () => {
                                 phone: {
                                     phoneNumber: "${phoneNumber}",
                                 },
-                                position: "Piano",
-                                level: 2,
+                                spec: {
+                                    position: "Piano",
+                                    level: 2
+                                },
                                 type: 1
                             )
                         }
@@ -405,8 +421,10 @@ describe("User auth service test", () => {
                                 phone: {
                                     phoneNumber: "${phoneNumber}",
                                 },
-                                position: "Piano",
-                                level: 2,
+                                spec: {
+                                    position: "Piano",
+                                    level: 2
+                                },
                                 type: 1
                             )
                         }
@@ -915,12 +933,13 @@ describe("User auth service test", () => {
                     }`
                 const { body } = await fileUpload(query, {
                     file: `src/test/test.jpg`
-                })
+                }, token[0])
                 const result = await fetch(body.data.uploadProfile, {
                     method: "GET"
                 })
+                uri.push(body.data.uploadProfile)
                 equal(result.status, 200)
-            })
+            }).timeout(5000)
             it("If you uploaded files normally .png", async () => {
                 const query = `
                     mutation($file: Upload!){
@@ -930,12 +949,13 @@ describe("User auth service test", () => {
                     }`
                 const { body } = await fileUpload(query, {
                     file: "src/test/test.png"
-                })
+                }, token[0])
                 const result = await fetch(body.data.uploadProfile, {
                     method: "GET"
                 })
+                uri.push(body.data.uploadProfile)
                 equal(result.status, 200)
-            })
+            }).timeout(5000)
             it("If you uploaded files normally .jpeg", async () => {
                 const query = `
                     mutation($file: Upload!){
@@ -945,12 +965,13 @@ describe("User auth service test", () => {
                     }`
                 const { body } = await fileUpload(query, {
                     file: "src/test/test.jpeg"
-                })
+                }, token[0])
                 const result = await fetch(body.data.uploadProfile, {
                     method: "GET"
                 })
+                uri.push(body.data.uploadProfile)
                 equal(result.status, 200)
-            })
+            }).timeout(5000)
         })
         describe("Failure", () => {
             it("If you uploaded a file that wasn't a picture", async () => {
@@ -962,8 +983,130 @@ describe("User auth service test", () => {
                     }`
                 const { body } = await fileUpload(query, {
                     file: "src/test/test.zip"
-                })
+                }, token[0])
                 equal(body.errors[0].message, "파일 확장자가 올바르지 않습니다")
+            })
+            it("If the user's token is not valid", async () => {
+                const query = `
+                    mutation($file: Upload!){
+                        uploadProfile(
+                            file: $file
+                        )
+                    }`
+                const { body } = await fileUpload(query, {
+                    file: "src/test/test.png"
+                }, "14235412534231132")
+                equal(body.errors[0].message, "Authorization Error")
+            })
+        })
+    })
+    describe("Mutation changeProfile", () => {
+        describe("Success", () => {
+            it("If you update all information", async () => {
+                const query = `
+                mutation{
+                    changeProfile(
+                        username: "SeungWon",
+                        profile: "${uri[0]}",
+                        introduce: "테스트 자기소개 글 입니다!",
+                        spec:{
+                            position: "Vocal",
+                            level: 1
+                        },
+                        type: 1
+                    ){
+                        id
+                        username
+                    }
+                }
+            `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({
+                        "Content-Type": "application/json",
+                        "Authorization": token[0]
+                    })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                const result = body.data.changeProfile
+                equal(result.id, "test1234")
+                equal(result.username, "SeungWon")
+            })
+            it("If only some of them were updated", async () => {
+                const query = `
+                mutation{
+                    changeProfile(
+                        username: "papagopapago",
+                        type: 3
+                    ){
+                        username
+                        introduce
+                        type
+                    }
+                }
+            `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({
+                        "Content-Type": "application/json",
+                        "Authorization": token[0]
+                    })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                const result = body.data.changeProfile
+                equal(result.username, "papagopapago")
+                equal(result.type, 3)
+                equal(result.introduce, "테스트 자기소개 글 입니다!")
+            })
+        })
+        describe("Failure", () => {
+            it("If you do not include the essential factor", async () => {
+                const query = `
+                mutation{
+                    changeProfile(
+                        spec:{
+                            level: 5
+                        }
+                    ){
+                        username
+                        introduce
+                        type
+                    }
+                }
+            `
+                await request(app)
+                    .post("/api")
+                    .set({
+                        "Content-Type": "application/json",
+                        "Authorization": token[0]
+                    })
+                    .send(JSON.stringify({ query }))
+                    .expect(400)
+            })
+            it("If you do not include the essential factor", async () => {
+                const query = `
+                mutation{
+                    changeProfile(
+                        spec:{
+                            level: 5,
+                            position: "piano"
+                        }
+                    ){
+                        username
+                        introduce
+                        type
+                    }
+                }
+            `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({
+                        "Content-Type": "application/json",
+                        "Authorization": jwt.sign({ id: "gogo1234321" }, env.JWT_SECRET)
+                    })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "인증 정보가 유효하지 않습니다")
             })
         })
     })

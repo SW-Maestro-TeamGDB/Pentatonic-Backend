@@ -11,4 +11,4 @@ RUN yarn install; \
 
 EXPOSE 3000
 
-CMD [ "yarn", "run", "on" ]
+CMD [ "yarn", "on" ]
