@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="./styles/graphdoc.css" />
-    <title>SafeInt</title>
+    <title>PlaySpec</title>
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700" rel="stylesheet"><link type="text/css" rel="stylesheet" href="./assets/code.css" /><link type="text/css" rel="stylesheet" href="./assets/require-by.css" />
 </head>
 <body class="slds-scrollable--y">
@@ -260,7 +260,7 @@
                 RGBA
             </a>
         </li>
-        <li class="slds-is-active" title="SafeInt">
+        <li  title="SafeInt">
             <a href="safeint.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 SafeInt
             </a>
@@ -385,7 +385,7 @@
 <div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
     <h4 class="slds-text-title--caps slds-p-around--medium">Input Objects</h4>
     <ul>
-        <li  title="PlaySpec">
+        <li class="slds-is-active" title="PlaySpec">
             <a href="playspec.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 PlaySpec
             </a>
@@ -440,9 +440,9 @@
         </div>
     </div>
     <div class="container">
-        <p class="slds-text-title--caps slds-text-color--weak">SCALAR</p>
-        <h1 class="slds-text-heading--large">SafeInt</h1>
-        <div class="slds-text-body--regular"><p>The <code>SafeInt</code> scalar type represents non-fractional signed whole numeric values that are considered safe as defined by the ECMAScript specification.</p>
+        <p class="slds-text-title--caps slds-text-color--weak">INPUT_OBJECT</p>
+        <h1 class="slds-text-heading--large">PlaySpec</h1>
+        <div class="slds-text-body--regular"><p>유저의 주 악기와, 연주 실력을 입력합니다</p>
 </div>
     </div>
 </section>
@@ -454,7 +454,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:28px"><li><span class="keyword operator ts">scalar</span> <span class="identifier">SafeInt</span></li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:28px"><li><span class="keyword operator ts">input</span> <span class="identifier">PlaySpec</span> {</li><li><span class="tab"><li><span class="tab"><span class="comment line">#   연주자의 포지션 입니다</span></span></li><li><span class="tab"><span class="meta">position</span>: <a class="support type" href="string.doc.html">String</a>!</span></li></span></li><li><span class="tab"><li><span class="tab"><span class="comment line">#   연주자의 실력 입니다 (1 ~ 5)</span></span></li><li><span class="tab"><span class="meta">level</span>: <a class="support type" href="int.doc.html">Int</a>!</span></li></span></li><li>}</li></ul></code>
     </div>
 </section>
 <section>
@@ -465,7 +465,7 @@
             </a>
             Require by
         </h2>
-        <div class="require-by anyone">This element is not required by anyone</div>
+        <ul class="require-by"><li><a href="mutation.doc.html" title="Mutation - ">Mutation<em>null</em></a><li></ul>
     </div>
 </section>
 <footer>
