@@ -18,7 +18,7 @@ type Query{
         username: String!
     ): Boolean!
 
-
+    getPersonalInformation: PersonalInformation!
 }
 
 """아이디 비밀번호 찾기와 비밀번호 재설정에 대한 리턴 타입입니다"""

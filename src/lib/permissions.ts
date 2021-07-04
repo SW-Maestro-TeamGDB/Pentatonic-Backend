@@ -17,5 +17,8 @@ export const permissions = shield({
         changePassword: isLogin,
         uploadProfile: isLogin,
         changeProfile: isLogin
+    },
+    Query: {
+        getPersonalInformation: isLogin
     }
 })

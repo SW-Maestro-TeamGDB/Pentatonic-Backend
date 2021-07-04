@@ -1110,4 +1110,50 @@ describe("User auth service test", () => {
             })
         })
     })
+    describe("Query getPersonalInformation", () => {
+        describe("Success", () => {
+            it("If you bring my personal information normally", async () => {
+                const query = `
+                    query{
+                        getPersonalInformation{
+                            id
+                            username
+                            position
+                            level
+                            type
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .get(`/api?query=${query}`)
+                    .set({ "Authorization": token[0] })
+                    .expect(200)
+                equal(body.data.getPersonalInformation.id, "test1234")
+                equal(body.data.getPersonalInformation.username, "papagopapago")
+                equal(body.data.getPersonalInformation.position, "Vocal")
+                equal(body.data.getPersonalInformation.level, 1)
+                equal(body.data.getPersonalInformation.type, 3)
+            })
+        })
+        describe("Failure", () => {
+            it("If the token is not delivered normally", async () => {
+                const query = `
+                    query{
+                        getPersonalInformation{
+                            id
+                            username
+                            position
+                            level
+                            type
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .get(`/api?query=${query}`)
+                    .set({ "Authorization": "12321232123212321" })
+                    .expect(200)
+                console.log(body.errors[0].message, "Authorization Error")
+            })
+        })
+    })
 })
