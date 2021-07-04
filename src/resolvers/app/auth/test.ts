@@ -1125,4 +1125,110 @@ describe("User auth service test", () => {
             })
         })
     })
+    describe("Query getPersonalInformation", () => {
+        describe("Success", () => {
+            it("If you bring my personal information normally", async () => {
+                const query = `
+                    query{
+                        getPersonalInformation{
+                            id
+                            username
+                            position
+                            level
+                            type
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .get(`/api?query=${query}`)
+                    .set({ "Authorization": token[0] })
+                    .expect(200)
+                equal(body.data.getPersonalInformation.id, "test1234")
+                equal(body.data.getPersonalInformation.username, "papagopapago")
+                equal(body.data.getPersonalInformation.position, "Vocal")
+                equal(body.data.getPersonalInformation.level, 1)
+                equal(body.data.getPersonalInformation.type, 3)
+            })
+        })
+        describe("Failure", () => {
+            it("If the token is not delivered normally", async () => {
+                const query = `
+                    query{
+                        getPersonalInformation{
+                            id
+                            username
+                            position
+                            level
+                            type
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .get(`/api?query=${query}`)
+                    .set({ "Authorization": "12321232123212321" })
+                    .expect(200)
+                console.log(body.errors[0].message, "Authorization Error")
+            })
+        })
+    })
+    describe("Mutation deleteAccount", () => {
+        describe("Failure", () => {
+            it("If the password is not right", async () => {
+                const query = `
+                    mutation{
+                        deleteAccount(
+                            password:"xxxxxx"
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({
+                        "Content-Type": "application/json",
+                        "Authorization": token[0]
+                    })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "비밀번호가 올바르지 않습니다")
+            })
+            it("If it is a member that does not exist", async () => {
+                const query = `
+                    mutation{
+                        deleteAccount(
+                            password:"asdfdsasdf"
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({
+                        "Content-Type": "application/json",
+                        "Authorization": "1234342112341234"
+                    })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "Authorization Error")
+            })
+        })
+        describe("Success", () => {
+            it("If you normally leave the membership", async () => {
+                const query = `
+                    mutation{
+                        deleteAccount(
+                            password:"exPassword!"
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({
+                        "Content-Type": "application/json",
+                        "Authorization": token[0]
+                    })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.deleteAccount, true)
+            })
+        })
+    })
 })

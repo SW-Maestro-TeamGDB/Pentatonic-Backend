@@ -16,6 +16,10 @@ export const permissions = shield({
     Mutation: {
         changePassword: isLogin,
         uploadProfile: isLogin,
-        changeProfile: isLogin
+        changeProfile: isLogin,
+        deleteAccount: isLogin
+    },
+    Query: {
+        getPersonalInformation: isLogin
     }
 })

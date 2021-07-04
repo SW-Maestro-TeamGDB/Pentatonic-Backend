@@ -1,5 +1,6 @@
 import { Db } from "mongodb"
 import { ApolloError } from "apollo-server-express"
+import { JWTUser } from "config/types"
 
 export const checkUsername = async (
     parent: void, {
@@ -48,3 +49,14 @@ export const checkId = async (
     const result = await db.collection("user").findOne({ id })
     return result === null ? true : new ApolloError("중복인 id 입니다.")
 }
+
+export const getPersonalInformation = (
+    parent: void,
+    args: void, {
+        db,
+        user
+    }: {
+        user: JWTUser,
+        db: Db
+    }
+) => db.collection("user").findOne({ id: user.id })
