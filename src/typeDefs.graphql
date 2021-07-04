@@ -181,6 +181,10 @@ type Mutation{
         "type 은 유저의 유형을 나타냅니다. (1: 취미, 2: 본업, 3: 리스너)"
         type: Int
     ): PersonalInformation!
+
+    deleteAccount(
+        password: String!
+    ): Boolean!
 } 
 
 

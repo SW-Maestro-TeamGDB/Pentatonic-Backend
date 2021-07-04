@@ -220,3 +220,23 @@ export const changeProfile = async (
     await db.collection("user").updateOne({ id: user.id }, { $set: updateArgs })
     return updateArgs
 }
+
+export const deleteAccount = async (
+    parent: void, {
+        password
+    }: {
+        password: string
+    }, {
+        db,
+        user
+    }: {
+        db: Db,
+        user: JWTUser
+    }
+) => {
+    const result = await db.collection("user").findOne({ id: user.id })
+    if (checkPassword(password, result.hash) === false) {
+        return new ApolloError("비밀번호가 올바르지 않습니다")
+    }
+    return db.collection("user").deleteOne({ id: user.id }).then(({ result }) => result.n === 1)
+}
