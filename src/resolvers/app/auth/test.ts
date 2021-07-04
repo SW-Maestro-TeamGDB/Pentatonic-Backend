@@ -1156,4 +1156,64 @@ describe("User auth service test", () => {
             })
         })
     })
+    describe("Mutation deleteAccount", () => {
+        describe("Failure", () => {
+            it("If the password is not right", async () => {
+                const query = `
+                    mutation{
+                        deleteAccount(
+                            password:"xxxxxx"
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({
+                        "Content-Type": "application/json",
+                        "Authorization": token[0]
+                    })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "비밀번호가 올바르지 않습니다")
+            })
+            it("If it is a member that does not exist", async () => {
+                const query = `
+                    mutation{
+                        deleteAccount(
+                            password:"asdfdsasdf"
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({
+                        "Content-Type": "application/json",
+                        "Authorization": "1234342112341234"
+                    })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "Authorization Error")
+            })
+        })
+        describe("Success", () => {
+            it("If you normally leave the membership", async () => {
+                const query = `
+                    mutation{
+                        deleteAccount(
+                            password:"exPassword!"
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({
+                        "Content-Type": "application/json",
+                        "Authorization": token[0]
+                    })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.deleteAccount, true)
+            })
+        })
+    })
 })
