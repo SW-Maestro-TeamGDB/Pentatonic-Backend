@@ -1144,10 +1144,10 @@ describe("User auth service test", () => {
                     .set({ "Authorization": token[0] })
                     .expect(200)
                 equal(body.data.getPersonalInformation.id, "test1234")
-                equal(body.data.getPersonalInformation.username, "papagopapago")
+                equal(body.data.getPersonalInformation.username, "SeungWon")
                 equal(body.data.getPersonalInformation.position, "Vocal")
                 equal(body.data.getPersonalInformation.level, 1)
-                equal(body.data.getPersonalInformation.type, 3)
+                equal(body.data.getPersonalInformation.type, 1)
             })
         })
         describe("Failure", () => {
