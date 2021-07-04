@@ -10,7 +10,8 @@
     "on": "NODE_PATH=dist/ node dist/index.js",
     "gen-docs": "rm -rf docs && NODE_PATH=src/ pm2 start --interpreter ./node_modules/.bin/ts-node src/index.ts && sleep 5 && graphdoc -e http://localhost:4000/api -o ./docs; pm2 delete all",
     "coveralls": "echo \"repo_token: ${COVERALLS_TOKEN}\" >>  .coveralls.yml && nyc report --reporter=text-lcov | coveralls",
-    "coverage": "export NODE_ENV=test;nyc --reporter=html yarn test "
+    "coverage": "export NODE_ENV=test;nyc --reporter=html yarn test ",
+    "deploy": "ts-node deploy.ts"
   },
   "repository": {
     "type": "git",
