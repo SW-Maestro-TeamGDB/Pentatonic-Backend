@@ -630,7 +630,27 @@ describe("User auth service test", () => {
         })
         describe("Mutation findPasswordSMSSend", () => {
             describe("Success", () => {
-                it("If you have sent a password-finding authentication number", async () => {
+                it("If you have sent a password-finding authentication number - 1", async () => {
+                    await (redis as Redis).setex("canSMSRequest-::ffff:127.0.0.1", 60, `[${Date.now() - 70000},3]`)
+                    const query = `
+                        mutation{
+                            findPasswordSMSSend(
+                                id: "test1234",
+                                phone: {
+                                    phoneNumber: "${phoneNumber}"
+                                }
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.findPasswordSMSSend, true)
+                })
+                it("If you have sent a password-finding authentication number - 2", async () => {
+                    await (redis as Redis).setex("canSMSRequest-::ffff:127.0.0.1", 60, `[${Date.now() - 70000},3]`)
                     const query = `
                         mutation{
                             findPasswordSMSSend(
@@ -668,12 +688,32 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(body.errors[0].message, "해당 정보로 가입한 유저가 존재하지 않습니다")
                 })
+                it("If the number of requests exceeds - 1", async () => {
+                    await (redis as Redis).setex("canSMSRequest-::ffff:127.0.0.1", 60, `[${Date.now()},5]`)
+                    const query = `
+                        mutation{
+                            findPasswordSMSSend(
+                                id: "test1234",
+                                phone: {
+                                    phoneNumber: "${phoneNumber}"
+                                }
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "잠시 뒤에 시도해주세요")
+                })
             })
         })
         describe("Mutation findPasswordSMSCheck", () => {
             describe("Success", () => {
                 before(async () => {
                     await (redis as Redis).setex(env.PHONE_NUMBER as string, 180, 111111)
+                    await (redis as Redis).del("canSMSRequest-::ffff:127.0.0.1")
                 })
                 it("Find Password Authentication Number is correct", async () => {
                     const query = `

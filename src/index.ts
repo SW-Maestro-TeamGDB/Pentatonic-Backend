@@ -3,7 +3,7 @@ dotenv.config()
 import env from "config/env"
 
 import { express as voyagerMiddleware } from "graphql-voyager/middleware"
-import { ApolloServer, ApolloError, GraphQLUpload } from "apollo-server-express"
+import { ApolloServer, ApolloError, GraphQLUpload, ExpressContext } from "apollo-server-express"
 import { readFileSync } from "fs"
 import { createServer } from "http"
 import depthLimit from "graphql-depth-limit"
@@ -44,9 +44,10 @@ const start = async () => {
     const server = new ApolloServer({
         schema: applyMiddleware(schema, permissions),
         context: ({ req }) => {
+            const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || null
             const token = req.headers.authorization || ''
             const user = getUser(token)
-            return { db, redis, user }
+            return { db, redis, user, ip }
         },
         validationRules: [
             depthLimit(8),

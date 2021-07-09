@@ -43,10 +43,11 @@ const schema = makeExecutableSchema({
 const server = new ApolloServer({
     schema: applyMiddleware(schema, permissions),
     context: async ({ req }) => {
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
         const db = await DB.get()
         const token = req.headers.authorization || ''
         const user = getUser(token)
-        return { db, redis, user }
+        return { db, redis, user, ip }
     },
     validationRules: [
         depthLimit(8),
