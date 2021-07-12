@@ -1,6 +1,5 @@
 import dotenv from "dotenv"
 dotenv.config()
-import env from "config/env"
 
 import { express as voyagerMiddleware } from "graphql-voyager/middleware"
 import { ApolloServer, ApolloError, GraphQLUpload } from "apollo-server-express"
