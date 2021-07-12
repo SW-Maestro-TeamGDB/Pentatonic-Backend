@@ -13,6 +13,8 @@ branches:
     - develop
 
 install:
+  - apt-get update -y
+  - apt-get install ffmpeg -y
   - yarn install
 
 script:

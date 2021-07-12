@@ -1,5 +1,9 @@
 FROM node:14
 
+RUN apt-get update -y
+
+RUN apt-get install ffmpeg -y
+
 RUN mkdir -p /server
 
 WORKDIR /server
