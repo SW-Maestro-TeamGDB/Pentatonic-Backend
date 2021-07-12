@@ -12,9 +12,11 @@ branches:
     - master
     - develop
 
+before_install:
+  - sudo apt-get update -y
+  - sudo apt-get install ffmpeg -y
+
 install:
-  - apt-get update -y
-  - apt-get install ffmpeg -y
   - yarn install
 
 script:
