@@ -131,9 +131,23 @@ type Mutation{
         type: Int
     ): PersonalInformation!
 
+
+    """계정을 삭제합니다"""    
     deleteAccount(
+
+        "비밀번호 입니다"
         password: String!
+
     ): Boolean!
+
+    """SONG의 기본 음원을 업로드 합니다"""
+    uploadDefaultAR(
+        "권한을 확인하기 위한 코드입니다"
+        code: String!,
+        "파일 입니다"
+        file: Upload!
+    ): URL!
+    
 } 
 
 

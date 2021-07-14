@@ -29,3 +29,7 @@ export const mergeAudios = async (audios: string[], audioName: string) => {
         return false
     }
 }
+
+import { getAudioDurationInSeconds } from "get-audio-duration"
+
+export const getAudioDuration = async (uri: string): Promise<number> => await getAudioDurationInSeconds(uri)
