@@ -21,7 +21,7 @@ export interface IdPwSearchResult {
     [key: string]: string
 }
 
-export interface PlayingSpec {
-    position: String
+export interface Spec {
+    session: String
     level: Number
 }

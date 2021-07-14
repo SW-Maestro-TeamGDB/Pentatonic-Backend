@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken"
 import { createHashedPassword, checkPassword, isValidImage, uploadS3 } from "lib"
 import { File, Redis } from "config/types"
 import env from "config/env"
-import { SMSSend, PlayingSpec } from "resolvers/app/auth/models"
+import { SMSSend, Spec } from "resolvers/app/auth/models"
 import { checkUsername, checkId } from "resolvers/app/auth/Query"
 import { JWTUser } from "config/types"
 const specialCharacters = "\"'\\!@#$%^&*()_-=+/?.><,[{]}|;:"
@@ -33,7 +33,7 @@ export const register = async (
         password: string,
         username: string,
         phone: SMSSend,
-        spec: PlayingSpec,
+        spec: Spec[],
         type: number
     }, {
         db,
@@ -65,9 +65,10 @@ export const register = async (
         hash,
         username,
         phoneNumber,
-        ...spec,
+        spec: [...spec],
+        prime: false,
         introduce: "자기소개글이 아직 비어있습니다!",
-        profile: "https://kr.seaicons.com/wp-content/uploads/2016/05/Letter-P-blue-icon.png",
+        profileURI: "https://kr.seaicons.com/wp-content/uploads/2016/05/Letter-P-blue-icon.png",
         type
     }).then(({ result }) => result.n === 1)
 }
@@ -173,15 +174,15 @@ export const uploadProfile = async (
 export const changeProfile = async (
     parent: void, {
         username,
-        profile,
+        profileURI,
         introduce,
         spec,
         type
     }: {
         username: string,
-        profile: URL,
+        profileURI: URL,
         introduce: string,
-        spec: PlayingSpec,
+        spec: Spec[],
         type: number
     }, {
         db,
@@ -195,15 +196,14 @@ export const changeProfile = async (
     const updateArgs = { ...result }
     delete updateArgs._id
     delete updateArgs.hash
-    if (profile !== undefined) {
-        updateArgs.profile = profile.href
+    if (profileURI !== undefined) {
+        updateArgs.profileURI = profileURI.href
     }
     if (introduce !== undefined) {
         updateArgs.introduce = introduce
     }
     if (spec !== undefined) {
-        updateArgs.level = spec.level
-        updateArgs.position = spec.position
+        updateArgs.spec = [...spec]
     }
     if (type !== undefined) {
         updateArgs.type = type

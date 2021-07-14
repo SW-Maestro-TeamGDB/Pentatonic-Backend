@@ -1,57 +1,6 @@
 # Upload Type
 scalar Upload
 
-type Query{
-    test: String!
-
-    """ id가 조건에 맞는지 확인하는 쿼리 입니다"""
-    checkId(
-        "id는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다"
-        id: String!
-    ): Boolean!
-
-
-
-    """ username이 조건에 맞는지 확인하는 쿼리 입니다"""
-    checkUsername(
-        "username은 길이가 2 이상이여야 합니다"
-        username: String!
-    ): Boolean!
-
-    getPersonalInformation: PersonalInformation!
-}
-
-"""아이디 비밀번호 찾기와 비밀번호 재설정에 대한 리턴 타입입니다"""
-type IdPwSearchResult{
-    message: String!
-    id: String
-    token: String
-}
-
-"""본인확인 문자발송 input"""
-input SMSSend{
-    "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
-    phoneNumber: PhoneNumber!
-}
-
-"""본인확인 인증번호 확인 input"""
-input SMSCheck{
-    "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
-    phoneNumber: PhoneNumber!
-
-    "authenticationNumber 는 999999 와 같은 100000~999999 사이의 숫자 입니다"
-    authenticationNumber: Int!
-}
-
-"""유저의 주 악기와, 연주 실력을 입력합니다"""
-input PlaySpec{
-
-    "연주자의 포지션 입니다"
-    position: String!
-
-    "연주자의 실력 입니다 (1 ~ 5)"
-    level: Int!
-}
 
 type Mutation{
 
@@ -70,7 +19,7 @@ type Mutation{
         phone: SMSSend!
 
         "주 악기와 연주 실력을 입력해야합니다"
-        spec: PlaySpec!
+        spec: [InputSpec!]!
 
         "type 은 유저의 유형을 나타냅니다. (1: 취미, 2: 본업, 3: 리스너)"
         type: Int!
@@ -170,13 +119,13 @@ type Mutation{
         username: String
 
         "변경할 프로필의 URL 입니다"
-        profile: URL
+        profileURI: URL
 
         "변경할 자기소개 문구 입니다"
         introduce: String
 
         "주 악기와 연주 실력을 입력해야합니다"
-        spec: PlaySpec
+        spec: [InputSpec]
         
         "type 은 유저의 유형을 나타냅니다. (1: 취미, 2: 본업, 3: 리스너)"
         type: Int
@@ -188,13 +137,73 @@ type Mutation{
 } 
 
 
+type Query{
+    test: String!
+
+    """ id가 조건에 맞는지 확인하는 쿼리 입니다"""
+    checkId(
+        "id는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다"
+        id: String!
+    ): Boolean!
+
+
+
+    """ username이 조건에 맞는지 확인하는 쿼리 입니다"""
+    checkUsername(
+        "username은 길이가 2 이상이여야 합니다"
+        username: String!
+    ): Boolean!
+
+    getPersonalInformation: PersonalInformation!
+}
+
+"""아이디 비밀번호 찾기와 비밀번호 재설정에 대한 리턴 타입입니다"""
+type IdPwSearchResult{
+    message: String!
+    id: String
+    token: String
+}
+
+"""본인확인 문자발송 input"""
+input SMSSend{
+    "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
+    phoneNumber: PhoneNumber!
+}
+
+"""본인확인 인증번호 확인 input"""
+input SMSCheck{
+    "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
+    phoneNumber: PhoneNumber!
+
+    "authenticationNumber 는 999999 와 같은 100000~999999 사이의 숫자 입니다"
+    authenticationNumber: Int!
+}
+
+"""유저의 주 악기와, 연주 실력을 입력합니다"""
+input InputSpec{
+
+    "연주자의 포지션 입니다"
+    session: String!
+
+    "연주자의 실력 입니다 (1 ~ 5)"
+    level: Int!
+}
+
+type Spec{
+    "연주자의 포지션 입니다"
+    session: String!
+    "연주자의 실력 입니다 (1 ~ 5)"
+    level: Int!
+}
+
+
 type PersonalInformation{
     id: String!
     username: String!
-    profile: URL!
+    profileURI: URL!
     phoneNumber: PhoneNumber!
+    prime: Boolean!
     introduce: String!
-    position: String!
-    level: Int!
+    spec: [Spec!]!
     type: Int!
 }

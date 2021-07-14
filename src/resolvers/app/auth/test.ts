@@ -214,10 +214,10 @@ describe("User auth service test", () => {
                                 phone: {
                                     phoneNumber: "${phoneNumber}"
                                 },
-                                spec: {
-                                    position: "Piano",
+                                spec: [{
+                                    session: "Piano",
                                     level: 2
-                                },
+                                }],
                                 type: 1
                             )
                         }
@@ -244,10 +244,10 @@ describe("User auth service test", () => {
                                 phone: {
                                     phoneNumber: "${phoneNumber}",
                                 },
-                                spec: {
-                                    position: "Piano",
+                                spec: [{
+                                    session: "Piano",
                                     level: 2
-                                },
+                                }],
                                 type: 1
                             )
                         }
@@ -269,10 +269,10 @@ describe("User auth service test", () => {
                                 phone: {
                                     phoneNumber: "${phoneNumber}",
                                 },
-                                spec: {
-                                    position: "Piano",
+                                spec: [{
+                                    session: "Piano",
                                     level: 2
-                                },
+                                }],
                                 type: 1
                             )
                         }
@@ -294,10 +294,10 @@ describe("User auth service test", () => {
                                 phone: { 
                                     phoneNumber: "+821000000000",
                                 },
-                                spec: {
-                                    position: "Piano",
+                                spec: [{
+                                    session: "Piano",
                                     level: 2
-                                },
+                                }],
                                 type: 1
                             )
                         }
@@ -319,10 +319,10 @@ describe("User auth service test", () => {
                                 phone: { 
                                     phoneNumber: "${phoneNumber}",
                                 },
-                                spec: {
-                                    position: "Piano",
+                                spec: [{
+                                    session: "Piano",
                                     level: 2
-                                }
+                                }],
                                 type: 1
                             )
                         }
@@ -344,10 +344,10 @@ describe("User auth service test", () => {
                                 phone: { 
                                     phoneNumber: "${phoneNumber}",
                                 },
-                                spec: {
-                                    position: "Piano",
+                                spec: [{
+                                    session: "Piano",
                                     level: 2
-                                },
+                                }],
                                 type: 1
                             )
                         }
@@ -369,10 +369,10 @@ describe("User auth service test", () => {
                                 phone: {
                                     phoneNumber: "${phoneNumber}",
                                 },
-                                spec: {
-                                    position: "Piano",
+                                spec: [{
+                                    session: "Piano",
                                     level: 2
-                                },
+                                }],
                                 type: 1
                             )
                         }
@@ -394,10 +394,10 @@ describe("User auth service test", () => {
                                 phone: {
                                     phoneNumber: "${phoneNumber}",
                                 },
-                                spec: {
-                                    position: "Piano",
+                                spec: [{
+                                    session: "Piano",
                                     level: 2
-                                },
+                                }],
                                 type: 1
                             )
                         }
@@ -419,10 +419,10 @@ describe("User auth service test", () => {
                                 phone: {
                                     phoneNumber: "${phoneNumber}",
                                 },
-                                spec: {
-                                    position: "Piano",
+                                spec: [{
+                                    session: "Piano",
                                     level: 2
-                                },
+                                }],
                                 type: 1
                             )
                         }
@@ -1045,16 +1045,21 @@ describe("User auth service test", () => {
                 mutation{
                     changeProfile(
                         username: "SeungWon",
-                        profile: "${uri[0]}",
+                        profileURI: "${uri[0]}",
                         introduce: "테스트 자기소개 글 입니다!",
-                        spec:{
-                            position: "Vocal",
+                        spec:[{
+                            session: "Vocal",
                             level: 1
-                        },
+                        }],
                         type: 1
                     ){
                         id
                         username
+                        spec{
+                            session
+                            level
+                        }
+                        profileURI
                     }
                 }
             `
@@ -1069,6 +1074,8 @@ describe("User auth service test", () => {
                 const result = body.data.changeProfile
                 equal(result.id, "test1234")
                 equal(result.username, "SeungWon")
+                equal(result.spec[0].session, "Vocal")
+                equal(result.profileURI, uri[0])
             })
             it("If only some of them were updated", async () => {
                 const query = `
@@ -1077,6 +1084,10 @@ describe("User auth service test", () => {
                         username
                         introduce
                         type
+                        spec{
+                            level
+                            session
+                        }
                     }
                 }
             `
@@ -1091,6 +1102,8 @@ describe("User auth service test", () => {
                 const result = body.data.changeProfile
                 equal(result.username, "SeungWon")
                 equal(result.type, 1)
+                equal(result.spec[0].session, "Vocal")
+                equal(result.spec[0].level, 1)
                 equal(result.introduce, "테스트 자기소개 글 입니다!")
             })
         })
@@ -1098,17 +1111,17 @@ describe("User auth service test", () => {
             it("If you do not include the essential factor", async () => {
                 const query = `
                 mutation{
-                    changeProfile(
-                        spec:{
-                            level: 5
-                        }
-                    ){
-                        username
-                        introduce
-                        type
-                    }
+                changeProfile(
+                    spec: [{
+                        level: 5
+                    }]
+                ) {
+                    username
+                    introduce
+                    type
                 }
-            `
+            }
+                `
                 await request(app)
                     .post("/api")
                     .set({
@@ -1122,17 +1135,17 @@ describe("User auth service test", () => {
                 const query = `
                 mutation{
                     changeProfile(
-                        spec:{
+                        spec: [{
                             level: 5,
-                            position: "piano"
-                        }
-                    ){
+                            session: "piano"
+                        }]
+                    ) {
                         username
                         introduce
                         type
                     }
                 }
-            `
+                `
                 const { body } = await request(app)
                     .post("/api")
                     .set({
@@ -1145,14 +1158,14 @@ describe("User auth service test", () => {
             })
             it("If you change to a nickname that exists", async () => {
                 const query = `mutation{
-                    changeProfile(
-                        username:"SeungWon"
-                    ){
-                        username
-                        introduce
-                        type
-                    }
-                }`
+                changeProfile(
+                    username: "SeungWon"
+                ) {
+                    username
+                    introduce
+                    type
+                }
+            }`
                 const { body } = await request(app)
                     .post("/api")
                     .set({
@@ -1173,8 +1186,10 @@ describe("User auth service test", () => {
                         getPersonalInformation{
                             id
                             username
-                            position
-                            level
+                            spec{ 
+                                session
+                                level
+                            }
                             type
                         }
                     }
@@ -1185,8 +1200,8 @@ describe("User auth service test", () => {
                     .expect(200)
                 equal(body.data.getPersonalInformation.id, "test1234")
                 equal(body.data.getPersonalInformation.username, "SeungWon")
-                equal(body.data.getPersonalInformation.position, "Vocal")
-                equal(body.data.getPersonalInformation.level, 1)
+                equal(body.data.getPersonalInformation.spec[0].session, "Vocal")
+                equal(body.data.getPersonalInformation.spec[0].level, 1)
                 equal(body.data.getPersonalInformation.type, 1)
             })
         })
@@ -1197,8 +1212,6 @@ describe("User auth service test", () => {
                         getPersonalInformation{
                             id
                             username
-                            position
-                            level
                             type
                         }
                     }
@@ -1217,8 +1230,8 @@ describe("User auth service test", () => {
                 const query = `
                     mutation{
                         deleteAccount(
-                            password:"xxxxxx"
-                        )
+                            password: "xxxxxx"
+                        ) 
                     }
                 `
                 const { body } = await request(app)
@@ -1235,7 +1248,7 @@ describe("User auth service test", () => {
                 const query = `
                     mutation{
                         deleteAccount(
-                            password:"asdfdsasdf"
+                            password: "asdfdsasdf"
                         )
                     }
                 `
@@ -1255,7 +1268,7 @@ describe("User auth service test", () => {
                 const query = `
                     mutation{
                         deleteAccount(
-                            password:"exPassword!"
+                            password: "exPassword!"
                         )
                     }
                 `
