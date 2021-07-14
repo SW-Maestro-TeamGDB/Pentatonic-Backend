@@ -1,6 +1,7 @@
 import { ObjectID } from "mongodb"
+import { File } from "config/types"
 
-export interface InputSong {
+interface InputSong {
     songURI: URL
     name: string
     songImg: URL
@@ -11,11 +12,22 @@ export interface InputSong {
     level: number
 }
 
+interface InputCode {
+    code: string
+}
+
+export interface InputUploadSong extends InputCode {
+    song: InputSong
+}
+
 export interface Song extends InputSong {
     _id: ObjectID
     playTime: number
 }
 
+export interface InputUploadDefaultImg extends InputCode {
+    file: File
+}
 
 const SongGenres = {
     Pop: "Pop",

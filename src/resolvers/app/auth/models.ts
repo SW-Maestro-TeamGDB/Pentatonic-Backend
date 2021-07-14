@@ -1,15 +1,10 @@
 import { File } from "config/types"
 
-export interface TokenInterface {
-
-    id: string
-}
-
-export interface SMSSend {
+interface SMSSend {
     phoneNumber: string
 }
 
-export interface SMSCheck {
+interface SMSCheck {
     phoneNumber: string
     authenticationNumber: number
 }
@@ -19,7 +14,7 @@ export interface IdPwSearchResult {
     [key: string]: string
 }
 
-export interface Spec {
+interface Spec {
     session: String
     level: Number
 }

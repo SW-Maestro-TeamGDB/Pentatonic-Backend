@@ -140,7 +140,7 @@ type Mutation {
     """
     SONG의 기본 음원을 업로드 합니다
     """
-    uploadSongDefaultImage(
+    uploadDefaultFile(
         "권한을 확인하기 위한 코드입니다"
         code: String!
         "파일 입니다"

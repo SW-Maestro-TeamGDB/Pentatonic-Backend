@@ -1,30 +1,34 @@
 import { Db } from "mongodb"
-import { Redis } from "config/types"
-import { Song } from "resolvers/app/song/models"
-import { File } from "config/types"
+import { InputUploadSong, InputUploadDefaultImg } from "resolvers/app/song/models"
+import { Context } from "config/types"
 import env from "config/env"
 import { ApolloError } from "apollo-server-errors"
-import { uploadS3 } from "lib"
-
-export const uploadDefaultAR = async (
-    args: void, {
-        code,
-        file
-    }: {
-        code: string
-        file: File
-    }, {
-        db
-    }: {
-        db: Db
-    }
-) => {
+import { uploadS3, isValidImage, getAudioDuration } from "lib"
+export const uploadDefaultFile = async (parent: void, args: InputUploadDefaultImg, context: Context) => {
+    const { code, file } = await args
     if (code !== env.JWT_SECRET) {
         return new ApolloError("관리자 코드가 알맞지 않습니다")
     }
-    const song = await file
-    const stream = await file.createReadStream()
-    const fileName = `${Date.now()}-${song.filename}`
-    await uploadS3(stream, fileName, song.mimetype)
+    const stream = file.createReadStream()
+    const fileName = `${Date.now()}-${file.filename}`
+    await uploadS3(stream, fileName, file.mimetype)
     return `${env.S3_URI}/${fileName}`
+}
+
+export const uploadSong = async (parent: void, args: InputUploadSong, context: Context) => {
+    const { name, songImg, genre, artist, songURI, weeklyChallenge, level } = args.song
+    if (args.code !== env.JWT_SECRET) {
+        return new ApolloError("관리자 코드가 알맞지 않습니다")
+    }
+    const { db } = context
+    return db.collection("song").insertOne({
+        name,
+        songImg,
+        genre,
+        artist,
+        songURI: songURI.href,
+        weeklyChallenge,
+        level,
+        duration: await getAudioDuration(args.song.songURI.href),
+    }).then(({ ops }) => ops[0])
 }
