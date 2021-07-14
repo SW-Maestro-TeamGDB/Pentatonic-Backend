@@ -5,10 +5,9 @@ import fetch from "node-fetch"
 import env from "config/env"
 import { deepStrictEqual as equal } from "assert"
 import * as redis from "config/connectRedis"
-import { Redis } from "config/types"
+import { Redis, JWTUser } from "config/types"
 import DB from "config/connectDB"
 import jwt from "jsonwebtoken"
-import { TokenInterface } from "resolvers/app/auth/models"
 import { Db } from "mongodb"
 
 const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
@@ -454,7 +453,7 @@ describe("User auth service test", () => {
                         .expect(200)
                     equal(typeof body.data.login, "string")
                     token.push(body.data.login)
-                    const user = jwt.verify(token[0], env.JWT_SECRET) as TokenInterface
+                    const user = jwt.verify(token[0], env.JWT_SECRET) as JWTUser
                     equal(user.id, "test1234")
                 })
             })

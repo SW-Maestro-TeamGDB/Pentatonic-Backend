@@ -1,11 +1,11 @@
-import { Db } from "mongodb"
 import { InputUploadSong, InputUploadDefaultImg } from "resolvers/app/song/models"
 import { Context } from "config/types"
 import env from "config/env"
 import { ApolloError } from "apollo-server-errors"
 import { uploadS3, isValidImage, getAudioDuration } from "lib"
 export const uploadDefaultFile = async (parent: void, args: InputUploadDefaultImg, context: Context) => {
-    const { code, file } = await args
+    const { code } = args
+    const file = await args.file
     if (code !== env.JWT_SECRET) {
         return new ApolloError("관리자 코드가 알맞지 않습니다")
     }

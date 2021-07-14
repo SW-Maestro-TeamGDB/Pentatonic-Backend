@@ -150,7 +150,12 @@ type Mutation {
     """
     Song을 업로드 합니다
     """
-    uploadSong(song: InputSong!): Song
+    uploadSong(
+        "권한을 확인하기 위한 코드입니다"
+        code: String!
+        "파일 입니다"
+        song: InputSong!
+    ): Song!
 }
 
 type Query {
