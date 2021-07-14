@@ -1,13 +1,21 @@
-export interface Song {
+import { ObjectID } from "mongodb"
+
+export interface InputSong {
     songURI: URL
     name: string
     songImg: URL
     genre: SongGenres
     artist: string
+
     weeklyChallenge: boolean
-    playTime: number
     level: number
 }
+
+export interface Song extends InputSong {
+    _id: ObjectID
+    playTime: number
+}
+
 
 const SongGenres = {
     Pop: "Pop",

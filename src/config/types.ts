@@ -1,5 +1,5 @@
 import { ReadStream } from "fs"
-
+import { Db } from "mongodb"
 export interface File {
     filename: string
     mimetype: string
@@ -15,4 +15,10 @@ export interface Redis {
 
 export interface JWTUser {
     id: string
+}
+
+export interface Context {
+    user: JWTUser
+    db: Db
+    redis: Redis
 }

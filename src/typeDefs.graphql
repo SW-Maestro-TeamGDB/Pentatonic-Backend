@@ -1,10 +1,10 @@
 # Upload Type
 scalar Upload
 
-
-type Mutation{
-
-    """회원가입 뮤테이션 이며 회원가입의 성공 여부를 1, 0으로 반환합니다"""
+type Mutation {
+    """
+    회원가입 뮤테이션 이며 회원가입의 성공 여부를 1, 0으로 반환합니다
+    """
     register(
         "id 는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다"
         id: String!
@@ -23,19 +23,12 @@ type Mutation{
 
         "type 은 유저의 유형을 나타냅니다. (1: 취미, 2: 본업, 3: 리스너)"
         type: Int!
-
     ): Boolean!
 
-
-
-    """인증번호를 전송하는 뮤테이션 입니다. (발송성공 ? 1 : 0)"""
-    registerSMSSend(
-        "휴대전화 정보를 입력해야합니다"
-        phone: SMSSend!
-
-    ): Boolean!
-
-
+    """
+    인증번호를 전송하는 뮤테이션 입니다. (발송성공 ? 1 : 0)
+    """
+    registerSMSSend("휴대전화 정보를 입력해야합니다" phone: SMSSend!): Boolean!
 
     "SMS 인증번호를 확인하는 뮤테이션 입니다. (본인확인 완료 ? 1 : 0)"
     registerSMSCheck(
@@ -45,32 +38,33 @@ type Mutation{
 
     test(data: PhoneNumber!): Boolean!
 
-
-
-    """Login을 하는 뮤테이션 입니다. JWT 토큰을 반환합니다"""
+    """
+    Login을 하는 뮤테이션 입니다. JWT 토큰을 반환합니다
+    """
     login(
-
         "계정의 id 입니다"
-        id: String!,
+        id: String!
 
         "계정의 password 입니다"
         password: String!
     ): JWT!
 
+    """
+    Id 를 찾기위해 휴대번호에 인증번호를 발송합니다
+    """
+    findIdSMSSend("휴대전화 정보를 입력해야합니다" phone: SMSSend!): Boolean!
 
-    """Id 를 찾기위해 휴대번호에 인증번호를 발송합니다"""
-    findIdSMSSend(
-        "휴대전화 정보를 입력해야합니다"
-        phone: SMSSend!
-    ): Boolean!
-
-    """Id 를 찾기위해 인증번호로 휴대전화 인증을 합니다"""
+    """
+    Id 를 찾기위해 인증번호로 휴대전화 인증을 합니다
+    """
     findIdSMSCheck(
         "휴대전화 정보를 입력해야합니다"
         phone: SMSCheck!
     ): IdPwSearchResult!
-    
-    """Password 를 찾기위해 휴대번호에 인증번호를 발송합니다"""
+
+    """
+    Password 를 찾기위해 휴대번호에 인증번호를 발송합니다
+    """
     findPasswordSMSSend(
         "계정의 id 입니다"
         id: String!
@@ -79,7 +73,9 @@ type Mutation{
         phone: SMSSend!
     ): Boolean!
 
-    """Password 를 찾기위해 인증번호로 휴대전화 인증을 합니다"""
+    """
+    Password 를 찾기위해 인증번호로 휴대전화 인증을 합니다
+    """
     findPasswordSMSCheck(
         "계정의 id 입니다"
         id: String!
@@ -88,8 +84,9 @@ type Mutation{
         phone: SMSCheck!
     ): IdPwSearchResult!
 
-
-    """비밀번호 찾기에서 비밀번호를 재설정 해주는 뮤테이션 입니다"""
+    """
+    비밀번호 찾기에서 비밀번호를 재설정 해주는 뮤테이션 입니다
+    """
     resetPassword(
         "휴대전화 인증의 결과값인 토큰 입니다"
         token: String!
@@ -97,7 +94,9 @@ type Mutation{
         resetPassword: String!
     ): Boolean!
 
-    """비밀번호를 변경하는 뮤테이션 입니다"""
+    """
+    비밀번호를 변경하는 뮤테이션 입니다
+    """
     changePassword(
         "기존의 비밀번호 입니다"
         password: String!
@@ -105,16 +104,18 @@ type Mutation{
         changePassword: String!
     ): Boolean!
 
-
-    """이미지를 Upload하고 URL을 반환합니다"""
+    """
+    이미지를 Upload하고 URL을 반환합니다
+    """
     uploadProfile(
         ".jpg, .jpeg, .png 파일을 전송해야 합니다"
         file: Upload!
     ): URL!
 
-    """사용자의 프로필을 변경합니다"""
+    """
+    사용자의 프로필을 변경합니다
+    """
     changeProfile(
-
         "변경할 유저 이름 입니다"
         username: String
 
@@ -126,43 +127,46 @@ type Mutation{
 
         "주 악기와 연주 실력을 입력해야합니다"
         spec: [InputSpec]
-        
+
         "type 은 유저의 유형을 나타냅니다. (1: 취미, 2: 본업, 3: 리스너)"
         type: Int
     ): PersonalInformation!
 
+    """
+    계정을 삭제합니다
+    """
+    deleteAccount("비밀번호 입니다" password: String!): Boolean!
 
-    """계정을 삭제합니다"""    
-    deleteAccount(
-
-        "비밀번호 입니다"
-        password: String!
-
-    ): Boolean!
-
-    """SONG의 기본 음원을 업로드 합니다"""
-    uploadDefaultAR(
+    """
+    SONG의 기본 음원을 업로드 합니다
+    """
+    uploadSongDefaultImage(
         "권한을 확인하기 위한 코드입니다"
-        code: String!,
+        code: String!
         "파일 입니다"
         file: Upload!
     ): URL!
-    
-} 
 
+    """
+    Song을 업로드 합니다
+    """
+    uploadSong(song: InputSong!): Song
+}
 
-type Query{
+type Query {
     test: String!
 
-    """ id가 조건에 맞는지 확인하는 쿼리 입니다"""
+    """
+    id가 조건에 맞는지 확인하는 쿼리 입니다
+    """
     checkId(
         "id는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다"
         id: String!
     ): Boolean!
 
-
-
-    """ username이 조건에 맞는지 확인하는 쿼리 입니다"""
+    """
+    username이 조건에 맞는지 확인하는 쿼리 입니다
+    """
     checkUsername(
         "username은 길이가 2 이상이여야 합니다"
         username: String!
@@ -171,21 +175,27 @@ type Query{
     getPersonalInformation: PersonalInformation!
 }
 
-"""아이디 비밀번호 찾기와 비밀번호 재설정에 대한 리턴 타입입니다"""
-type IdPwSearchResult{
+"""
+아이디 비밀번호 찾기와 비밀번호 재설정에 대한 리턴 타입입니다
+"""
+type IdPwSearchResult {
     message: String!
     id: String
     token: String
 }
 
-"""본인확인 문자발송 input"""
-input SMSSend{
+"""
+본인확인 문자발송 input
+"""
+input SMSSend {
     "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
     phoneNumber: PhoneNumber!
 }
 
-"""본인확인 인증번호 확인 input"""
-input SMSCheck{
+"""
+본인확인 인증번호 확인 input
+"""
+input SMSCheck {
     "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
     phoneNumber: PhoneNumber!
 
@@ -193,9 +203,10 @@ input SMSCheck{
     authenticationNumber: Int!
 }
 
-"""유저의 주 악기와, 연주 실력을 입력합니다"""
-input InputSpec{
-
+"""
+유저의 주 악기와, 연주 실력을 입력합니다
+"""
+input InputSpec {
     "연주자의 포지션 입니다"
     session: String!
 
@@ -203,15 +214,14 @@ input InputSpec{
     level: Int!
 }
 
-type Spec{
+type Spec {
     "연주자의 포지션 입니다"
     session: String!
     "연주자의 실력 입니다 (1 ~ 5)"
     level: Int!
 }
 
-
-type PersonalInformation{
+type PersonalInformation {
     id: String!
     username: String!
     profileURI: URL!
@@ -220,4 +230,36 @@ type PersonalInformation{
     introduce: String!
     spec: [Spec!]!
     type: Int!
+}
+
+type Song {
+    id: ObjectID!
+    name: String!
+    songURI: URL!
+    songImg: URL!
+    genre: String!
+    artist: String!
+    weeklyChallenge: Boolean!
+    duration: Float!
+    level: Int!
+}
+
+input InputSong {
+    name: String!
+    songURI: URL!
+    songImg: URL!
+    genre: String!
+    artist: String!
+    weeklyChallenge: Boolean!
+    level: Int!
+}
+
+input InputUpdateSong {
+    name: String
+    songURI: URL
+    songImg: URL
+    genre: String
+    artist: String
+    weeklyChallenge: Boolean
+    level: Int
 }

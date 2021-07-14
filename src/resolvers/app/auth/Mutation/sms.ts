@@ -1,27 +1,15 @@
-import { Db } from "mongodb"
 import { ApolloError } from "apollo-server-express"
-import { Redis } from "config/types"
+import { Context } from "config/types"
 import { smsRequest, changePhoneNumber } from "lib"
-import { SMSCheck, SMSSend, IdPwSearchResult } from "resolvers/app/auth/models"
+import { InputSMSSend, IdPwSearchResult, InputSMSCheck, InputFindPasswordSMSSend, InputFindPasswordSMSCheck } from "resolvers/app/auth/models"
 import cryptoRandomString from 'crypto-random-string'
 
-export const registerSMSSend = async (
-    parent: void, {
-        phone
-    }: {
-        phone: SMSSend
-    }, {
-        redis,
-        db
-    }: {
-        redis: Redis,
-        db: Db
-    }
-) => {
-    const { phoneNumber } = phone
+export const registerSMSSend = async (parent: void, args: InputSMSSend, context: Context) => {
+    const { phoneNumber } = args.phone
     if (phoneNumber.startsWith("+82") === false) {
         return new ApolloError("한국 번호가 아닙니다")
     }
+    const { db, redis } = context
     const user = await db.collection("user").findOne({ phoneNumber })
     if (user !== null) {
         return new ApolloError("이미 해당 전화번호로 가입한 유저가 있습니다")
@@ -33,19 +21,10 @@ export const registerSMSSend = async (
     return true
 }
 
-export const registerSMSCheck = async (
-    parent: void, {
-        phone
-    }: {
-        phone: SMSCheck
-    }, {
-        redis
-    }: {
-        redis: Redis
-    }
-) => {
-    const { phoneNumber, authenticationNumber } = phone
+export const registerSMSCheck = async (parent: void, args: InputSMSCheck, context: Context) => {
+    const { phoneNumber, authenticationNumber } = args.phone
     const smsNumber = changePhoneNumber(phoneNumber)
+    const { redis } = context
     const authNumber = await redis.get(smsNumber)
     if (authNumber === null) {
         return new ApolloError("인증번호를 다시 요청해야합니다")
@@ -60,20 +39,9 @@ export const registerSMSCheck = async (
     return true
 }
 
-export const findIdSMSSend = async (
-    parent: void, {
-        phone
-    }: {
-        phone: SMSSend
-    }, {
-        db,
-        redis
-    }: {
-        db: Db
-        redis: Redis
-    }
-) => {
-    const { phoneNumber } = phone
+export const findIdSMSSend = async (parent: void, args: InputSMSSend, context: Context) => {
+    const { phoneNumber } = args.phone
+    const { db, redis } = context
     const user = await db.collection("user").findOne({ phoneNumber })
     if (user === null) {
         return new ApolloError("해당 번호로 가입한 유저가 존재하지 않습니다")
@@ -85,20 +53,9 @@ export const findIdSMSSend = async (
     return true
 }
 
-export const findIdSMSCheck = async (
-    parent: void, {
-        phone
-    }: {
-        phone: SMSCheck
-    }, {
-        db,
-        redis
-    }: {
-        db: Db
-        redis: Redis
-    }
-): Promise<ApolloError | IdPwSearchResult> => {
-    const { phoneNumber, authenticationNumber } = phone
+export const findIdSMSCheck = async (parent: void, args: InputSMSCheck, context: Context): Promise<ApolloError | IdPwSearchResult> => {
+    const { phoneNumber, authenticationNumber } = args.phone
+    const { db, redis } = context
     const user = await db.collection("user").findOne({ phoneNumber })
     if (user === null) {
         return new ApolloError("해당 번호로 가입한 유저가 존재하지 않습니다")
@@ -117,22 +74,10 @@ export const findIdSMSCheck = async (
     }
 }
 
-export const findPasswordSMSSend = async (
-    parent: void, {
-        id,
-        phone
-    }: {
-        id: string,
-        phone: SMSSend
-    }, {
-        db,
-        redis
-    }: {
-        db: Db,
-        redis: Redis
-    }
-) => {
-    const { phoneNumber } = phone
+export const findPasswordSMSSend = async (parent: void, args: InputFindPasswordSMSSend, context: Context) => {
+    const { phoneNumber } = args.phone
+    const { id } = args
+    const { db, redis } = context
     const user = await db.collection("user").findOne({ phoneNumber, id })
     if (user === null) {
         return new ApolloError("해당 정보로 가입한 유저가 존재하지 않습니다")
@@ -144,22 +89,10 @@ export const findPasswordSMSSend = async (
     return true
 }
 
-export const findPasswordSMSCheck = async (
-    parent: void, {
-        id,
-        phone
-    }: {
-        id: string,
-        phone: SMSCheck
-    }, {
-        db,
-        redis
-    }: {
-        db: Db,
-        redis: Redis
-    }
-): Promise<ApolloError | IdPwSearchResult> => {
-    const { phoneNumber, authenticationNumber } = phone
+export const findPasswordSMSCheck = async (parent: void, args: InputFindPasswordSMSCheck, context: Context) => {
+    const { phoneNumber, authenticationNumber } = args.phone
+    const { id } = args
+    const { db, redis } = context
     const user = await db.collection("user").findOne({ id, phoneNumber })
     if (user === null) {
         return new ApolloError("해당 정보의 유저를 찾을 수 없습니다")
