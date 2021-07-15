@@ -2,7 +2,7 @@ import { InputUploadSong, InputUploadDefaultImg } from "resolvers/app/song/model
 import { Context } from "config/types"
 import env from "config/env"
 import { ApolloError } from "apollo-server-errors"
-import { uploadS3, isValidImage, getAudioDuration } from "lib"
+import { uploadS3, getAudioDuration } from "lib"
 export const uploadDefaultFile = async (parent: void, args: InputUploadDefaultImg, context: Context) => {
     const { code } = args
     const file = await args.file
@@ -23,7 +23,7 @@ export const uploadSong = async (parent: void, args: InputUploadSong, context: C
     const { db } = context
     return db.collection("song").insertOne({
         name,
-        songImg,
+        songImg: songImg.href,
         genre,
         artist,
         songURI: songURI.href,

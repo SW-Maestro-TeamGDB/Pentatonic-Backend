@@ -178,6 +178,8 @@ type Query {
     ): Boolean!
 
     getPersonalInformation: PersonalInformation!
+
+    getAllSongs: [Song!]!
 }
 
 """
@@ -247,6 +249,7 @@ type Song {
     weeklyChallenge: Boolean!
     duration: Float!
     level: Int!
+    instrument: [Instrument!]!
 }
 
 input InputSong {
@@ -267,4 +270,13 @@ input InputUpdateSong {
     artist: String
     weeklyChallenge: Boolean
     level: Int
+}
+
+
+type Instrument {
+    id: ObjectID!
+    songId: ObjectID!
+    instrumentURI: URL!
+    name: String!
+    duration: Float!
 }

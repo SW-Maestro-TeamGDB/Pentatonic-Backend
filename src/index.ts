@@ -13,7 +13,7 @@ import * as redis from "config/connectRedis"
 import { makeExecutableSchema } from "@graphql-tools/schema"
 import * as graphqlScalars from 'graphql-scalars'
 import { applyMiddleware } from "graphql-middleware"
-import { permissions, getUser } from "lib"
+import { permissions, getUser, instrumentsLoader } from "lib"
 import express from "express"
 import expressPlayground from "graphql-playground-middleware-express"
 import bodyParser from "body-parser"
@@ -47,7 +47,15 @@ const start = async () => {
             const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || null
             const token = req.headers.authorization || ''
             const user = getUser(token)
-            return { db, redis, user, ip }
+            return {
+                db,
+                redis,
+                user,
+                ip,
+                loaders: {
+                    instrumentsLoader: instrumentsLoader()
+                }
+            }
         },
         validationRules: [
             depthLimit(8),

@@ -1,10 +1,17 @@
 import { ReadStream } from "fs"
-import { Db } from "mongodb"
+import { Db, ObjectID } from "mongodb"
+import DataLoader from "dataloader"
 export interface File {
     filename: string
     mimetype: string
     encoding: string
     createReadStream: () => ReadStream
+}
+
+interface Loaders {
+    loaders: {
+        instrumentsLoader: DataLoader<ObjectID, any, ObjectID>
+    }
 }
 
 export interface Redis {
@@ -17,7 +24,7 @@ export interface JWTUser {
     id: string
 }
 
-export interface Context {
+export interface Context extends Loaders {
     user: JWTUser
     db: Db
     redis: Redis

@@ -23,6 +23,7 @@ export interface InputUploadSong extends InputCode {
 export interface Song extends InputSong {
     _id: ObjectID
     playTime: number
+    instrument: string[]
 }
 
 export interface InputUploadDefaultImg extends InputCode {
@@ -37,3 +38,11 @@ const SongGenres = {
 } as const
 
 type SongGenres = typeof SongGenres[keyof typeof SongGenres]
+
+export interface Instrument {
+    _id: ObjectID
+    songId: ObjectID
+    instrumentURI: URL
+    name: string
+    duration: number
+}
