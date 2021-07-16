@@ -153,8 +153,18 @@ type Mutation {
     uploadSong(
         "권한을 확인하기 위한 코드입니다"
         code: String!
-        "파일 입니다"
+        "음원 정보 입니다"
         song: InputSong!
+    ): Song!
+
+    """
+    Song을 업데이트 합니다
+    """
+    updateSong(
+        "권한을 확인하기 위한 코드입니다"
+        code: String!
+        "음원 정보 입니다"
+        song: InputUpdateSong!
     ): Song!
 }
 

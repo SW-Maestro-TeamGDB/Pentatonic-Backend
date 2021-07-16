@@ -6,12 +6,17 @@ interface InputSong {
     name: string
     songImg: URL
     genre: SongGenres
+    release: Date
     artist: string
+    album: string
 
     weeklyChallenge: boolean
     level: number
-}
 
+    id?: ObjectID
+
+}
+export type SongKeys = keyof InputSong
 interface InputCode {
     code: string
 }
@@ -19,6 +24,7 @@ interface InputCode {
 export interface InputUploadSong extends InputCode {
     song: InputSong
 }
+
 
 export interface Song extends InputSong {
     _id: ObjectID
@@ -38,7 +44,6 @@ const SongGenres = {
 } as const
 
 type SongGenres = typeof SongGenres[keyof typeof SongGenres]
-
 export interface Instrument {
     _id: ObjectID
     songId: ObjectID

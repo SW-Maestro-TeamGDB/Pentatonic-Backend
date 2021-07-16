@@ -5,8 +5,6 @@ import fetch from "node-fetch"
 import env from "config/env"
 import { deepStrictEqual as equal } from "assert"
 
-const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
-
 const fileUpload = (query: string, variables: { [x: string]: string }) => {
     const map = Object.assign({}, Object.keys(variables).map(key => [`variables.${key}`]))
     const response = request(app)
