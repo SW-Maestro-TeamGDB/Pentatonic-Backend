@@ -31,19 +31,27 @@ extend type Mutation {
 }
 
 extend type Query {
+    """Penta-Tonic에 있는 모든 곡을 불러옵니다"""
     getAllSongs: [Song!]!
 }
 
+"""올라와 있는 곡에 대한 세션별 연주에 대한 타입입니다"""
 type Instrument {
-    id: ObjectID!
+    "데모 세션에 대한 id 입니다"
+    instId: ObjectID!
+    "해당 연주가 업로드 되어있는 노래에 대한 id 입니다"
     songId: ObjectID!
+    "연주의 파일 주소입니다"
     instrumentURI: URL!
+    "파일의 이름 입니다"
     name: String!
+    "파일의 길이 입니다"
     duration: Float!
 }
 
+"""올라와 있는 곡에 대한 타입입니다"""
 type Song {
-    id: ObjectID!
+    songId: ObjectID!
     name: String!
     songURI: URL!
     songImg: URL!

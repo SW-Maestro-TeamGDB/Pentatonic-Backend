@@ -1,7 +1,4 @@
 extend type Query {
+    """Server의 health를 check하는 Query입니다"""
     test: String!
-}
-
-extend type Mutation {
-    test(data: PhoneNumber!): Boolean!
 }

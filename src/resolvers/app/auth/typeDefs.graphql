@@ -4,24 +4,15 @@ type Mutation{
     """
     register(
         "유저의 정보를 입력합니다"
-        user: InputRegister!
-    ): Boolean!
+        input: RegisterInput!
+    ): JWT!
 
     """
     인증번호를 전송하는 뮤테이션 입니다. (발송성공 ? 1 : 0)
     """
-    registerSMSSend(
+    sendAuthCode(
         "휴대전화 정보를 입력해야합니다" 
-        phone: SMSSend!
-    ): Boolean!
-
-
-    """
-    SMS 인증번호를 확인하는 뮤테이션 입니다. (본인확인 완료 ? 1 : 0)
-    """
-    registerSMSCheck(
-        "휴대전화 정보를 입력해야합니다"
-        phone: SMSCheck!
+        input: sendAuthCodeInput!
     ): Boolean!
 
     """
@@ -29,55 +20,16 @@ type Mutation{
     """
     login(
         "유저의 정보를 입력합니다"
-        user: InputLogin!
+        input: LoginInput!
     ): JWT!
 
-    """
-    Id 를 찾기위해 휴대번호에 인증번호를 발송합니다
-    """
-    findIdSMSSend(
-        "휴대전화 정보를 입력해야합니다" 
-        phone: SMSSend!
-    ): Boolean!
+    findId(
+        input: FindIdInput!
+    ): FindId!
 
-    """
-    Id 를 찾기위해 인증번호로 휴대전화 인증을 합니다
-    """
-    findIdSMSCheck(
-        "휴대전화 정보를 입력해야합니다"
-        phone: SMSCheck!
-    ): IdPwSearchResult!
 
-    """
-    Password 를 찾기위해 휴대번호에 인증번호를 발송합니다
-    """
-    findPasswordSMSSend(
-        "유저의 정보를 입력합니다"
-        user: InputId!
-
-        "휴대전화 정보를 입력해야합니다"
-        phone: SMSSend!
-    ): Boolean!
-
-    """
-    Password 를 찾기위해 인증번호로 휴대전화 인증을 합니다
-    """
-    findPasswordSMSCheck(
-        "유저의 정보를 입력합니다"
-        user: InputId!
-
-        "휴대전화 정보를 입력해야합니다"
-        phone: SMSCheck!
-    ): IdPwSearchResult!
-
-    """
-    비밀번호 찾기에서 비밀번호를 재설정 해주는 뮤테이션 입니다
-    """
     resetPassword(
-        "휴대전화 인증의 결과값인 토큰 입니다"
-        token: String!
-        "재설정과 관련된 정보를 입력합니다"
-        reset: InputPassword!
+        input: ResetPasswordInput!
     ): Boolean!
 
     """
@@ -85,15 +37,15 @@ type Mutation{
     """
     changePassword(
         "변경과 관련된 정보를 입력합니다"
-        change: InputChangePassword!
+        input: ChangePasswordInput!
     ): Boolean!
 
     """
     이미지를 Upload하고 URL을 반환합니다
     """
-    uploadProfile(
+    uploadImageFile(
         ".jpg, .jpeg, .png 파일을 전송해야 합니다"
-        file: Upload!
+        input: UploadImageInput!
     ): URL!
 
     """
@@ -101,7 +53,7 @@ type Mutation{
     """
     changeProfile(
         "변경과 관련된 정보를 입력합니다"
-        change: InputChangeProfile!
+        input: ChangeProfileInput!
     ): PersonalInformation!
 
     """
@@ -109,7 +61,7 @@ type Mutation{
     """
     deleteAccount(
         "유저의 정보를 입력합니다"
-        user: InputPassword!
+        input: DeleteAccountInput!
     ): Boolean!
 }
 
@@ -135,18 +87,6 @@ type Query{
 }
 
 """
-아이디 비밀번호 찾기와 비밀번호 재설정에 대한 리턴 타입입니다
-"""
-type IdPwSearchResult {
-    "결과 메세제 입니다"
-    message: String!
-    "아이디 입니다"
-    id: String
-    "본인확인에 사용할 토큰입니다"
-    token: String
-}
-
-"""
 유저의 개인 정보 입니다
 """
 type PersonalInformation {
@@ -166,51 +106,73 @@ type PersonalInformation {
     type: Int!
 }
 
+type FindId{
+    id: String!
+}
+
+
+input UploadImageInput{
+    file: Upload!
+}
 
 """
 본인확인 문자발송 input
 """
-input SMSSend {
+
+input sendAuthCodeInput {
+    isRegistration: Boolean!
+
     "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
     phoneNumber: PhoneNumber!
 }
 
-"""
-본인확인 인증번호 확인 input
-"""
-input SMSCheck {
+
+input FindIdInput {
     "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
     phoneNumber: PhoneNumber!
-
+    
     "authenticationNumber 는 123456 와 같은 100000~999999 사이의 숫자 입니다"
-    authenticationNumber: Int!
+    authCode: Int!
 }
 
+input ResetPasswordInput {
+    "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
+    phoneNumber: PhoneNumber!
+    
+    "authenticationNumber 는 123456 와 같은 100000~999999 사이의 숫자 입니다"
+    authCode: Int!
+ 
+    user: InputPassword!
+}
 
-input InputRegister {
-    "id 는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다"
-    id: String!
-
-    "password 는 길이가 6 이상이여야하며 영문과 숫자 특수문자가 가능합니다"
-    password: String!
-
-    "username 은 길이가 2 이상이여야 합니다"
+input RegisterUserInput{
     username: String!
-
-    "휴대전화 정보를 입력해야합니다"
-    phone: SMSSend!
-
-    "type 은 유저의 유형을 나타냅니다. (1: 취미, 2: 본업, 3: 리스너)"
+    id: String!
+    password: String!
     type: Int!
 }
 
+input RegisterInput{
+    user: RegisterUserInput!
+
+    "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
+    phoneNumber: PhoneNumber!
+    
+    "authenticationNumber 는 123456 와 같은 100000~999999 사이의 숫자 입니다"
+    authCode: Int!
+}
+
 """로그인의 사용되는 input 입니다"""
-input InputLogin {
+input LoginUserInput {
     "계정의 id 입니다"
     id: String!
 
     "계정의 password 입니다"
     password: String!
+}
+
+input LoginInput {
+    user: LoginUserInput!
 }
 
 """아이디를 입력하는 input 입니다"""
@@ -225,18 +187,22 @@ input InputPassword {
     password: String!
 }
 
-"""비밀번호를 재설정 하는 input 입니다"""
-input InputChangePassword {
+input ChangePassword{
     "변경할 비밀번호 입니다"
     changePassword: String!
     "현 비밀번호 입니다"
     password: String!
 }
 
+"""비밀번호를 재설정 하는 input 입니다"""
+input ChangePasswordInput {
+    user: ChangePassword!
+}
+
 """
 프로필을 변경하는 input 입니다 업데이트할 필드만 담아 요청합니다
 """
-input InputChangeProfile {
+input ChangeProfile {
     "계정의 username 입니다"
     username: String
     "계정의 profileURI 입니다"
@@ -246,3 +212,11 @@ input InputChangeProfile {
     "계정의 회원 유형 입니다"
     type: Int
 } 
+
+input ChangeProfileInput {
+    user: ChangeProfile!
+}
+
+input DeleteAccountInput {
+    user: InputPassword!
+}

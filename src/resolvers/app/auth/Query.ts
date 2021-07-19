@@ -1,8 +1,8 @@
 import { ApolloError } from "apollo-server-express"
-import { InputUsername, InputId } from "resolvers/app/auth/models"
+import { CheckIdInput, CheckUsernameInput } from "resolvers/app/auth/models"
 import { Context } from "config/types"
 
-export const checkUsername = async (parent: void, args: InputUsername, context: any) => {
+export const checkUsername = async (parent: void, args: CheckUsernameInput, context: any) => {
     const { username } = args
     if (username.length < 2) return new ApolloError("username 길이는 2 이상이여야합니다.")
     const { db } = context
@@ -21,7 +21,7 @@ const isValidId = (id: string) => {
     return true
 }
 
-export const checkId = async (parent: void, args: InputId, context: Context) => {
+export const checkId = async (parent: void, args: CheckIdInput, context: Context) => {
     const { id } = args
     if (id.length < 6) {
         return new ApolloError("id는 길이는 6 이상이여야합니다.")

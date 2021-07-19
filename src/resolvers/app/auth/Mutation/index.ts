@@ -1,2 +1,2 @@
-export * from "resolvers/app/auth/Mutation/auth"
-export * from "resolvers/app/auth/Mutation/sms"
+export * from "resolvers/app/auth/Mutation/sign"
+export * from "resolvers/app/auth/Mutation/user"
