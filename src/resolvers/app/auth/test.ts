@@ -12,8 +12,6 @@ import { Db } from "mongodb"
 
 const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
 
-import { contentType } from 'mime-types'
-import { extname } from "path"
 const fileUpload = (query: string, variables: { [x: string]: string }, token: string) => {
     const map = Object.assign({}, Object.keys(variables).map(key => [`variables.${key}`]))
     const response = request(app)
@@ -207,17 +205,15 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             register(
-                                id: "test1234",
-                                password: "test1234AA@@",
-                                username: "pukuba",
-                                phone: {
-                                    phoneNumber: "${phoneNumber}"
-                                },
-                                spec: [{
-                                    session: "Piano",
-                                    level: 2
-                                }],
-                                type: 1
+                                user:{
+                                    id: "test1234",
+                                    password: "test1234AA@@",
+                                    username: "pukuba",
+                                    phone: {
+                                        phoneNumber: "${phoneNumber}"
+                                    },
+                                    type: 1
+                                }
                             )
                         }
                     `
@@ -237,17 +233,15 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             register(
-                                id: "test1234",
-                                password: "test1234AA@@",
-                                username: "erolf0123",
-                                phone: {
-                                    phoneNumber: "${phoneNumber}",
-                                },
-                                spec: [{
-                                    session: "Piano",
-                                    level: 2
-                                }],
-                                type: 1
+                                user:{
+                                    id: "test1234",
+                                    password: "test1234AA@@",
+                                    username: "erolf0123",
+                                    phone: {
+                                        phoneNumber: "${phoneNumber}",
+                                    },
+                                    type: 1
+                                }
                             )
                         }
                     `
@@ -262,17 +256,15 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             register(
-                                id: "erolf0123",
-                                password: "test1234AA@2",
-                                username: "pukuba",
-                                phone: {
-                                    phoneNumber: "${phoneNumber}",
-                                },
-                                spec: [{
-                                    session: "Piano",
-                                    level: 2
-                                }],
-                                type: 1
+                                user: {
+                                    id: "erolf0123",
+                                    password: "test1234AA@2",
+                                    username: "pukuba",
+                                    phone: {
+                                        phoneNumber: "${phoneNumber}",
+                                    },
+                                    type: 1
+                                }
                             )
                         }
                     `
@@ -287,17 +279,15 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             register(
-                                id: "kkzkk1234",
-                                password: "test1234AA@@",
-                                username: "kkzkk1234",
-                                phone: { 
-                                    phoneNumber: "+821000000000",
-                                },
-                                spec: [{
-                                    session: "Piano",
-                                    level: 2
-                                }],
-                                type: 1
+                                user: {
+                                    id: "kkzkk1234",
+                                    password: "test1234AA@@",
+                                    username: "kkzkk1234",
+                                    phone: { 
+                                        phoneNumber: "+821000000000",
+                                    },
+                                    type: 1
+                                }
                             )
                         }
                     `
@@ -312,17 +302,15 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             register(
-                                id: "testtest",
-                                password: "test1234AA@@",
-                                username: "X",
-                                phone: { 
-                                    phoneNumber: "${phoneNumber}",
-                                },
-                                spec: [{
-                                    session: "Piano",
-                                    level: 2
-                                }],
-                                type: 1
+                                user: {
+                                    id: "testtest",
+                                    password: "test1234AA@@",
+                                    username: "X",
+                                    phone: { 
+                                        phoneNumber: "${phoneNumber}",
+                                    },
+                                    type: 1
+                                }
                             )
                         }
                     `
@@ -337,17 +325,15 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             register(
-                                id: "test",
-                                password: "test1234AA@@",
-                                username: "kkzkk1234",
-                                phone: { 
-                                    phoneNumber: "${phoneNumber}",
-                                },
-                                spec: [{
-                                    session: "Piano",
-                                    level: 2
-                                }],
-                                type: 1
+                                user: {
+                                    id: "test",
+                                    password: "test1234AA@@",
+                                    username: "kkzkk1234",
+                                    phone: { 
+                                        phoneNumber: "${phoneNumber}",
+                                    },
+                                    type: 1
+                                }
                             )
                         }
                     `
@@ -362,17 +348,15 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             register(
-                                id: "testTEST!@#$하와와",
-                                password: "test1234AA@@",
-                                username: "kkzkk1234",
-                                phone: {
-                                    phoneNumber: "${phoneNumber}",
-                                },
-                                spec: [{
-                                    session: "Piano",
-                                    level: 2
-                                }],
-                                type: 1
+                                user: {
+                                    id: "testTEST!@#$하와와",
+                                    password: "test1234AA@@",
+                                    username: "kkzkk1234",
+                                    phone: {
+                                        phoneNumber: "${phoneNumber}",
+                                    },
+                                    type: 1
+                                }
                             )
                         }
                     `
@@ -387,17 +371,15 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             register(
-                                id: "kkzkk1234",
-                                password: "test",
-                                username: "kkzkk1234",
-                                phone: {
-                                    phoneNumber: "${phoneNumber}",
-                                },
-                                spec: [{
-                                    session: "Piano",
-                                    level: 2
-                                }],
-                                type: 1
+                                user: {
+                                    id: "kkzkk1234",
+                                    password: "test",
+                                    username: "kkzkk1234",
+                                    phone: {
+                                        phoneNumber: "${phoneNumber}",
+                                    },
+                                    type: 1
+                                }
                             )
                         }
                     `
@@ -412,17 +394,15 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             register(
-                                id: "kkzkk1234",
-                                password: "하와와와와와와",
-                                username: "kkzkk1234",
-                                phone: {
-                                    phoneNumber: "${phoneNumber}",
-                                },
-                                spec: [{
-                                    session: "Piano",
-                                    level: 2
-                                }],
-                                type: 1
+                                user: {
+                                    id: "kkzkk1234",
+                                    password: "하와와와와와와",
+                                    username: "kkzkk1234",
+                                    phone: {
+                                        phoneNumber: "${phoneNumber}",
+                                    },
+                                    type: 1
+                                }
                             )
                         }
                     `
@@ -441,8 +421,10 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             login(
-                                id:"test1234",
-                                password:"test1234AA@@"
+                                user: {
+                                    id:"test1234",
+                                    password:"test1234AA@@"
+                                }
                             )
                         }
                     `
@@ -462,8 +444,10 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             login(
-                                id:"kkzkk1234",
-                                password:"test1234AA@@"
+                                user: {
+                                    id:"kkzkk1234",
+                                    password:"test1234AA@@"
+                                }
                             )
                         }
                     `
@@ -478,8 +462,10 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             login(
-                                id:"test1234",
-                                password:"kkzkk1234"
+                                user:{
+                                    id:"test1234",
+                                    password:"kkzkk1234"
+                                }
                             )
                         }
                     `
@@ -634,7 +620,9 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             findPasswordSMSSend(
-                                id: "test1234",
+                                user: {
+                                    id: "test1234"
+                                },
                                 phone: {
                                     phoneNumber: "${phoneNumber}"
                                 }
@@ -653,7 +641,9 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             findPasswordSMSSend(
-                                id: "test1234",
+                                user: {
+                                    id: "test1234"
+                                },
                                 phone: {
                                     phoneNumber: "${phoneNumber}"
                                 }
@@ -673,7 +663,9 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             findPasswordSMSSend(
-                                id: "asdffadsfsad",
+                                user:{
+                                    id: "asdffadsfsad"
+                                },
                                 phone: {
                                     phoneNumber: "${phoneNumber}"
                                 }
@@ -692,7 +684,9 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             findPasswordSMSSend(
-                                id: "test1234",
+                                user: {
+                                    id: "test1234"
+                                },
                                 phone: {
                                     phoneNumber: "${phoneNumber}"
                                 }
@@ -718,7 +712,9 @@ describe("User auth service test", () => {
                     const query = `
                         mutation{
                             findPasswordSMSCheck(
-                                id: "test1234",
+                                user: {
+                                    id: "test1234"
+                                },
                                 phone: {
                                     phoneNumber: "${phoneNumber}",
                                     authenticationNumber: 111111
@@ -743,7 +739,9 @@ describe("User auth service test", () => {
                     const query = `
                     mutation{
                         findPasswordSMSCheck(
-                            id: "test123asdfdsa4",
+                            user: {
+                                id: "test123asdfdsa4"
+                            },
                             phone: {
                                 phoneNumber: "${phoneNumber}",
                                 authenticationNumber: 123211
@@ -764,7 +762,9 @@ describe("User auth service test", () => {
                     const query = `
                     mutation{
                         findPasswordSMSCheck(
-                            id: "test1234",
+                            user: {
+                                id: "test1234"
+                            },
                             phone: {
                                 phoneNumber: "${phoneNumber}",
                                 authenticationNumber: 123211
@@ -786,7 +786,9 @@ describe("User auth service test", () => {
                     const query = `
                     mutation{
                         findPasswordSMSCheck(
-                            id: "test1234",
+                            user: {
+                                id: "test1234"
+                            },
                             phone: {
                                 phoneNumber: "${phoneNumber}",
                                 authenticationNumber: 333333
@@ -812,8 +814,10 @@ describe("User auth service test", () => {
                 const query = `
                     mutation{
                         changePassword(
-                            password:"test1234AA@@",
-                            changePassword: "testtest1234@@"
+                            change: {
+                                password:"test1234AA@@",
+                                changePassword: "testtest1234@@"
+                            }
                         )
                     }
                 `
@@ -833,8 +837,10 @@ describe("User auth service test", () => {
                 const query = `
                     mutation{
                         changePassword(
-                            password:"testtest1234@@",
-                            changePassword: "testtest1234!!"
+                            change: {
+                                password:"testtest1234@@",
+                                changePassword: "testtest1234!!"
+                            }
                         )
                     }
                 `
@@ -849,8 +855,10 @@ describe("User auth service test", () => {
                 const query = `
                     mutation{
                         changePassword(
-                            password:"testtest1234@@",
-                            changePassword: "testtest1234!!"
+                            change: {
+                                password:"testtest1234@@",
+                                changePassword: "testtest1234!!"
+                            }
                         )
                     }
                 `
@@ -868,8 +876,10 @@ describe("User auth service test", () => {
                 const query = `
                     mutation{
                         changePassword(
-                            password:"xxxxxxxxxxxx",
-                            changePassword: "testtest1234!!"
+                            change: {
+                                password:"xxxxxxxxxxxx",
+                                changePassword: "testtest1234!!"
+                            }
                         )
                     }
                 `
@@ -887,8 +897,10 @@ describe("User auth service test", () => {
                 const query = `
                     mutation{
                         changePassword(
-                            password:"testtest1234@@",
-                            changePassword: "ㅌㅌ"
+                            change: {
+                                password:"testtest1234@@",
+                                changePassword: "ㅌㅌ"
+                            }
                         )
                     }
                 `
@@ -911,7 +923,9 @@ describe("User auth service test", () => {
                     mutation{
                         resetPassword(
                             token: "${token[1]}",
-                            resetPassword: "exPassword!"
+                            reset: {
+                                password: "exPassword!"
+                            }
                         )
                     }
                 `
@@ -929,7 +943,9 @@ describe("User auth service test", () => {
                     mutation{
                         resetPassword(
                             token: "${token[1]}",
-                            resetPassword: "c"
+                            reset: {
+                                password: "c"
+                            }
                         )
                     }
                 `
@@ -945,7 +961,9 @@ describe("User auth service test", () => {
                     mutation{
                         resetPassword(
                             token: "${token[1]}",
-                            resetPassword: "ccc22211!!"
+                            reset: {
+                                password: "ccc22211!!"
+                            }
                         )
                     }
                 `
@@ -1043,22 +1061,17 @@ describe("User auth service test", () => {
                 const query = `
                 mutation{
                     changeProfile(
-                        username: "SeungWon",
-                        profileURI: "${uri[0]}",
-                        introduce: "테스트 자기소개 글 입니다!",
-                        spec:[{
-                            session: "Vocal",
-                            level: 1
-                        }],
-                        type: 1
+                        change: {
+                            username: "SeungWon",
+                            profileURI: "${uri[0]}",
+                            introduce: "테스트 자기소개 글 입니다!",
+                            type: 3
+                        }
                     ){
                         id
                         username
-                        spec{
-                            session
-                            level
-                        }
                         profileURI
+                        introduce
                     }
                 }
             `
@@ -1073,20 +1086,18 @@ describe("User auth service test", () => {
                 const result = body.data.changeProfile
                 equal(result.id, "test1234")
                 equal(result.username, "SeungWon")
-                equal(result.spec[0].session, "Vocal")
                 equal(result.profileURI, uri[0])
+                equal(result.introduce, "테스트 자기소개 글 입니다!")
             })
             it("If only some of them were updated", async () => {
                 const query = `
                 mutation{
-                    changeProfile{
+                    changeProfile(
+                        change:{}
+                    ){
                         username
                         introduce
                         type
-                        spec{
-                            level
-                            session
-                        }
                     }
                 }
             `
@@ -1100,9 +1111,7 @@ describe("User auth service test", () => {
                     .expect(200)
                 const result = body.data.changeProfile
                 equal(result.username, "SeungWon")
-                equal(result.type, 1)
-                equal(result.spec[0].session, "Vocal")
-                equal(result.spec[0].level, 1)
+                equal(result.type, 3)
                 equal(result.introduce, "테스트 자기소개 글 입니다!")
             })
         })
@@ -1110,35 +1119,7 @@ describe("User auth service test", () => {
             it("If you do not include the essential factor", async () => {
                 const query = `
                 mutation{
-                changeProfile(
-                    spec: [{
-                        level: 5
-                    }]
-                ) {
-                    username
-                    introduce
-                    type
-                }
-            }
-                `
-                await request(app)
-                    .post("/api")
-                    .set({
-                        "Content-Type": "application/json",
-                        "Authorization": token[0]
-                    })
-                    .send(JSON.stringify({ query }))
-                    .expect(400)
-            })
-            it("If you do not include the essential factor", async () => {
-                const query = `
-                mutation{
-                    changeProfile(
-                        spec: [{
-                            level: 5,
-                            session: "piano"
-                        }]
-                    ) {
+                    changeProfile(change:{}) {
                         username
                         introduce
                         type
@@ -1158,7 +1139,9 @@ describe("User auth service test", () => {
             it("If you change to a nickname that exists", async () => {
                 const query = `mutation{
                 changeProfile(
-                    username: "SeungWon"
+                    change:{
+                        username: "SeungWon"
+                    }
                 ) {
                     username
                     introduce
@@ -1185,10 +1168,6 @@ describe("User auth service test", () => {
                         getPersonalInformation{
                             id
                             username
-                            spec{ 
-                                session
-                                level
-                            }
                             type
                         }
                     }
@@ -1199,9 +1178,7 @@ describe("User auth service test", () => {
                     .expect(200)
                 equal(body.data.getPersonalInformation.id, "test1234")
                 equal(body.data.getPersonalInformation.username, "SeungWon")
-                equal(body.data.getPersonalInformation.spec[0].session, "Vocal")
-                equal(body.data.getPersonalInformation.spec[0].level, 1)
-                equal(body.data.getPersonalInformation.type, 1)
+                equal(body.data.getPersonalInformation.type, 3)
             })
         })
         describe("Failure", () => {
@@ -1229,7 +1206,9 @@ describe("User auth service test", () => {
                 const query = `
                     mutation{
                         deleteAccount(
-                            password: "xxxxxx"
+                            user: {
+                                password: "xxxxxx"
+                            }
                         ) 
                     }
                 `
@@ -1247,7 +1226,9 @@ describe("User auth service test", () => {
                 const query = `
                     mutation{
                         deleteAccount(
-                            password: "asdfdsasdf"
+                            user: {
+                                password: "asdfdsasdf"
+                            }
                         )
                     }
                 `
@@ -1267,7 +1248,9 @@ describe("User auth service test", () => {
                 const query = `
                     mutation{
                         deleteAccount(
-                            password: "exPassword!"
+                            user: {
+                                password: "exPassword!"
+                            }
                         )
                     }
                 `

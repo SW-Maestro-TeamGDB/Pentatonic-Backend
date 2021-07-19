@@ -14,43 +14,56 @@ export interface IdPwSearchResult {
     [key: string]: string
 }
 
-interface Spec {
-    session: String
-    level: Number
-}
 
-export interface InputPassword {
+interface InputPassword {
     password: string
 }
+
+export interface InputDeleteAccount {
+    user: InputPassword
+}
+
 export interface InputUser extends InputId, InputPassword {
     username: string
     phone: SMSSend
-    spec: Spec[]
     type: number
+}
+
+export interface InputRegister {
+    user: InputUser
 }
 
 export interface InputResetPassword {
     token: string
-    resetPassword: string
+    reset: {
+        password: string
+    }
 }
 
-export interface InputLogin extends InputPassword {
-    id: string
+interface UserLogin extends InputPassword, InputId { }
+export interface InputLogin {
+    user: UserLogin
 }
 
-export interface InputChangePassword extends InputPassword {
-    changePassword: string
+export interface InputChangePassword {
+    change: {
+        password: string
+        changePassword: string
+    }
 }
 
 export interface InputFile {
     file: File
 }
 
-export interface InputChangeProfile extends InputUsername {
+interface ChangeProfile extends InputUsername {
     profileURI: URL
     introduce: string
-    spec: Spec[]
     type: string
+}
+
+export interface InputChangeProfile {
+    change: ChangeProfile
 }
 
 export interface InputId {
@@ -69,5 +82,5 @@ export interface InputSMSCheck {
     phone: SMSCheck
 }
 
-export interface InputFindPasswordSMSSend extends InputSMSSend, InputId { }
-export interface InputFindPasswordSMSCheck extends InputSMSCheck, InputId { }
+export interface InputFindPasswordSMSSend extends InputSMSSend, InputLogin { }
+export interface InputFindPasswordSMSCheck extends InputSMSCheck, InputLogin { }

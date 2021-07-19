@@ -28,6 +28,8 @@
   "homepage": "https://github.com/pukuba/graphql-ts-boilerplate#readme",
   "dependencies": {
     "@2fd/graphdoc": "^2.4.0",
+    "@graphql-tools/load-files": "^6.3.2",
+    "@graphql-tools/merge": "^6.2.14",
     "@graphql-tools/schema": "^7.1.5",
     "@types/aws-sdk": "^2.7.0",
     "@types/bcrypt": "^5.0.0",

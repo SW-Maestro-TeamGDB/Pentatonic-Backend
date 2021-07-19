@@ -11,6 +11,7 @@ import DB from "config/connectDB"
 import * as redis from "config/connectRedis"
 
 import { makeExecutableSchema } from "@graphql-tools/schema"
+import { loadFilesSync } from "@graphql-tools/load-files"
 import * as graphqlScalars from 'graphql-scalars'
 import { applyMiddleware } from "graphql-middleware"
 import { permissions, getUser, instrumentsLoader } from "lib"
@@ -19,7 +20,7 @@ import expressPlayground from "graphql-playground-middleware-express"
 import bodyParser from "body-parser"
 
 import resolvers from "resolvers"
-const typeDefsGraphQL = readFileSync("src/typeDefs.graphql", "utf-8")
+const typeDefs = loadFilesSync("src/**/*.graphql")
 
 const app = express()
 app.use(bodyParser.json())
@@ -31,7 +32,7 @@ app.use("/api-docs", express.static("docs"))
 const schema = makeExecutableSchema({
     typeDefs: `
         ${graphqlScalars.typeDefs.join('\n')}
-        ${typeDefsGraphQL}
+        ${typeDefs}
     `,
     resolvers: {
         ...resolvers,

@@ -41,7 +41,7 @@ export const updateSong = async (parent: void, args: InputUploadSong, context: C
     }
     const req = args.song
     const { db } = context
-    const song = await db.collection("song").findOne({ _id: req.id })
+    const song = await db.collection("song").findOne({ _id: req.songId })
     for (const key in req) {
         if (key === "songURI") {
             song.duration = await getAudioDuration(req.songURI.href)
@@ -55,5 +55,5 @@ export const updateSong = async (parent: void, args: InputUploadSong, context: C
         }
     }
     delete song._id
-    return db.collection("song").updateOne({ _id: req.id }, { $set: song })
+    return db.collection("song").updateOne({ _id: req.songId }, { $set: song })
 }

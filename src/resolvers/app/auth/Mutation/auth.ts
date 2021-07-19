@@ -2,7 +2,15 @@ import { ApolloError } from "apollo-server-express"
 import jwt from "jsonwebtoken"
 import { createHashedPassword, checkPassword, isValidImage, uploadS3 } from "lib"
 import env from "config/env"
-import { InputUser, InputResetPassword, InputLogin, InputChangePassword, InputFile, InputChangeProfile, InputPassword } from "resolvers/app/auth/models"
+import {
+    InputRegister,
+    InputResetPassword,
+    InputLogin,
+    InputChangePassword,
+    InputFile,
+    InputChangeProfile,
+    InputDeleteAccount
+} from "resolvers/app/auth/models"
 import { checkUsername, checkId } from "resolvers/app/auth/Query"
 import { Context } from "config/types"
 const specialCharacters = "\"'\\!@#$%^&*()_-=+/?.><,[{]}|;:"
@@ -18,8 +26,8 @@ const isValidPassword = (password: string) => {
     return true
 }
 
-export const register = async (parent: void, args: InputUser, context: Context) => {
-    const { id, password, username, phone, spec, type } = args
+export const register = async (parent: void, args: InputRegister, context: Context) => {
+    const { id, password, username, phone, type } = args.user
     if (isValidPassword(password) === false) {
         return new ApolloError("비밀번호가 조건에 맞지 않습니다")
     }
@@ -43,7 +51,6 @@ export const register = async (parent: void, args: InputUser, context: Context) 
         hash,
         username,
         phoneNumber,
-        spec: [...spec],
         prime: false,
         introduce: "자기소개글이 아직 비어있습니다!",
         profileURI: "https://kr.seaicons.com/wp-content/uploads/2016/05/Letter-P-blue-icon.png",
@@ -52,7 +59,7 @@ export const register = async (parent: void, args: InputUser, context: Context) 
 }
 
 export const login = async (parent: void, args: InputLogin, context: Context) => {
-    const { id, password } = args
+    const { id, password } = args.user
     const { db } = context
     const user = await db.collection("user").findOne({ id })
     if (user !== null && checkPassword(password, user.hash)) {
@@ -64,8 +71,8 @@ export const login = async (parent: void, args: InputLogin, context: Context) =>
 }
 
 export const resetPassword = async (parent: void, args: InputResetPassword, context: Context) => {
-    const { token, resetPassword } = args
-    if (isValidPassword(resetPassword) === false) {
+    const { token } = args
+    if (isValidPassword(args.reset.password) === false) {
         return new ApolloError("비밀번호가 조건에 맞지 않습니다")
     }
     const { redis, db } = context
@@ -74,13 +81,13 @@ export const resetPassword = async (parent: void, args: InputResetPassword, cont
         return new ApolloError("다시 시도해 주세요")
     }
     await redis.del(token)
-    await db.collection("user").updateOne({ phoneNumber: user }, { $set: { hash: createHashedPassword(resetPassword) } })
+    await db.collection("user").updateOne({ phoneNumber: user }, { $set: { hash: createHashedPassword(args.reset.password) } })
     return true
 }
 
 export const changePassword = async (parent: void, args: InputChangePassword, context: Context) => {
     const { db, user } = context
-    const { password, changePassword } = args
+    const { password, changePassword } = args.change
     const userResult = await db.collection("user").findOne({ id: user.id })
     if (checkPassword(password, userResult.hash) === false) {
         return new ApolloError("비밀번호가 올바르지 않습니다")
@@ -104,7 +111,7 @@ export const uploadProfile = async (parent: void, file: InputFile) => {
 }
 
 export const changeProfile = async (parent: void, args: InputChangeProfile, context: Context) => {
-    const { username, profileURI, introduce, spec, type } = args
+    const { username, profileURI, introduce, type } = args.change
     const { db, user } = context
     const result = await db.collection("user").findOne({ id: user.id })
     const updateArgs = { ...result }
@@ -115,9 +122,6 @@ export const changeProfile = async (parent: void, args: InputChangeProfile, cont
     }
     if (introduce !== undefined) {
         updateArgs.introduce = introduce
-    }
-    if (spec !== undefined) {
-        updateArgs.spec = [...spec]
     }
     if (type !== undefined) {
         updateArgs.type = type
@@ -133,10 +137,10 @@ export const changeProfile = async (parent: void, args: InputChangeProfile, cont
     return updateArgs
 }
 
-export const deleteAccount = async (parent: void, args: InputPassword, context: Context) => {
+export const deleteAccount = async (parent: void, args: InputDeleteAccount, context: Context) => {
     const { db, user } = context
     const result = await db.collection("user").findOne({ id: user.id })
-    const { password } = args
+    const { password } = args.user
     if (checkPassword(password, result.hash) === false) {
         return new ApolloError("비밀번호가 올바르지 않습니다")
     }

@@ -75,14 +75,15 @@ export const findIdSMSCheck = async (parent: void, args: InputSMSCheck, context:
 }
 
 export const findPasswordSMSSend = async (parent: void, args: InputFindPasswordSMSSend, context: Context) => {
-    const { phoneNumber } = args.phone
-    const { id } = args
     const { db, redis } = context
-    const user = await db.collection("user").findOne({ phoneNumber, id })
-    if (user === null) {
+    const userResult = await db.collection("user").findOne({
+        phoneNumber: args.phone.phoneNumber,
+        id: args.user.id
+    })
+    if (userResult === null) {
         return new ApolloError("해당 정보로 가입한 유저가 존재하지 않습니다")
     }
-    const smsNumber = changePhoneNumber(phoneNumber)
+    const smsNumber = changePhoneNumber(args.phone.phoneNumber)
     const result = await smsRequest(smsNumber)
     if (result === false) return false
     await redis.setex(smsNumber, 180, result)
@@ -91,9 +92,11 @@ export const findPasswordSMSSend = async (parent: void, args: InputFindPasswordS
 
 export const findPasswordSMSCheck = async (parent: void, args: InputFindPasswordSMSCheck, context: Context) => {
     const { phoneNumber, authenticationNumber } = args.phone
-    const { id } = args
     const { db, redis } = context
-    const user = await db.collection("user").findOne({ id, phoneNumber })
+    const user = await db.collection("user").findOne({
+        id: args.user.id,
+        phoneNumber
+    })
     if (user === null) {
         return new ApolloError("해당 정보의 유저를 찾을 수 없습니다")
     }

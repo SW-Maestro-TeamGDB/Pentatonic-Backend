@@ -1,0 +1,7 @@
+extend type Query {
+    test: String!
+}
+
+extend type Mutation {
+    test(data: PhoneNumber!): Boolean!
+}

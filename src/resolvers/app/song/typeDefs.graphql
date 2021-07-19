@@ -1,0 +1,77 @@
+extend type Mutation {
+    """
+    SONG의 기본 음원을 업로드 합니다
+    """
+    uploadDefaultFile(
+        "권한을 확인하기 위한 코드입니다"
+        code: String!
+        "파일 입니다"
+        file: Upload!
+    ): URL!
+
+    """
+    Song을 업로드 합니다
+    """
+    uploadSong(
+        "권한을 확인하기 위한 코드입니다"
+        code: String!
+        "음원 정보 입니다"
+        song: InputSong!
+    ): Song!
+
+    """
+    Song을 업데이트 합니다
+    """
+    updateSong(
+        "권한을 확인하기 위한 코드입니다"
+        code: String!
+        "음원 정보 입니다"
+        song: InputUpdateSong!
+    ): Song!
+}
+
+extend type Query {
+    getAllSongs: [Song!]!
+}
+
+type Instrument {
+    id: ObjectID!
+    songId: ObjectID!
+    instrumentURI: URL!
+    name: String!
+    duration: Float!
+}
+
+type Song {
+    id: ObjectID!
+    name: String!
+    songURI: URL!
+    songImg: URL!
+    genre: String!
+    artist: String!
+    weeklyChallenge: Boolean!
+    duration: Float!
+    level: Int!
+    instrument: [Instrument!]!
+}
+
+input InputSong {
+    name: String!
+    songURI: URL!
+    songImg: URL!
+    genre: String!
+    artist: String!
+    weeklyChallenge: Boolean!
+    level: Int!
+}
+
+input InputUpdateSong {
+    songId: ObjectID!
+    name: String
+    songURI: URL
+    songImg: URL
+    genre: String
+    artist: String
+    weeklyChallenge: Boolean
+    level: Int
+}

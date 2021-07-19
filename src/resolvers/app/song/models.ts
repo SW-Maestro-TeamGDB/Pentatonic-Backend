@@ -13,7 +13,7 @@ interface InputSong {
     weeklyChallenge: boolean
     level: number
 
-    id?: ObjectID
+    songId?: ObjectID
 
 }
 export type SongKeys = keyof InputSong
