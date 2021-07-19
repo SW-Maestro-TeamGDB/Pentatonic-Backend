@@ -3,16 +3,22 @@ type Mutation{
     회원가입 뮤테이션 이며 회원가입의 성공 여부를 1, 0으로 반환합니다
     """
     register(
+        "유저의 정보를 입력합니다"
         user: InputRegister!
     ): Boolean!
 
     """
     인증번호를 전송하는 뮤테이션 입니다. (발송성공 ? 1 : 0)
     """
-    registerSMSSend("휴대전화 정보를 입력해야합니다" phone: SMSSend!): Boolean!
+    registerSMSSend(
+        "휴대전화 정보를 입력해야합니다" 
+        phone: SMSSend!
+    ): Boolean!
 
 
-    "SMS 인증번호를 확인하는 뮤테이션 입니다. (본인확인 완료 ? 1 : 0)"
+    """
+    SMS 인증번호를 확인하는 뮤테이션 입니다. (본인확인 완료 ? 1 : 0)
+    """
     registerSMSCheck(
         "휴대전화 정보를 입력해야합니다"
         phone: SMSCheck!
@@ -22,6 +28,7 @@ type Mutation{
     Login을 하는 뮤테이션 입니다. JWT 토큰을 반환합니다
     """
     login(
+        "유저의 정보를 입력합니다"
         user: InputLogin!
     ): JWT!
 
@@ -45,7 +52,7 @@ type Mutation{
     Password 를 찾기위해 휴대번호에 인증번호를 발송합니다
     """
     findPasswordSMSSend(
-        "계정의 id 입니다"
+        "유저의 정보를 입력합니다"
         user: InputId!
 
         "휴대전화 정보를 입력해야합니다"
@@ -56,7 +63,7 @@ type Mutation{
     Password 를 찾기위해 인증번호로 휴대전화 인증을 합니다
     """
     findPasswordSMSCheck(
-        "계정의 id 입니다"
+        "유저의 정보를 입력합니다"
         user: InputId!
 
         "휴대전화 정보를 입력해야합니다"
@@ -69,14 +76,15 @@ type Mutation{
     resetPassword(
         "휴대전화 인증의 결과값인 토큰 입니다"
         token: String!
-        "재설정할 비밀번호 입니다"
-        reset: InputResetPassword!
+        "재설정과 관련된 정보를 입력합니다"
+        reset: InputPassword!
     ): Boolean!
 
     """
     비밀번호를 변경하는 뮤테이션 입니다
     """
     changePassword(
+        "변경과 관련된 정보를 입력합니다"
         change: InputChangePassword!
     ): Boolean!
 
@@ -92,6 +100,7 @@ type Mutation{
     사용자의 프로필을 변경합니다
     """
     changeProfile(
+        "변경과 관련된 정보를 입력합니다"
         change: InputChangeProfile!
     ): PersonalInformation!
 
@@ -99,6 +108,7 @@ type Mutation{
     계정을 삭제합니다
     """
     deleteAccount(
+        "유저의 정보를 입력합니다"
         user: InputPassword!
     ): Boolean!
 }
@@ -120,6 +130,7 @@ type Query{
         username: String!
     ): Boolean!
 
+    """자신의 정보를 가져오는 쿼리 입니다"""
     getPersonalInformation: PersonalInformation!
 }
 
@@ -127,18 +138,31 @@ type Query{
 아이디 비밀번호 찾기와 비밀번호 재설정에 대한 리턴 타입입니다
 """
 type IdPwSearchResult {
+    "결과 메세제 입니다"
     message: String!
+    "아이디 입니다"
     id: String
+    "본인확인에 사용할 토큰입니다"
     token: String
 }
 
+"""
+유저의 개인 정보 입니다
+"""
 type PersonalInformation {
+    "아이디 입니다"
     id: String!
+    "유저네임 입니다"
     username: String!
+    "프로필 사진 입니다"
     profileURI: URL!
+    "휴대번호 입니다"
     phoneNumber: PhoneNumber!
+    "프리미엄 유저인지를 나타냅니다"
     prime: Boolean!
+    "자기소개 메세지 입니다"
     introduce: String!
+    "회원의 유형 입니다"
     type: Int!
 }
 
@@ -180,6 +204,7 @@ input InputRegister {
     type: Int!
 }
 
+"""로그인의 사용되는 input 입니다"""
 input InputLogin {
     "계정의 id 입니다"
     id: String!
@@ -188,26 +213,36 @@ input InputLogin {
     password: String!
 }
 
+"""아이디를 입력하는 input 입니다"""
 input InputId {
+    "계정의 id 입니다"
     id: String!
 }
 
+"""비밀번호를 입력하는 input 입니다"""
 input InputPassword {
+    "계정의 password 입니다"
     password: String!
 }
 
-input InputResetPassword {
-    password: String!
-}
-
+"""비밀번호를 재설정 하는 input 입니다"""
 input InputChangePassword {
+    "변경할 비밀번호 입니다"
     changePassword: String!
+    "현 비밀번호 입니다"
     password: String!
 }
 
+"""
+프로필을 변경하는 input 입니다 업데이트할 필드만 담아 요청합니다
+"""
 input InputChangeProfile {
+    "계정의 username 입니다"
     username: String
+    "계정의 profileURI 입니다"
     profileURI: URL
+    "계정의 자기소개 글 입니다"
     introduce: String
+    "계정의 회원 유형 입니다"
     type: Int
 } 
