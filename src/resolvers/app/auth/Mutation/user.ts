@@ -15,8 +15,7 @@ export const uploadImageFile = async (parent: void, file: UploadImageInput) => {
     }
     const stream = img.createReadStream()
     const fileName = `${Date.now()}-${img.filename}`
-    await uploadS3(stream, fileName, img.mimetype)
-    return `${env.S3_URI}/${fileName}`
+    return await uploadS3(stream, fileName, img.mimetype)
 }
 
 export const changeProfile = async (parent: void, args: ChangeProfileInput, context: Context) => {

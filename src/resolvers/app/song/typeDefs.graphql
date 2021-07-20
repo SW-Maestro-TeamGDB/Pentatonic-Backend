@@ -84,7 +84,7 @@ type Song {
     duration: Float!
     level: Int!
     instrument: [Instrument!]!
-    release: Date!
+    releaseDate: Date!
 }
 
 input SongInput {
@@ -95,7 +95,7 @@ input SongInput {
     artist: String!
     weeklyChallenge: Boolean!
     level: Int!
-    release: Date!
+    releaseDate: Date!
     album: String!
 }
 
@@ -117,8 +117,10 @@ input UpdateSong {
     songImg: URL
     genre: String
     artist: String
+    releaseDate: Date
     weeklyChallenge: Boolean
     level: Int
+    album: String
 }
 
 input UpdateSongInput {

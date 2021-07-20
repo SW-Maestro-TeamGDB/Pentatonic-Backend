@@ -9,7 +9,9 @@ const connectDB = () => {
 
         try {
             const client = await MongoClient.connect(
-                process.env.DB_HOST || env.DB_HOST
+                process.env.NODE_ENV === "test" ?
+                    "mongodb://localhost:27017/database" :
+                    env.DB_HOST
                 , {
                     useNewUrlParser: true,
                     useUnifiedTopology: true

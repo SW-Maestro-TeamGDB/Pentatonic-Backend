@@ -2,7 +2,7 @@ import AWS from "aws-sdk"
 import { ReadStream } from "fs-capacitor"
 import { createReadStream } from "fs"
 import env from "config/env"
-
+import { ApolloError } from "apollo-server-express"
 const region = env.AWS_REGION as string
 
 const S3 = new AWS.S3({
@@ -21,10 +21,9 @@ export const uploadS3 = async (fileStream: ReadStream | string, Key: string, Con
     }
     try {
         await S3.upload(params).promise()
-        return true
+        return `${env.S3_URI}/${Key}`
     } catch (e) {
-        console.log(e)
-        return false
+        return new ApolloError(e)
     }
 }
 

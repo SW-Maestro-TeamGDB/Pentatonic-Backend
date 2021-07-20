@@ -14,18 +14,17 @@ export const uploadDefaultFile = async (parent: void, args: UploadDefaultImgInpu
     const file = await args.input.file
     const stream = file.createReadStream()
     const fileName = `${Date.now()}-${file.filename}`
-    await uploadS3(stream, fileName, file.mimetype)
-    return `${env.S3_URI}/${fileName}`
+    return await uploadS3(stream, fileName, file.mimetype)
 }
 
 export const uploadSong = async (parent: void, args: UploadSongInput, context: Context) => {
-    const { name, songImg, genre, artist, songURI, weeklyChallenge, level, release, album } = args.input.song
+    const { name, songImg, genre, artist, songURI, weeklyChallenge, level, releaseDate, album } = args.input.song
     const { db } = context
     return db.collection("song").insertOne({
         name,
         genre,
         artist,
-        release,
+        releaseDate,
         album,
         songURI: songURI.href,
         songImg: songImg.href,

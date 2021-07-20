@@ -35,7 +35,7 @@ const isLogin = rule()(async (parent: void, args: void, { user, db }: { user: JW
 })
 
 const isValidCode = rule()(async (parent: void, args: { input: { code: string } }) => {
-    if (args.input.code === env.JWT_SECRET) {
+    if (args.input.code !== env.JWT_SECRET) {
         return new ApolloError("관리자 코드가 알맞지 않습니다")
     }
     return true

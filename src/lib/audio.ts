@@ -1,6 +1,7 @@
 import { exec as syncExec } from "child_process"
 import util from "util"
 import { uploadS3 } from "lib"
+import { ApolloError } from "apollo-server-express"
 const exec = util.promisify(syncExec)
 import { unlink } from "fs"
 const deleteFile = util.promisify(unlink)
@@ -17,16 +18,19 @@ export const mergeAudios = async (audios: string[], audioName: string) => {
             ${audioName} -y
         `)
         if (audioName.endsWith(".wav")) {
-            await uploadS3(audioName, audioName, "audio/wav")
+            const result = await uploadS3(audioName, audioName, "audio/wav")
+            deleteFile(audioName)
+            return result
         }
         if (audioName.endsWith(".mp3")) {
-            await uploadS3(audioName, audioName, "audio/mpeg")
+            const result = await uploadS3(audioName, audioName, "audio/mpeg")
+            deleteFile(audioName)
+            return result
         }
+
+    } catch (e) {
         deleteFile(audioName)
-        return true
-    } catch {
-        deleteFile(audioName)
-        return false
+        return new ApolloError(e)
     }
 }
 

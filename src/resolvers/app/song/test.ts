@@ -20,122 +20,138 @@ const fileUpload = (query: string, variables: { [x: string]: string }) => {
 }
 
 const uri: string[] = []
-// describe("Penta-Tonic Song Services test", () => {
-//     describe("Mutation uploadDefaultFile", () => {
-//         describe("Failure", () => {
-//             it("If the code is not correct", async () => {
-//                 const { body } = await fileUpload(`
-//                     mutation($file: Upload!) {
-//                         uploadDefaultFile(
-//                             code: "test-code",
-//                             file: $file
-//                         )
-//                     }`, {
-//                     file: "src/test/test.jpg"
-//                 }).expect(200)
-//                 equal(body.errors[0].message, "관리자 코드가 알맞지 않습니다")
-//             })
-//         })
-//         describe("Success", () => {
-//             it(".mp3 file is uploaded normally", async () => {
-//                 const { body } = await fileUpload(`
-//                     mutation($file: Upload!) {
-//                         uploadDefaultFile(
-//                             code: "${env.JWT_SECRET}",
-//                             file: $file
-//                         )
-//                     }`, {
-//                     file: "src/test/song1-Drum.mp3"
-//                 }).expect(200)
-//                 uri.push(body.data.uploadDefaultFile)
-//                 const result = await fetch(body.data.uploadDefaultFile, {
-//                     method: "GET"
-//                 })
-//                 equal(result.status, 200)
-//             })
-//             it(".jpg file is uploaded normally", async () => {
-//                 const { body } = await fileUpload(`
-//                     mutation($file: Upload!) {
-//                         uploadDefaultFile(
-//                             code: "${env.JWT_SECRET}",
-//                             file: $file
-//                         )
-//                     }`, {
-//                     file: "src/test/test.jpg"
-//                 }).expect(200)
-//                 uri.push(body.data.uploadDefaultFile)
-//                 const result = await fetch(body.data.uploadDefaultFile, {
-//                     method: "GET"
-//                 })
-//                 equal(result.status, 200)
-//             })
-//         })
-//     })
-//     describe("Mutation uploadSong", () => {
-//         describe("Failure", () => {
-//             it("If the code is not correct", async () => {
-//                 const query = `
-//                     mutation{
-//                         uploadSong(
-//                             code: "test-code",
-//                             song: {
-//                                 name: "name",
-//                                 songURI: "${uri[0]}",
-//                                 songImg: "${uri[1]}",
-//                                 genre: "Pop",
-//                                 artist: "artist",
-//                                 weeklyChallenge: false,
-//                                 level: 2
-//                             }
-//                         ){
-//                             id
-//                             songURI
-//                             songImg
-//                         }
-//                     }`
-//                 const { body } = await request(app)
-//                     .post("/api")
-//                     .set("Content-Type", "application/json")
-//                     .send(JSON.stringify({ query }))
-//                     .expect(200)
+describe("Penta-Tonic Song Services test", () => {
+    describe("Mutation uploadDefaultFile", () => {
+        describe("Failure", () => {
+            it("If the code is not correct", async () => {
+                const { body } = await fileUpload(`
+                    mutation($file: Upload!) {
+                        uploadDefaultFile(
+                            input: {
+                                code: "test-code",
+                                file: $file
+                            }
+                        )
+                    }`, {
+                    file: "src/test/test.jpg"
+                }).expect(200)
+                equal(body.errors[0].message, "관리자 코드가 알맞지 않습니다")
+            })
+        })
+        describe("Success", () => {
+            it(".mp3 file is uploaded normally", async () => {
+                const { body } = await fileUpload(`
+                    mutation($file: Upload!) {
+                        uploadDefaultFile(
+                            input: {
+                                code: "${env.JWT_SECRET}",
+                                file: $file
+                            }
+                        )
+                    }`, {
+                    file: "src/test/viva/violin.mp3"
+                }).expect(200)
+                uri.push(body.data.uploadDefaultFile)
+                const result = await fetch(body.data.uploadDefaultFile, {
+                    method: "GET"
+                })
+                equal(result.status, 200)
+            })
+            it(".jpg file is uploaded normally", async () => {
+                const { body } = await fileUpload(`
+                    mutation($file: Upload!) {
+                        uploadDefaultFile(
+                            input: {
+                                code: "${env.JWT_SECRET}",
+                                file: $file
+                            }
+                        )
+                    }`, {
+                    file: "src/test/test.jpg"
+                }).expect(200)
+                uri.push(body.data.uploadDefaultFile)
+                const result = await fetch(body.data.uploadDefaultFile, {
+                    method: "GET"
+                })
+                equal(result.status, 200)
+            })
+        })
+    })
+    describe("Mutation uploadSong", () => {
+        describe("Failure", () => {
+            it("If the code is not correct", async () => {
+                const query = `
+                    mutation{
+                        uploadSong(
+                            input: {
+                                code: "test-code",
+                                song: {
+                                    name: "name",
+                                    songURI: "${uri[0]}",
+                                    songImg: "${uri[1]}",
+                                    genre: "Pop",
+                                    artist: "artist",
+                                    weeklyChallenge: false,
+                                    releaseDate: "2008-06-12",
+                                    level: 2,
+                                    album: "Viva la Vida or Death and All His Friends"
+                                }
+                            }
+                        ){
+                            songId
+                            songURI
+                            releaseDate
+                            songImg
+                        }
+                    }`
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
 
-//                 equal(body.errors[0].message, "관리자 코드가 알맞지 않습니다")
-//             })
-//         })
-//         describe("Success", () => {
-//             it("Successfully uploaded a song", async () => {
-//                 const query = `
-//                     mutation{
-//                         uploadSong(
-//                             code: "${env.JWT_SECRET}",
-//                             song: {
-//                                 name: "name",
-//                                 songURI: "${uri[0]}",
-//                                 songImg: "${uri[1]}",
-//                                 genre: "Pop",
-//                                 artist: "artist",
-//                                 weeklyChallenge: false,
-//                                 level: 2
-//                             }
-//                         ){
-//                             id
-//                             songURI
-//                             name
-//                             level
-//                             songImg
-//                         }
-//                     }`
-//                 const { body } = await request(app)
-//                     .post("/api")
-//                     .set("Content-Type", "application/json")
-//                     .send(JSON.stringify({ query }))
-//                     .expect(200)
+                equal(body.errors[0].message, "관리자 코드가 알맞지 않습니다")
+            })
+        })
+        describe("Success", () => {
+            it("Successfully uploaded a song", async () => {
+                const query = `
+                    mutation{
+                        uploadSong(
+                            input: {
+                                code: "${env.JWT_SECRET}",
+                                song: {
+                                    name: "name",
+                                    songURI: "${uri[0]}",
+                                    songImg: "${uri[1]}",
+                                    genre: "Pop",
+                                    artist: "artist",
+                                    weeklyChallenge: false,
+                                    releaseDate: "2019-01-01",
+                                    level: 2,
+                                    album: "Viva la Vida or Death and All His Friends"
+                                }
+                            }
+                        ){
+                            songId
+                            songURI
+                            releaseDate
+                            songImg
+                            name
+                            level
+                        }
+                    }`
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
 
-//                 equal(body.data.uploadSong.songURI, uri[0])
-//                 equal(body.data.uploadSong.songImg, uri[1])
-//                 equal(body.data.uploadSong.name, "name")
-//                 equal(body.data.uploadSong.level, 2)
-//             })
-//         })
-//     })
-// })
+                equal(body.data.uploadSong.songURI, uri[0])
+                equal(body.data.uploadSong.songImg, uri[1])
+                equal(body.data.uploadSong.name, "name")
+                equal(body.data.uploadSong.level, 2)
+            })
+        })
+    })
+})

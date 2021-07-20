@@ -26,7 +26,7 @@ export interface UploadSongInput {
             songURI: URL
             weeklyChallenge: boolean
             level: number
-            release: Date
+            releaseDate: Date
             album: string
         }
     }
@@ -69,7 +69,7 @@ export interface UpdateSongInput {
             songURI?: URL
             weeklyChallenge?: boolean
             level?: number
-            release?: Date
+            releaseDate?: Date
             album?: string
         }
     }
