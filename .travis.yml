@@ -17,11 +17,12 @@ before_install:
   - sudo apt-get install ffmpeg -y
 
 install:
+  - yarn global add codecov
   - yarn install
 
 script:
   - yarn coverage
 
 after_success:
-  - yarn coveralls
+  - yarn codecov
   - yarn deploy

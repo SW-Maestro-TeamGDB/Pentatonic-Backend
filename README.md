@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/SW-Maestro-TeamGDB/Pentatonic-Backend.svg?branch=develop)](https://travis-ci.com/SW-Maestro-TeamGDB/Pentatonic-Backend)
 
-[![Coverage Status](https://coveralls.io/repos/github/SW-Maestro-TeamGDB/Pentatonic-Backend/badge.svg?branch=develop)](https://coveralls.io/github/SW-Maestro-TeamGDB/Pentatonic-Backend?branch=develop)
+[![codecov](https://codecov.io/gh/SW-Maestro-TeamGDB/Pentatonic-Backend/branch/develop/graph/badge.svg?token=20867YLIIY)](https://codecov.io/gh/SW-Maestro-TeamGDB/Pentatonic-Backend)
 
 pukuba graphql-ts-boilerplate
 
