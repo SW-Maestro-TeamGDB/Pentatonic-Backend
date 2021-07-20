@@ -807,7 +807,7 @@ describe("User auth service test", () => {
                 })
                 uri.push(body.data.uploadImageFile)
                 equal(result.status, 200)
-            }).timeout(5000)
+            }).timeout(50000)
             it("If you uploaded files normally .png", async () => {
                 const query = `
                     mutation($file: Upload!){
@@ -825,7 +825,7 @@ describe("User auth service test", () => {
                 })
                 uri.push(body.data.uploadImageFile)
                 equal(result.status, 200)
-            }).timeout(5000)
+            }).timeout(50000)
             it("If you uploaded files normally .jpeg", async () => {
                 const query = `
                     mutation($file: Upload!){
@@ -843,7 +843,7 @@ describe("User auth service test", () => {
                 })
                 uri.push(body.data.uploadImageFile)
                 equal(result.status, 200)
-            }).timeout(5000)
+            }).timeout(50000)
         })
         describe("Failure", () => {
             it("If you uploaded a file that wasn't a picture", async () => {
