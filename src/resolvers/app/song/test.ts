@@ -20,6 +20,7 @@ const fileUpload = (query: string, variables: { [x: string]: string }) => {
 }
 
 const uri: string[] = []
+const songIds: string[] = []
 describe("Penta-Tonic Song Services test", () => {
     describe("Mutation uploadDefaultFile", () => {
         describe("Failure", () => {
@@ -151,7 +152,54 @@ describe("Penta-Tonic Song Services test", () => {
                 equal(body.data.uploadSong.songImg, uri[1])
                 equal(body.data.uploadSong.name, "name")
                 equal(body.data.uploadSong.level, 2)
+                songIds.push(body.data.uploadSong.songId)
             })
+        })
+    })
+    describe("Mutation update song", async () => {
+        it("Successfully updated a song", async () => {
+            const query = `
+                mutation{
+                    updateSong(
+                        input: {
+                            code: "${env.JWT_SECRET}",
+                            song: {
+                                name: "Viva La Vida",
+                                songId: "${songIds[0]}",
+                                songURI: "${env.S3_URI}/result.mp3",
+                                songImg: "${uri[1]}",
+                                genre: "Pop",
+                                artist: "Coldplay",
+                                weeklyChallenge: true,
+                                releaseDate: "2008-06-12",
+                                level: 3,
+                                album: "Viva la Vida or Death and All His Friends"
+                            }
+                        }
+                    ){
+                        songId
+                        songURI
+                        releaseDate
+                        songImg
+                        name
+                        level
+                        releaseDate
+                        instrument{
+                            instId
+                        }
+                    }
+                }`
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.updateSong.songURI, env.S3_URI + "/result.mp3")
+            equal(body.data.updateSong.songId, songIds[0])
+            equal(body.data.updateSong.songImg, uri[1])
+            equal(body.data.updateSong.name, "Viva La Vida")
+            equal(body.data.updateSong.level, 3)
+            equal(body.data.updateSong.releaseDate, "2008-06-12")
         })
     })
 })

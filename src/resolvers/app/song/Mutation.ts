@@ -10,6 +10,7 @@ import {
 import { Context } from "config/types"
 import env from "config/env"
 import { uploadS3, getAudioDuration } from "lib"
+import { ObjectID } from "mongodb"
 export const uploadDefaultFile = async (parent: void, args: UploadDefaultImgInput, context: Context) => {
     const file = await args.input.file
     const stream = file.createReadStream()
@@ -37,7 +38,8 @@ export const uploadSong = async (parent: void, args: UploadSongInput, context: C
 export const updateSong = async (parent: void, args: UpdateSongInput, context: Context) => {
     const req = args.input.song
     const { db } = context
-    const song = await db.collection("song").findOne({ _id: req.songId })
+    const _id = new ObjectID(req.songId)
+    const song = await db.collection("song").findOne({ _id })
     for (const key in req) {
         if (key === "songURI") {
             song.duration = await getAudioDuration(req?.songURI?.href as string)
@@ -51,8 +53,8 @@ export const updateSong = async (parent: void, args: UpdateSongInput, context: C
         }
     }
     delete song._id
-    await db.collection("song").updateOne({ _id: req.songId }, { $set: song })
-    return await db.collection("song").findOne({ _id: req.songId })
+    await db.collection("song").updateOne({ _id }, { $set: song })
+    return await db.collection("song").findOne({ _id })
 }
 
 export const uploadInstrument = async (parent: void, args: UploadInstrumentInput, context: Context) => {
