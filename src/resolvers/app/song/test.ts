@@ -36,7 +36,7 @@ describe("Penta-Tonic Song Services test", () => {
                     file: "src/test/test.jpg"
                 }).expect(200)
                 equal(body.errors[0].message, "관리자 코드가 알맞지 않습니다")
-            })
+            }).timeout(5000)
         })
         describe("Success", () => {
             it(".mp3 file is uploaded normally", async () => {
@@ -56,7 +56,7 @@ describe("Penta-Tonic Song Services test", () => {
                     method: "GET"
                 })
                 equal(result.status, 200)
-            })
+            }).timeout(5000)
             it(".jpg file is uploaded normally", async () => {
                 const { body } = await fileUpload(`
                     mutation($file: Upload!) {
@@ -74,7 +74,7 @@ describe("Penta-Tonic Song Services test", () => {
                     method: "GET"
                 })
                 equal(result.status, 200)
-            })
+            }).timeout(5000)
         })
     })
     describe("Mutation uploadSong", () => {
