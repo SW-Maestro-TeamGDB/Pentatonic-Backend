@@ -59,7 +59,8 @@ const server = new ApolloServer({
     validationRules: [
         depthLimit(8),
     ],
-    debug: true
+    debug: true,
+    engine: false
 })
 
 server.applyMiddleware({

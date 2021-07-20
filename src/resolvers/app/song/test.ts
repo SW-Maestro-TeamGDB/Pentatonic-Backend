@@ -21,6 +21,7 @@ const fileUpload = (query: string, variables: { [x: string]: string }) => {
 
 const uri: string[] = []
 const songIds: string[] = []
+const instrumentIds: string[] = []
 describe("Penta-Tonic music Services", () => {
     describe("Upload Services test", () => {
         describe("Mutation uploadDefaultFile", () => {
@@ -272,7 +273,126 @@ describe("Penta-Tonic music Services", () => {
     describe("Instrument Services test", () => {
         describe("Mutation uploadInstrument", async () => {
             describe("Success", () => {
+                it("If you normally upload the instrument", async () => {
+                    const query = `
+                        mutation{
+                            uploadInstrument(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    instrument: {
+                                        name: "viva la vida demo guitar",
+                                        instrumentURI: "${env.S3_URI}/song1-Guitar.mp3",
+                                        songId: "${songIds[0]}"
+                                    }
+                                }
+                            ){
+                                instId
+                                songId
+                                instrumentURI
+                                name
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.uploadInstrument.songId, songIds[0])
+                    equal(body.data.uploadInstrument.instrumentURI, `${env.S3_URI}/song1-Guitar.mp3`)
+                    equal(body.data.uploadInstrument.name, "viva la vida demo guitar")
+                    instrumentIds.push(body.data.uploadInstrument.instId)
+                })
+            })
+            describe("Failure", () => {
+                it("If you didn't read the sound source file normally", async () => {
+                    const query = `
+                        mutation{
+                            uploadInstrument(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    instrument: {
+                                        name: "viva la vida demo guitar",
+                                        instrumentURI: "${uri[1]}",
+                                        songId: "${songIds[0]}"
+                                    }
+                                }
+                            ){
+                                    instId
+                                    songId
+                                    instrumentURI
+                                    name
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "음원 파일을 정상적으로 읽지 못했습니다")
+                })
+            })
+        })
+        describe("Mutation updateInstrument", () => {
+            describe("Success", () => {
+                it("Successfully updated an instrument", async () => {
+                    const query = `
+                        mutation{
+                            updateInstrument(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    instrument: {
+                                        name: "Viva La Vida demo Drum",
+                                        instId: "${instrumentIds[0]}",
+                                        instrumentURI: "${env.S3_URI}/song1-Drum.mp3",
+                                        songId: "${songIds[0]}"
+                                    }
+                                }
+                            ){
+                                instId
+                                songId
+                                instrumentURI
+                                name
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
 
+                    equal(body.data.updateInstrument.songId, songIds[0])
+                    equal(body.data.updateInstrument.instrumentURI, `${env.S3_URI}/song1-Drum.mp3`)
+                    equal(body.data.updateInstrument.name, "Viva La Vida demo Drum")
+                    equal(body.data.updateInstrument.instId, instrumentIds[0])
+                })
+            })
+            describe("Failure", () => {
+                it("If you didn't read the sound source file normally", async () => {
+                    const query = `
+                        mutation{
+                            updateInstrument(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    instrument: {
+                                        name: "viva la vida demo guitar",
+                                        instId: "${instrumentIds[0]}",
+                                        instrumentURI: "${uri[1]}",
+                                        songId: "${songIds[0]}"
+                                    }
+                                }
+                            ){
+                                instId
+                                songId
+                                instrumentURI
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "음원 파일을 정상적으로 읽지 못했습니다")
+                })
             })
         })
     })

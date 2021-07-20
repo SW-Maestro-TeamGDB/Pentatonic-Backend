@@ -82,7 +82,8 @@ export const uploadInstrument = async (parent: void, args: UploadInstrumentInput
 
 export const updateInstrument = async (parent: void, args: UpdateInstrumentInput, context: Context) => {
     const { db } = context
-    const instrument = await db.collection("instrument").findOne({ _id: args.input.instrument.instId })
+    const _id = new ObjectID(args.input.instrument.instId)
+    const instrument = await db.collection("instrument").findOne({ _id })
     delete instrument._id
     delete args.input.instrument.instId
     for (const key in args.input.instrument) {
@@ -97,8 +98,6 @@ export const updateInstrument = async (parent: void, args: UpdateInstrumentInput
             instrument[key] = args.input.instrument[key as InstrumentKeys]
         }
     }
-    await db.collection("instrument").updateOne({
-        _id: args.input.instrument.instId
-    }, { $set: instrument })
-    return await db.collection("instrument").findOne({ _id: args.input.instrument.instId })
+    await db.collection("instrument").updateOne({ _id }, { $set: instrument })
+    return await db.collection("instrument").findOne({ _id })
 }

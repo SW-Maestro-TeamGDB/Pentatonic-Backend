@@ -36,7 +36,8 @@ extend type Query {
 }
 
 input UpdateInstrumentArgs{
-    songId: ObjectID!
+    songId: ObjectID
+    instId: ObjectID!
     name: String
     instrumentURI: URL
 }
