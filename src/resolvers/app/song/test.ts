@@ -21,185 +21,259 @@ const fileUpload = (query: string, variables: { [x: string]: string }) => {
 
 const uri: string[] = []
 const songIds: string[] = []
-describe("Penta-Tonic Song Services test", () => {
-    describe("Mutation uploadDefaultFile", () => {
-        describe("Failure", () => {
-            it("If the code is not correct", async () => {
-                const { body } = await fileUpload(`
-                    mutation($file: Upload!) {
-                        uploadDefaultFile(
-                            input: {
-                                code: "test-code",
-                                file: $file
-                            }
-                        )
-                    }`, {
-                    file: "src/test/test.jpg"
-                }).expect(200)
-                equal(body.errors[0].message, "관리자 코드가 알맞지 않습니다")
-            }).timeout(50000)
-        })
-        describe("Success", () => {
-            it(".mp3 file is uploaded normally", async () => {
-                const { body } = await fileUpload(`
-                    mutation($file: Upload!) {
-                        uploadDefaultFile(
-                            input: {
-                                code: "${env.JWT_SECRET}",
-                                file: $file
-                            }
-                        )
-                    }`, {
-                    file: "src/test/viva/violin.mp3"
-                }).expect(200)
-                uri.push(body.data.uploadDefaultFile)
-                const result = await fetch(body.data.uploadDefaultFile, {
-                    method: "GET"
-                })
-                equal(result.status, 200)
-            }).timeout(50000)
-            it(".jpg file is uploaded normally", async () => {
-                const { body } = await fileUpload(`
-                    mutation($file: Upload!) {
-                        uploadDefaultFile(
-                            input: {
-                                code: "${env.JWT_SECRET}",
-                                file: $file
-                            }
-                        )
-                    }`, {
-                    file: "src/test/test.jpg"
-                }).expect(200)
-                uri.push(body.data.uploadDefaultFile)
-                const result = await fetch(body.data.uploadDefaultFile, {
-                    method: "GET"
-                })
-                equal(result.status, 200)
-            }).timeout(50000)
-        })
-    })
-    describe("Mutation uploadSong", () => {
-        describe("Failure", () => {
-            it("If the code is not correct", async () => {
-                const query = `
-                    mutation{
-                        uploadSong(
-                            input: {
-                                code: "test-code",
-                                song: {
-                                    name: "name",
-                                    songURI: "${uri[0]}",
-                                    songImg: "${uri[1]}",
-                                    genre: "Pop",
-                                    artist: "artist",
-                                    weeklyChallenge: false,
-                                    releaseDate: "2008-06-12",
-                                    level: 2,
-                                    album: "Viva la Vida or Death and All His Friends"
+describe("Penta-Tonic music Services", () => {
+    describe("Upload Services test", () => {
+        describe("Mutation uploadDefaultFile", () => {
+            describe("Failure", () => {
+                it("If the code is not correct", async () => {
+                    const { body } = await fileUpload(`
+                        mutation($file: Upload!) {
+                            uploadDefaultFile(
+                                input: {
+                                    code: "test-code",
+                                    file: $file
                                 }
-                            }
-                        ){
-                            songId
-                            songURI
-                            releaseDate
-                            songImg
-                        }
-                    }`
-                const { body } = await request(app)
-                    .post("/api")
-                    .set("Content-Type", "application/json")
-                    .send(JSON.stringify({ query }))
-                    .expect(200)
-
-                equal(body.errors[0].message, "관리자 코드가 알맞지 않습니다")
+                            )
+                        }`, {
+                        file: "src/test/test.jpg"
+                    }).expect(200)
+                    equal(body.errors[0].message, "관리자 코드가 알맞지 않습니다")
+                }).timeout(50000)
             })
-        })
-        describe("Success", () => {
-            it("Successfully uploaded a song", async () => {
-                const query = `
-                    mutation{
-                        uploadSong(
-                            input: {
-                                code: "${env.JWT_SECRET}",
-                                song: {
-                                    name: "name",
-                                    songURI: "${uri[0]}",
-                                    songImg: "${uri[1]}",
-                                    genre: "Pop",
-                                    artist: "artist",
-                                    weeklyChallenge: false,
-                                    releaseDate: "2019-01-01",
-                                    level: 2,
-                                    album: "Viva la Vida or Death and All His Friends"
+            describe("Success", () => {
+                it(".mp3 file is uploaded normally", async () => {
+                    const { body } = await fileUpload(`
+                        mutation($file: Upload!) {
+                            uploadDefaultFile(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    file: $file
                                 }
-                            }
-                        ){
-                            songId
-                            songURI
-                            releaseDate
-                            songImg
-                            name
-                            level
-                        }
-                    }`
-                const { body } = await request(app)
-                    .post("/api")
-                    .set("Content-Type", "application/json")
-                    .send(JSON.stringify({ query }))
-                    .expect(200)
-
-                equal(body.data.uploadSong.songURI, uri[0])
-                equal(body.data.uploadSong.songImg, uri[1])
-                equal(body.data.uploadSong.name, "name")
-                equal(body.data.uploadSong.level, 2)
-                songIds.push(body.data.uploadSong.songId)
+                            )
+                        }`, {
+                        file: "src/test/viva/violin.mp3"
+                    }).expect(200)
+                    uri.push(body.data.uploadDefaultFile)
+                    const result = await fetch(body.data.uploadDefaultFile, {
+                        method: "GET"
+                    })
+                    equal(result.status, 200)
+                }).timeout(50000)
+                it(".jpg file is uploaded normally", async () => {
+                    const { body } = await fileUpload(`
+                        mutation($file: Upload!) {
+                            uploadDefaultFile(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    file: $file
+                                }
+                            )
+                        }`, {
+                        file: "src/test/test.jpg"
+                    }).expect(200)
+                    uri.push(body.data.uploadDefaultFile)
+                    const result = await fetch(body.data.uploadDefaultFile, {
+                        method: "GET"
+                    })
+                    equal(result.status, 200)
+                }).timeout(50000)
             })
         })
     })
-    describe("Mutation update song", async () => {
-        it("Successfully updated a song", async () => {
-            const query = `
-                mutation{
-                    updateSong(
-                        input: {
-                            code: "${env.JWT_SECRET}",
-                            song: {
-                                name: "Viva La Vida",
-                                songId: "${songIds[0]}",
-                                songURI: "${env.S3_URI}/result.mp3",
-                                songImg: "${uri[1]}",
-                                genre: "Pop",
-                                artist: "Coldplay",
-                                weeklyChallenge: true,
-                                releaseDate: "2008-06-12",
-                                level: 3,
-                                album: "Viva la Vida or Death and All His Friends"
+    describe("Song Services test", () => {
+        describe("Mutation uploadSong", () => {
+            describe("Success", () => {
+                it("Successfully uploaded a song", async () => {
+                    const query = `
+                        mutation{
+                            uploadSong(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    song: {
+                                        name: "name",
+                                        songURI: "${uri[0]}",
+                                        songImg: "${uri[1]}",
+                                        genre: "Pop",
+                                        artist: "artist",
+                                        weeklyChallenge: false,
+                                        releaseDate: "2019-01-01",
+                                        level: 2,
+                                        album: "Viva la Vida or Death and All His Friends"
+                                    }
+                                }
+                            ){
+                                songId
+                                songURI
+                                releaseDate
+                                songImg
+                                name
+                                level
                             }
-                        }
-                    ){
-                        songId
-                        songURI
-                        releaseDate
-                        songImg
-                        name
-                        level
-                        releaseDate
-                        instrument{
-                            instId
-                        }
-                    }
-                }`
-            const { body } = await request(app)
-                .post("/api")
-                .set("Content-Type", "application/json")
-                .send(JSON.stringify({ query }))
-                .expect(200)
-            equal(body.data.updateSong.songURI, env.S3_URI + "/result.mp3")
-            equal(body.data.updateSong.songId, songIds[0])
-            equal(body.data.updateSong.songImg, uri[1])
-            equal(body.data.updateSong.name, "Viva La Vida")
-            equal(body.data.updateSong.level, 3)
-            equal(body.data.updateSong.releaseDate, "2008-06-12")
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+
+                    equal(body.data.uploadSong.songURI, uri[0])
+                    equal(body.data.uploadSong.songImg, uri[1])
+                    equal(body.data.uploadSong.name, "name")
+                    equal(body.data.uploadSong.level, 2)
+                    songIds.push(body.data.uploadSong.songId)
+                })
+            })
+            describe("Failure", () => {
+                it("If the code is not correct", async () => {
+                    const query = `
+                        mutation{
+                            uploadSong(
+                                input: {
+                                    code: "test-code",
+                                    song: {
+                                        name: "name",
+                                        songURI: "${uri[0]}",
+                                        songImg: "${uri[1]}",
+                                        genre: "Pop",
+                                        artist: "artist",
+                                        weeklyChallenge: false,
+                                        releaseDate: "2008-06-12",
+                                        level: 2,
+                                        album: "Viva la Vida or Death and All His Friends"
+                                    }
+                                }
+                            ){
+                                songId
+                                songURI
+                                releaseDate
+                                songImg
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+
+                    equal(body.errors[0].message, "관리자 코드가 알맞지 않습니다")
+                })
+                it("If you didn't read the sound source file normally", async () => {
+                    const query = `
+                        mutation{
+                            uploadSong(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    song: {
+                                        name: "name",
+                                        songURI: "${uri[1]}",
+                                        songImg: "${uri[1]}",
+                                        genre: "Pop",
+                                        artist: "artist",
+                                        weeklyChallenge: false,
+                                        releaseDate: "2008-06-12",
+                                        level: 2,
+                                        album: "Viva la Vida or Death and All His Friends"
+                                    }
+                                }
+                            ){
+                                songId
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "음원 파일을 정상적으로 읽지 못했습니다")
+                })
+            })
+        })
+        describe("Mutation update song", () => {
+            describe("Success", () => {
+                it("Successfully updated a song", async () => {
+                    const query = `
+                        mutation{
+                            updateSong(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    song: {
+                                        name: "Viva La Vida",
+                                        songId: "${songIds[0]}",
+                                        songURI: "${env.S3_URI}/result.mp3",
+                                        songImg: "${uri[1]}",
+                                        genre: "Pop",
+                                        artist: "Coldplay",
+                                        weeklyChallenge: true,
+                                        releaseDate: "2008-06-12",
+                                        level: 3,
+                                        album: "Viva la Vida or Death and All His Friends"
+                                    }
+                                }
+                            ){
+                                songId
+                                songURI
+                                releaseDate
+                                songImg
+                                name
+                                level
+                                releaseDate
+                                instrument{
+                                    instId
+                                }
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.updateSong.songURI, env.S3_URI + "/result.mp3")
+                    equal(body.data.updateSong.songId, songIds[0])
+                    equal(body.data.updateSong.songImg, uri[1])
+                    equal(body.data.updateSong.name, "Viva La Vida")
+                    equal(body.data.updateSong.level, 3)
+                    equal(body.data.updateSong.releaseDate, "2008-06-12")
+                })
+            })
+            describe("Failure", () => {
+                it("If you didn't read the sound source file normally", async () => {
+                    const query = `
+                        mutation{
+                            updateSong(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    song: {
+                                        name: "Viva La Vida",
+                                        songId: "${songIds[0]}",
+                                        songURI: "${uri[1]}",
+                                        songImg: "${uri[1]}",
+                                        genre: "Pop",
+                                        artist: "Coldplay",
+                                        weeklyChallenge: true,
+                                        releaseDate: "2008-06-12",
+                                        level: 3,
+                                        album: "Viva la Vida or Death and All His Friends"
+                                    }
+                                }
+                            ){
+                                songId
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "음원 파일을 정상적으로 읽지 못했습니다")
+                })
+            })
+        })
+    })
+    describe("Instrument Services test", () => {
+        describe("Mutation uploadInstrument", async () => {
+            describe("Success", () => {
+
+            })
         })
     })
 })

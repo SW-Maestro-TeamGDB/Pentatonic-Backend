@@ -36,4 +36,12 @@ export const mergeAudios = async (audios: string[], audioName: string) => {
 
 import { getAudioDurationInSeconds } from "get-audio-duration"
 
-export const getAudioDuration = async (uri: string): Promise<number> => await getAudioDurationInSeconds(uri)
+export const getAudioDuration = async (uri: string): Promise<number> => {
+    try {
+        const duration = await getAudioDurationInSeconds(uri)
+        if (duration < 10) throw ""
+        return duration
+    } catch {
+        return 0
+    }
+}
