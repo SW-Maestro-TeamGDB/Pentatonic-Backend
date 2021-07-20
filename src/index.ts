@@ -3,8 +3,8 @@ dotenv.config()
 import env from "config/env"
 
 import { express as voyagerMiddleware } from "graphql-voyager/middleware"
-import { ApolloServer, ApolloError, GraphQLUpload, ExpressContext } from "apollo-server-express"
-import { readFileSync } from "fs"
+import { ApolloServer, GraphQLUpload } from "apollo-server-express"
+import { ApolloServerPluginUsageReporting } from "apollo-server-core"
 import { createServer } from "http"
 import depthLimit from "graphql-depth-limit"
 import DB from "config/connectDB"
@@ -60,6 +60,11 @@ const start = async () => {
         },
         validationRules: [
             depthLimit(8),
+        ],
+        plugins: [
+            ApolloServerPluginUsageReporting({
+                sendVariableValues: { all: true }
+            })
         ],
         debug: true
     })
