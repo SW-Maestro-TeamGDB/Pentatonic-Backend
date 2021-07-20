@@ -7,7 +7,7 @@ import {
 import { Context } from "config/types"
 
 export const checkUsername = async (parent: void, args: CheckUsernameInput, context: any) => {
-    const { username } = args
+    const { username } = args.input.user
     if (username.length < 2) return new ApolloError("username 길이는 2 이상이여야합니다.")
     const { db } = context
     const result = await db.collection("user").findOne({ username })
@@ -26,7 +26,7 @@ const isValidId = (id: string) => {
 }
 
 export const checkId = async (parent: void, args: CheckIdInput, context: Context) => {
-    const { id } = args
+    const { id } = args.input.user
     if (id.length < 6) {
         return new ApolloError("id는 길이는 6 이상이여야합니다.")
     }

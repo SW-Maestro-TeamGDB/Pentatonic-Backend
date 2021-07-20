@@ -9,7 +9,6 @@ import {
 import env from "config/env"
 import {
     RegisterInput,
-    FindIdInput,
     ResetPasswordInput,
     LoginInput,
     ChangePasswordInput,
@@ -64,8 +63,8 @@ export const register = async (parent: void, args: RegisterInput, context: Conte
     const { phoneNumber, authCode } = args.input
     const validArgs = await Promise.all([
         redis.get(phoneNumber),
-        checkUsername(undefined, { username }, { db }),
-        checkId(undefined, { id }, context)
+        checkUsername(undefined, { input: { user: { username } } }, { db }),
+        checkId(undefined, { input: { user: { id } } }, context)
     ])
     if (validArgs[0] === null) {
         return new ApolloError("휴대번호 인증을 다시해야합니다")

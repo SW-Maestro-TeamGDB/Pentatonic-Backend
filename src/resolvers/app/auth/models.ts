@@ -2,11 +2,19 @@ import { File } from "config/types"
 
 
 export interface CheckIdInput {
-    id: string
+    input: {
+        user: {
+            id: string
+        }
+    }
 }
 
 export interface CheckUsernameInput {
-    username: string
+    input: {
+        user: {
+            username: string
+        }
+    }
 }
 
 

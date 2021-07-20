@@ -64,21 +64,51 @@ type Mutation{
     ): Boolean!
 }
 
+"""
+checkId Query에 사용되는 input 입니다
+"""
+input CheckIdInput{
+    "유저의 정보를 담습니다"
+    user: CheckIdArgs!
+}
+
+"""
+유효한 아이디인지 검사하는 쿼리에 들어가는 Args 입니다
+"""
+input CheckIdArgs {
+    "아이디"
+    id: String!
+}
+
+"""
+checkUsername Query에 사용되는 input 입니다
+"""
+input CheckUsernameInput{
+    "유저의 정보를 담습니다"
+    user: CheckUsernameArgs!
+}
+
+"""
+유효한 username인지 검사하는 쿼리에 들어가는 Args 입니다
+"""
+input CheckUsernameArgs{
+    "username"
+    username: String!
+}
+
 type Query{
     """
     id가 조건에 맞는지 확인합니다
     """
     checkId(
-        "id는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다"
-        id: String!
+        input: CheckIdInput!
     ): Boolean!
 
     """
     username이 조건에 맞는지 확인합니다
     """
     checkUsername(
-        "username은 길이가 2 이상이여야 합니다"
-        username: String!
+        input: CheckUsernameInput!
     ): Boolean!
 
     """자신의 정보를 가져옵니다"""

@@ -35,7 +35,7 @@ export const changeProfile = async (parent: void, args: ChangeProfileInput, cont
         updateArgs.type = type
     }
     if (username !== undefined) {
-        if (await checkUsername(undefined, { username }, { db }) === true) {
+        if (await checkUsername(undefined, { input: { user: { username } } }, { db }) === true) {
             updateArgs.username = username
         } else {
             return new ApolloError("username 이 올바르지 않습니다")
