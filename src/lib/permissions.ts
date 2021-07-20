@@ -3,6 +3,7 @@ import { ApolloError } from "apollo-server-express"
 import { JWTUser } from "config/types"
 import { Db } from "mongodb"
 import { Redis } from "config/types"
+import env from "config/env"
 
 const canSend = rule()(async (parent: void, args: void, { redis, ip }: { redis: Redis, ip: string }) => {
     const result = await redis.get(`canSend-${ip}`)
@@ -33,6 +34,13 @@ const isLogin = rule()(async (parent: void, args: void, { user, db }: { user: JW
     return true
 })
 
+const isValidCode = rule()(async (parent: void, args: { input: { code: string } }) => {
+    if (args.input.code === env.JWT_SECRET) {
+        return new ApolloError("관리자 코드가 알맞지 않습니다")
+    }
+    return true
+})
+
 export const permissions = shield({
     Mutation: {
         changePassword: isLogin,
@@ -41,7 +49,12 @@ export const permissions = shield({
         deleteAccount: isLogin,
         sendAuthCode: and(not(isLogin), canSend),
         findId: and(not(isLogin), canSend),
-        resetPassword: and(not(isLogin), canSend)
+        resetPassword: and(not(isLogin), canSend),
+        uploadDefaultFile: isValidCode,
+        uploadSong: isValidCode,
+        updateSong: isValidCode,
+        uploadInstrument: isValidCode,
+        updateInstrument: isValidCode,
     },
     Query: {
         getPersonalInformation: isLogin

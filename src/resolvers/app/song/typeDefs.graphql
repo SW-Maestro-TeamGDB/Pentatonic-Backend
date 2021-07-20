@@ -3,36 +3,59 @@ extend type Mutation {
     SONG의 기본 음원을 업로드 합니다
     """
     uploadDefaultFile(
-        "권한을 확인하기 위한 코드입니다"
-        code: String!
-        "파일 입니다"
-        file: Upload!
+        input: UploadDefaultFileInput!
     ): URL!
 
     """
     Song을 업로드 합니다
     """
     uploadSong(
-        "권한을 확인하기 위한 코드입니다"
-        code: String!
-        "음원 정보 입니다"
-        song: InputSong!
+        input: UploadSongInput!
     ): Song!
 
     """
     Song을 업데이트 합니다
     """
     updateSong(
-        "권한을 확인하기 위한 코드입니다"
-        code: String!
-        "음원 정보 입니다"
-        song: InputUpdateSong!
+        input: UpdateSongInput!
     ): Song!
+
+
+    uploadInstrument(
+        input: UploadInstrumentInput!
+    ): Instrument!
+
+    updateInstrument(
+        input: UpdateInstrumentInput!
+    ): Instrument!
 }
 
 extend type Query {
     """Penta-Tonic에 있는 모든 곡을 불러옵니다"""
     getAllSongs: [Song!]!
+}
+
+input UpdateInstrumentArgs{
+    songId: ObjectID!
+    name: String
+    instrumentURI: URL
+}
+
+input UpdateInstrumentInput {
+    code: String!
+    instrument: UpdateInstrumentArgs!
+}
+
+input UploadDefaultFileInput {
+    code: String!
+    file: Upload!
+}
+
+input UploadSongInput {
+    "권한을 확인하기 위한 코드입니다"
+    code: String!
+    "음원 정보 입니다"
+    song: SongInput!
 }
 
 """올라와 있는 곡에 대한 세션별 연주에 대한 타입입니다"""
@@ -61,9 +84,10 @@ type Song {
     duration: Float!
     level: Int!
     instrument: [Instrument!]!
+    release: Date!
 }
 
-input InputSong {
+input SongInput {
     name: String!
     songURI: URL!
     songImg: URL!
@@ -71,9 +95,22 @@ input InputSong {
     artist: String!
     weeklyChallenge: Boolean!
     level: Int!
+    release: Date!
+    album: String!
 }
 
-input InputUpdateSong {
+input UploadInstrumentArgs {
+    songId: ObjectID!
+    name: String!
+    instrumentURI: URL!
+}
+
+input UploadInstrumentInput {
+    code: String!
+    instrument: UploadInstrumentArgs!
+}
+
+input UpdateSong {
     songId: ObjectID!
     name: String
     songURI: URL
@@ -82,4 +119,9 @@ input InputUpdateSong {
     artist: String
     weeklyChallenge: Boolean
     level: Int
+}
+
+input UpdateSongInput {
+    code: String!
+    song: UpdateSong!
 }

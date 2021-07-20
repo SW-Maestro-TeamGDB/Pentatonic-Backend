@@ -1,39 +1,89 @@
 import { ObjectID } from "mongodb"
 import { File } from "config/types"
 
-interface InputSong {
-    songURI: URL
+export interface Song {
+    _id: ObjectID
     name: string
     songImg: URL
-    genre: SongGenres
-    release: Date
+    songURI: URL
+    genre: string
     artist: string
     album: string
-
-    weeklyChallenge: boolean
     level: number
-
-    songId?: ObjectID
-
-}
-export type SongKeys = keyof InputSong
-interface InputCode {
-    code: string
+    release: Date
+    weeklyChallenge: boolean
+    duration: number
 }
 
-export interface InputUploadSong extends InputCode {
-    song: InputSong
+export interface UploadSongInput {
+    input: {
+        code: string
+        song: {
+            name: string
+            songImg: URL
+            genre: string
+            artist: string
+            songURI: URL
+            weeklyChallenge: boolean
+            level: number
+            release: Date
+            album: string
+        }
+    }
 }
 
-
-export interface Song extends InputSong {
-    _id: ObjectID
-    playTime: number
-    instrument: string[]
+export interface UploadInstrumentInput {
+    input: {
+        code: string
+        instrument: {
+            songId: ObjectID
+            name: string
+            instrumentURI: URL
+        }
+    }
 }
 
-export interface InputUploadDefaultImg extends InputCode {
-    file: File
+export interface UpdateInstrumentInput {
+    input: {
+        code: string
+        instrument: {
+            instId?: ObjectID
+            songId?: ObjectID
+            name?: string
+            instrumentURI?: URL
+        }
+    }
+}
+
+export type InstrumentKeys = keyof UploadInstrumentInput["input"]["instrument"]
+
+export interface UpdateSongInput {
+    input: {
+        code: string
+        song: {
+            songId: ObjectID
+            name?: string
+            songImg?: URL
+            genre?: SongGenres
+            artist?: string
+            songURI?: URL
+            weeklyChallenge?: boolean
+            level?: number
+            release?: Date
+            album?: string
+        }
+    }
+}
+
+export type SongKeys = keyof UpdateSongInput["input"]["song"]
+
+
+
+export interface UploadDefaultImgInput {
+    input: {
+        file: File
+        code: string
+    }
 }
 
 const SongGenres = {

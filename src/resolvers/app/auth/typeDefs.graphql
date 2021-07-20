@@ -142,18 +142,18 @@ input ResetPasswordInput {
     "authenticationNumber 는 123456 와 같은 100000~999999 사이의 숫자 입니다"
     authCode: Int!
  
-    user: InputPassword!
+    user: PasswordArgs!
 }
 
-input RegisterUserInput{
+input RegisterArgs {
     username: String!
     id: String!
     password: String!
     type: Int!
 }
 
-input RegisterInput{
-    user: RegisterUserInput!
+input RegisterInput {
+    user: RegisterArgs!
 
     "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
     phoneNumber: PhoneNumber!
@@ -163,7 +163,7 @@ input RegisterInput{
 }
 
 """로그인의 사용되는 input 입니다"""
-input LoginUserInput {
+input LoginArgs {
     "계정의 id 입니다"
     id: String!
 
@@ -172,22 +172,16 @@ input LoginUserInput {
 }
 
 input LoginInput {
-    user: LoginUserInput!
-}
-
-"""아이디를 입력하는 input 입니다"""
-input InputId {
-    "계정의 id 입니다"
-    id: String!
+    user: LoginArgs!
 }
 
 """비밀번호를 입력하는 input 입니다"""
-input InputPassword {
+input PasswordArgs {
     "계정의 password 입니다"
     password: String!
 }
 
-input ChangePassword{
+input ChangePasswordArgs{
     "변경할 비밀번호 입니다"
     changePassword: String!
     "현 비밀번호 입니다"
@@ -196,13 +190,13 @@ input ChangePassword{
 
 """비밀번호를 재설정 하는 input 입니다"""
 input ChangePasswordInput {
-    user: ChangePassword!
+    user: ChangePasswordArgs!
 }
 
 """
 프로필을 변경하는 input 입니다 업데이트할 필드만 담아 요청합니다
 """
-input ChangeProfile {
+input ChangeProfileArgs {
     "계정의 username 입니다"
     username: String
     "계정의 profileURI 입니다"
@@ -214,9 +208,9 @@ input ChangeProfile {
 } 
 
 input ChangeProfileInput {
-    user: ChangeProfile!
+    user: ChangeProfileArgs!
 }
 
 input DeleteAccountInput {
-    user: InputPassword!
+    user: PasswordArgs!
 }
