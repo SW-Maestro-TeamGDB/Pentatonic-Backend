@@ -446,11 +446,11 @@ describe("User auth service test", () => {
         })
     })
     describe("User information find service", () => {
-        describe("Mutation findId", () => {
+        describe("Query findId", () => {
             describe("Success", () => {
                 it("If you have sent an ID find authentication number", async () => {
                     const query = ` 
-                    mutation{ 
+                    query{ 
                         findId(
                             input: {
                                 phoneNumber:"${phoneNumber}",
@@ -491,7 +491,7 @@ describe("User auth service test", () => {
                 it("If you are looking for a user who does not exist", async () => {
                     await (redis as Redis).setex("canSend-::ffff:127.0.0.1", 60, `[${Date.now()},0]`)
                     const query = ` 
-                        mutation{ 
+                        query{ 
                             findId(
                                 input:{
                                     phoneNumber:"+82100000000000",
@@ -512,7 +512,7 @@ describe("User auth service test", () => {
                 it("the authentication number is wrong", async () => {
                     await (redis as Redis).setex(phoneNumber, 60, "123432")
                     const query = ` 
-                        mutation{ 
+                        query{ 
                             findId(
                                 input:{
                                     phoneNumber:"${phoneNumber}",

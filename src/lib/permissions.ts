@@ -48,7 +48,6 @@ export const permissions = shield({
         changeProfile: isLogin,
         deleteAccount: isLogin,
         sendAuthCode: and(not(isLogin), canSend),
-        findId: and(not(isLogin), canSend),
         resetPassword: and(not(isLogin), canSend),
         uploadDefaultFile: isValidCode,
         uploadSong: isValidCode,
@@ -57,6 +56,7 @@ export const permissions = shield({
         updateInstrument: isValidCode,
     },
     Query: {
+        findId: and(not(isLogin), canSend),
         getPersonalInformation: isLogin
     }
 })

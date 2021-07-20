@@ -1,6 +1,6 @@
 type Mutation{
     """
-    회원가입 뮤테이션 이며 회원가입의 성공 여부를 1, 0으로 반환합니다
+    회원가입
     """
     register(
         "유저의 정보를 입력합니다"
@@ -8,32 +8,31 @@ type Mutation{
     ): JWT!
 
     """
-    인증번호를 전송하는 뮤테이션 입니다. (발송성공 ? 1 : 0)
+    인증번호를 전송합니다 (발송성공 ? true : false)
     """
     sendAuthCode(
-        "휴대전화 정보를 입력해야합니다" 
+        "휴대번호 정보를 입력해야합니다" 
         input: sendAuthCodeInput!
     ): Boolean!
 
     """
-    Login을 하는 뮤테이션 입니다. JWT 토큰을 반환합니다
+    로그인
     """
     login(
         "유저의 정보를 입력합니다"
         input: LoginInput!
     ): JWT!
 
-    findId(
-        input: FindIdInput!
-    ): FindId!
-
-
+    """
+    비밀번호를 재설정 합니다
+    """
     resetPassword(
+        "재설정에 대한 정보를 입력합니다"
         input: ResetPasswordInput!
     ): Boolean!
 
     """
-    비밀번호를 변경하는 뮤테이션 입니다
+    비밀번호를 변경합니다
     """
     changePassword(
         "변경과 관련된 정보를 입력합니다"
@@ -67,7 +66,7 @@ type Mutation{
 
 type Query{
     """
-    id가 조건에 맞는지 확인하는 쿼리 입니다
+    id가 조건에 맞는지 확인합니다
     """
     checkId(
         "id는 길이가 6 이상이여야하며 영문과 숫자만 가능합니다"
@@ -75,51 +74,64 @@ type Query{
     ): Boolean!
 
     """
-    username이 조건에 맞는지 확인하는 쿼리 입니다
+    username이 조건에 맞는지 확인합니다
     """
     checkUsername(
         "username은 길이가 2 이상이여야 합니다"
         username: String!
     ): Boolean!
 
-    """자신의 정보를 가져오는 쿼리 입니다"""
+    """자신의 정보를 가져옵니다"""
     getPersonalInformation: PersonalInformation!
+
+    """
+    아이디를 검색합니다
+    """
+    findId(
+        input: FindIdInput!
+    ): FindIdResult!
 }
 
 """
 유저의 개인 정보 입니다
 """
 type PersonalInformation {
-    "아이디 입니다"
+    "아이디"
     id: String!
-    "유저네임 입니다"
+    "유저 네임"
     username: String!
-    "프로필 사진 입니다"
+    "프로필 사진"
     profileURI: URL!
-    "휴대번호 입니다"
+    "휴대번호"
     phoneNumber: PhoneNumber!
-    "프리미엄 유저인지를 나타냅니다"
+    "프리미엄 유저인지"
     prime: Boolean!
-    "자기소개 메세지 입니다"
+    "자기소개 메세지"
     introduce: String!
-    "회원의 유형 입니다"
+    "회원 유형"
     type: Int!
 }
 
-type FindId{
+"""
+FindId Query 의 반환 결과입니다
+"""
+type FindIdResult{
+    "아이디"
     id: String!
 }
 
-
+"""
+uploadImage Mutation의 input 입니다
+"""
 input UploadImageInput{
     file: Upload!
 }
 
 """
-본인확인 문자발송 input
+sendAuthCode Mutation의 input 입니다
 """
-
 input sendAuthCodeInput {
+    "회원가입인지: true, 아이디 | 비밀번호 찾기인지: false"
     isRegistration: Boolean!
 
     "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
@@ -141,18 +153,29 @@ input ResetPasswordInput {
     
     "authenticationNumber 는 123456 와 같은 100000~999999 사이의 숫자 입니다"
     authCode: Int!
- 
+    
+    "유저의 정보를 담습니다"
     user: PasswordArgs!
 }
-
+"""
+회원가입에 사용되는 input 입니다
+"""
 input RegisterArgs {
+    "유저 네임"
     username: String!
+    "유저 아이디"
     id: String!
+    "유저 비밀번호"
     password: String!
+    "회원 유형"
     type: Int!
 }
 
+"""
+register Mutation에 사용되는 input 입니다
+"""
 input RegisterInput {
+    "유저의 정보를 담습니다"
     user: RegisterArgs!
 
     "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
@@ -162,7 +185,9 @@ input RegisterInput {
     authCode: Int!
 }
 
-"""로그인의 사용되는 input 입니다"""
+"""
+로그인에 사용되는 input 입니다
+"""
 input LoginArgs {
     "계정의 id 입니다"
     id: String!
@@ -171,7 +196,11 @@ input LoginArgs {
     password: String!
 }
 
+"""
+Login Mutation에 사용되는 input 입니다
+"""
 input LoginInput {
+    "유저의 정보를 담습니다"
     user: LoginArgs!
 }
 
@@ -181,6 +210,9 @@ input PasswordArgs {
     password: String!
 }
 
+"""
+비밀번호를 변경하는 input 입니다
+"""
 input ChangePasswordArgs{
     "변경할 비밀번호 입니다"
     changePassword: String!
@@ -188,8 +220,11 @@ input ChangePasswordArgs{
     password: String!
 }
 
-"""비밀번호를 재설정 하는 input 입니다"""
+"""
+changePassword Mutation에 사용되는 input 입니다
+"""
 input ChangePasswordInput {
+    "유저의 정보를 담습니다"
     user: ChangePasswordArgs!
 }
 
@@ -207,10 +242,18 @@ input ChangeProfileArgs {
     type: Int
 } 
 
+"""
+changeProfile Mutation에 사용되는 input 입니다
+"""
 input ChangeProfileInput {
+    "유저의 정보를 담습니다"
     user: ChangeProfileArgs!
 }
 
+"""
+deleteAccount Mutation에 사용되는 input 입니다
+"""
 input DeleteAccountInput {
+    "유저의 정보를 담습니다"
     user: PasswordArgs!
 }

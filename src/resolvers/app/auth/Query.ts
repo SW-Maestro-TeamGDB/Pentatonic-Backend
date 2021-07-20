@@ -1,5 +1,9 @@
 import { ApolloError } from "apollo-server-express"
-import { CheckIdInput, CheckUsernameInput } from "resolvers/app/auth/models"
+import {
+    CheckIdInput,
+    CheckUsernameInput,
+    FindIdInput
+} from "resolvers/app/auth/models"
 import { Context } from "config/types"
 
 export const checkUsername = async (parent: void, args: CheckUsernameInput, context: any) => {
@@ -31,6 +35,25 @@ export const checkId = async (parent: void, args: CheckIdInput, context: Context
     }
     const result = await context.db.collection("user").findOne({ id })
     return result === null ? true : new ApolloError("중복인 id 입니다.")
+}
+
+export const findId = async (parent: void, args: FindIdInput, context: Context) => {
+    const { phoneNumber, authCode } = args.input
+    const { redis, db } = context
+    const result = await redis.get(phoneNumber)
+    if (result === null) {
+        return new ApolloError("휴대번호 인증을 다시해야합니다")
+    }
+    if (result !== authCode.toString()) {
+        return new ApolloError("인증번호가 일치하지 않습니다")
+    }
+    const validArgs = await Promise.all([
+        redis.del(phoneNumber),
+        db.collection("user").findOne({ phoneNumber })
+    ])
+    return {
+        id: validArgs[1].id
+    }
 }
 
 export const getPersonalInformation = (parent: void, args: void, context: Context) => context.db.collection("user").findOne({ id: context.user.id })

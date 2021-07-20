@@ -107,25 +107,6 @@ export const login = async (parent: void, args: LoginInput, context: Context) =>
     return new ApolloError("잘못된 아이디 또는 비밀번호를 입력하셨습니다")
 }
 
-export const findId = async (parent: void, args: FindIdInput, context: Context) => {
-    const { phoneNumber, authCode } = args.input
-    const { redis, db } = context
-    const result = await redis.get(phoneNumber)
-    if (result === null) {
-        return new ApolloError("휴대번호 인증을 다시해야합니다")
-    }
-    if (result !== authCode.toString()) {
-        return new ApolloError("인증번호가 일치하지 않습니다")
-    }
-    const validArgs = await Promise.all([
-        redis.del(phoneNumber),
-        db.collection("user").findOne({ phoneNumber })
-    ])
-    return {
-        id: validArgs[1].id
-    }
-}
-
 export const resetPassword = async (parent: void, args: ResetPasswordInput, context: Context) => {
     const { user, phoneNumber, authCode } = args.input
     if (isValidPassword(user.password) === false) {
