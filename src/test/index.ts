@@ -29,6 +29,7 @@ app.use("/api-docs", express.static("docs"))
 
 const schema = makeExecutableSchema({
     typeDefs: `
+        scalar Upload \n
         ${graphqlScalars.typeDefs.join('\n')}
         ${typeDefs}
     `,
