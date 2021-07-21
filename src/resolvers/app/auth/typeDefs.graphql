@@ -3,7 +3,6 @@ type Mutation{
     회원가입
     """
     register(
-        "유저의 정보를 입력합니다"
         input: RegisterInput!
     ): JWT!
 
@@ -19,7 +18,6 @@ type Mutation{
     로그인
     """
     login(
-        "유저의 정보를 입력합니다"
         input: LoginInput!
     ): JWT!
 
@@ -27,7 +25,6 @@ type Mutation{
     비밀번호를 재설정 합니다
     """
     resetPassword(
-        "재설정에 대한 정보를 입력합니다"
         input: ResetPasswordInput!
     ): Boolean!
 
@@ -35,7 +32,6 @@ type Mutation{
     비밀번호를 변경합니다
     """
     changePassword(
-        "변경과 관련된 정보를 입력합니다"
         input: ChangePasswordInput!
     ): Boolean!
 
@@ -43,7 +39,6 @@ type Mutation{
     이미지를 Upload하고 URL을 반환합니다
     """
     uploadImageFile(
-        ".jpg, .jpeg, .png 파일을 전송해야 합니다"
         input: UploadImageInput!
     ): URL!
 
@@ -51,7 +46,6 @@ type Mutation{
     사용자의 프로필을 변경합니다
     """
     changeProfile(
-        "변경과 관련된 정보를 입력합니다"
         input: ChangeProfileInput!
     ): PersonalInformation!
 
@@ -59,7 +53,6 @@ type Mutation{
     계정을 삭제합니다
     """
     deleteAccount(
-        "유저의 정보를 입력합니다"
         input: DeleteAccountInput!
     ): Boolean!
 }
@@ -154,6 +147,7 @@ type FindIdResult{
 uploadImage Mutation의 input 입니다
 """
 input UploadImageInput{
+    "파일 입니다"
     file: Upload!
 }
 

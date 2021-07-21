@@ -1,131 +1,204 @@
 extend type Mutation {
     """
-    SONG의 기본 음원을 업로드 합니다
+    파일을 업로드
     """
     uploadDefaultFile(
         input: UploadDefaultFileInput!
     ): URL!
 
     """
-    Song을 업로드 합니다
+    Song을 업로드
     """
     uploadSong(
         input: UploadSongInput!
     ): Song!
 
     """
-    Song을 업데이트 합니다
+    Song을 업데이트
     """
     updateSong(
         input: UpdateSongInput!
     ): Song!
 
-
+    """
+    Song과 같이 제공되는 Instrument를 업로드
+    """
     uploadInstrument(
         input: UploadInstrumentInput!
     ): Instrument!
 
+    """
+    Song과 같이 제공되는 Instrument를 업데이트
+    """
     updateInstrument(
         input: UpdateInstrumentInput!
     ): Instrument!
 }
 
 extend type Query {
-    """Penta-Tonic에 있는 모든 곡을 불러옵니다"""
+    """Penta-Tonic에 있는 모든 곡을 불러오기"""
     getAllSongs: [Song!]!
 }
 
+"""
+Instrument를 Update 할때 사용되는 input
+"""
 input UpdateInstrumentArgs{
+    "song의 id"
     songId: ObjectID
+    "instrument의 id"
     instId: ObjectID!
+    "instrument의 name"
     name: String
+    "파일의 주소"
     instrumentURI: URL
 }
-
+"""
+updateInstrument Mutation의 input
+"""
 input UpdateInstrumentInput {
+    "권한을 확인하기 위한 코드"
     code: String!
+    "업데이트할 instrument의 정보"
     instrument: UpdateInstrumentArgs!
 }
 
 input UploadDefaultFileInput {
+    "권한을 확인하기 위한 코드"
     code: String!
+    "업로드할 파일"
     file: Upload!
 }
 
 input UploadSongInput {
-    "권한을 확인하기 위한 코드입니다"
+    "권한을 확인하기 위한 코드"
     code: String!
-    "음원 정보 입니다"
+    "음원 정보"
     song: SongInput!
 }
 
-"""올라와 있는 곡에 대한 세션별 연주에 대한 타입입니다"""
+"""
+Instrument
+"""
 type Instrument {
-    "데모 세션에 대한 id 입니다"
+    "데모 세션에 대한 id"
     instId: ObjectID!
-    "해당 연주가 업로드 되어있는 노래에 대한 id 입니다"
+    "해당 연주가 업로드 되어있는 노래에 대한 id"
     songId: ObjectID!
-    "연주의 파일 주소입니다"
+    "instreumt의 URI"
     instrumentURI: URL!
-    "파일의 이름 입니다"
+    "instrument의 이름"
     name: String!
-    "파일의 길이 입니다"
+    "파일의 길이"
     duration: Float!
 }
 
-"""올라와 있는 곡에 대한 타입입니다"""
+"""올라와 있는 곡에 대한 타입"""
 type Song {
+    "song의 Id"
     songId: ObjectID!
+    "song의 제목"
     name: String!
+    "song의 음원 URI"
     songURI: URL!
+    "song의 이미지 URI"
     songImg: URL!
+    "song의 장르"
     genre: String!
+    "song의 artist"
     artist: String!
+    "song이 포함되어있는 album"
     album: String!
+    "해당 곡이 weeklyChallenge 인가"
     weeklyChallenge: Boolean!
+    "song의 duration"
     duration: Float!
+    "song의 level"
     level: Int!
+    "해당 songId를 가지고 있는 Instruments"
     instrument: [Instrument!]!
+    "음원 발매의 날짜"
     releaseDate: Date!
 }
 
+"""
+노래의 기본 음원을 업로드 할때 사용하는 input 
+"""
 input SongInput {
+    "song의 제목"
     name: String!
+    "song의 음원 URI"
     songURI: URL!
+    "song의 이미지 URI"
     songImg: URL!
+    "song의 장르"
     genre: String!
+    "song의 artist"
     artist: String!
-    weeklyChallenge: Boolean!
-    level: Int!
-    releaseDate: Date!
+    "해당 song이 포함되어있는 album"
     album: String!
+    "해당 song이 weeklyChallenge 인가"
+    weeklyChallenge: Boolean!
+    "song의 난이도"
+    level: Int!
+    "음원의 날짜"
+    releaseDate: Date!
 }
 
+"""
+업로드 할 Instrument의 정보를 입력하는 input 
+"""
 input UploadInstrumentArgs {
+    "음원의 Id"
     songId: ObjectID!
+    "Instrument의 name"
     name: String!
+    "Instrument의 음원 URI"
     instrumentURI: URL!
 }
 
+"""
+uploadInstrument Mutation의 input 
+"""
 input UploadInstrumentInput {
+    "권한을 확인하기 위한 코드"
     code: String!
+    "업로드할 Instrument의 정보"
     instrument: UploadInstrumentArgs!
 }
 
+"""
+Song을 Update할때 사용되는 input 
+"""
 input UpdateSong {
+    "song의 id"
     songId: ObjectID!
+    "song의 name"
     name: String
+    "song의 음원 URI"
     songURI: URL
+    "song의 이미지 URI"
     songImg: URL
+    "song의 장르"
     genre: String
+    "song의 artist"
     artist: String
-    releaseDate: Date
-    weeklyChallenge: Boolean
-    level: Int
+    "song의 album"
     album: String
+    "song의 난이도"
+    level: Int
+    "song의 발매의 날짜"
+    releaseDate: Date
+    "song이 weeklyChallenge 인가"
+    weeklyChallenge: Boolean
 }
 
+"""
+updateSong Mutation의 input
+"""
 input UpdateSongInput {
+    "권한을 확인하기 위한 코드"
     code: String!
+    "업데이트할 song의 정보"
     song: UpdateSong!
 }
