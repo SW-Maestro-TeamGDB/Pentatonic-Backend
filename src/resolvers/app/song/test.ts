@@ -1,11 +1,10 @@
 import request from "supertest"
 import app from "test"
-import DB from "config/connectDB"
 import fetch from "node-fetch"
 import env from "config/env"
-import { deepStrictEqual as equal } from "assert"
 import { Db } from "mongodb"
-
+import { deepStrictEqual as equal } from "assert"
+import DB from "config/connectDB"
 const fileUpload = (query: string, variables: { [x: string]: string }) => {
     const map = Object.assign({}, Object.keys(variables).map(key => [`variables.${key}`]))
     const response = request(app)
@@ -26,9 +25,9 @@ const instrumentIds: string[] = []
 describe("Penta-Tonic music Services", () => {
     before(async () => {
         const db = await DB.get() as Db
-        Promise.all([
-            db.collection("instrument").deleteMany({}),
-            db.collection("song").deleteMany({})
+        await Promise.all([
+            db.collection("song").deleteMany({}),
+            db.collection("instrument").deleteMany({})
         ])
     })
     describe("Upload Services test", () => {
