@@ -396,4 +396,34 @@ describe("Penta-Tonic music Services", () => {
             })
         })
     })
+    describe("Query test", () => {
+        describe("Get All Songs", () => {
+            describe("Success", () => {
+                it("Successfully get all songs", async () => {
+                    const query = `
+                        query{
+                           getAllSongs{
+                                songId
+                                name
+                                album
+                                level
+                                instrument{
+                                    songId
+                                }
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.getAllSongs[0].songId, songIds[0])
+                    equal(body.data.getAllSongs[0].instrument[0].songId, body.data.getAllSongs[0].songId)
+                    equal(body.data.getAllSongs[0].name, "Viva La Vida")
+                    equal(body.data.getAllSongs[0].album, "Viva la Vida or Death and All His Friends")
+                    equal(body.data.getAllSongs[0].level, 3)
+                })
+            })
+        })
+    })
 })

@@ -81,6 +81,7 @@ type Song {
     songImg: URL!
     genre: String!
     artist: String!
+    album: String!
     weeklyChallenge: Boolean!
     duration: Float!
     level: Int!

@@ -75,7 +75,7 @@ export const uploadInstrument = async (parent: void, args: UploadInstrumentInput
     return await db.collection("instrument").insertOne({
         name,
         instrumentURI: instrumentURI.href,
-        songId,
+        songId: new ObjectID(songId),
         duration
     }).then(({ ops }) => ops[0])
 }
@@ -93,6 +93,9 @@ export const updateInstrument = async (parent: void, args: UpdateInstrumentInput
             if (instrument.duration === 0) {
                 return new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
             }
+        }
+        else if (key === "songId") {
+            instrument.songId = new ObjectID(args.input.instrument?.songId)
         }
         else {
             instrument[key] = args.input.instrument[key as InstrumentKeys]
