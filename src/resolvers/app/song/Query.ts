@@ -23,7 +23,7 @@ export const getSongByName = async (parent: void, args: GetSongByNameInput, cont
     if (args.input.song.level !== undefined) {
         query.level = args.input.song.level
     }
-    return await db.collection("song").find(query).toArray()
+    return db.collection("song").find(query).toArray()
 }
 
 export const getSongByArtist = async (parent: void, args: GetSongByArtistInput, context: Context) => {
@@ -37,11 +37,11 @@ export const getSongByArtist = async (parent: void, args: GetSongByArtistInput, 
     if (args.input.song.level !== undefined) {
         query.level = args.input.song.level
     }
-    return await db.collection("song").find(query).toArray()
+    return db.collection("song").find(query).toArray()
 }
 
 export const getSongByWeeklyChallenge = async (parent: void, args: GetSongByWeeklyChallengeInput, context: Context) => {
     const { db } = context
     const { weeklyChallenge } = args.input.song
-    return await db.collection("song").find({ weeklyChallenge }).toArray()
+    return db.collection("song").find({ weeklyChallenge }).toArray()
 }

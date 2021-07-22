@@ -1,10 +1,13 @@
 import {
     UploadCoverFileInput,
-    UploadCoverInput
+    UploadCoverInput,
+    UpdateCoverInput,
+    UpdateCoverQuery
 } from "resolvers/app/library/models"
 import { Context } from "config/types"
 import { ApolloError } from "apollo-server-express"
 import { uploadS3, getAudioDuration } from "lib"
+import { ObjectID } from "mongodb"
 
 
 const isValidAudio = (name: string) => {
@@ -44,4 +47,21 @@ export const uploadCover = async (parent: void, args: UploadCoverInput, context:
         duration,
         creatorId
     }).then(({ ops }) => ops[0])
+}
+
+export const updateCover = async (parent: void, args: UpdateCoverInput, context: Context) => {
+    const {
+        coverId,
+        name
+    } = args.input.cover
+    if (name !== undefined) {
+        return context.db.collection("library").findOneAndUpdate({
+            _id: new ObjectID(coverId),
+            creatorId: context.user.id
+        }, { $set: { name } }, { returnDocument: "after" }).then(({ value }) => value)
+    }
+    return context.db.collection("library").findOne({
+        _id: new ObjectID(coverId),
+        creatorId: context.user.id
+    })
 }

@@ -17,7 +17,7 @@ export const uploadDefaultFile = async (parent: void, args: UploadDefaultImgInpu
     const file = await args.input.file
     const stream = file.createReadStream()
     const fileName = `${Date.now()}-${file.filename}`
-    return await uploadS3(stream, fileName, file.mimetype)
+    return uploadS3(stream, fileName, file.mimetype)
 }
 
 export const uploadSong = async (parent: void, args: UploadSongInput, context: Context) => {
@@ -63,8 +63,7 @@ export const updateSong = async (parent: void, args: UpdateSongInput, context: C
         }
     }
     delete song._id
-    await db.collection("song").updateOne({ _id }, { $set: song })
-    return await db.collection("song").findOne({ _id })
+    return db.collection("song").findOneAndUpdate({ _id }, { $set: song }, { returnDocument: "after" }).then(({ value }) => value)
 }
 
 export const uploadInstrument = async (parent: void, args: UploadInstrumentInput, context: Context) => {
@@ -74,7 +73,7 @@ export const uploadInstrument = async (parent: void, args: UploadInstrumentInput
     if (duration === 0) {
         return new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
     }
-    return await db.collection("instrument").insertOne({
+    return db.collection("instrument").insertOne({
         name,
         instrumentURI: instrumentURI.href,
         songId: new ObjectID(songId),
@@ -103,18 +102,17 @@ export const updateInstrument = async (parent: void, args: UpdateInstrumentInput
             instrument[key] = args.input.instrument[key as InstrumentKeys]
         }
     }
-    await db.collection("instrument").updateOne({ _id }, { $set: instrument })
-    return await db.collection("instrument").findOne({ _id })
+    return db.collection("instrument").findOneAndUpdate({ _id }, { $set: instrument }, { returnDocument: "after" }).then(({ value }) => value)
 }
 
 export const deleteSong = async (parent: void, args: DeleteSongInput, context: Context) => {
     const { db } = context
     const _id = new ObjectID(args.input.song.songId)
-    return await db.collection("song").deleteOne({ _id }).then(({ deletedCount }) => deletedCount === 1)
+    return db.collection("song").deleteOne({ _id }).then(({ deletedCount }) => deletedCount === 1)
 }
 
 export const deleteInstrument = async (parent: void, args: DeleteInstrumentInput, context: Context) => {
     const { db } = context
     const _id = new ObjectID(args.input.instrument.instId)
-    return await db.collection("instrument").deleteOne({ _id }).then(({ deletedCount }) => deletedCount === 1)
+    return db.collection("instrument").deleteOne({ _id }).then(({ deletedCount }) => deletedCount === 1)
 }
