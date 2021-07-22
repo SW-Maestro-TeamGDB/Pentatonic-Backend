@@ -29,7 +29,7 @@ export const uploadS3 = async (fileStream: ReadStream | string, Key: string, Con
 
 export const isValidImage = (fileName: String) => {
     for (const extension of [".jpg", ".jpeg", ".png"]) {
-        if (fileName.endsWith(extension) === true) {
+        if (fileName.endsWith(extension)) {
             return true
         }
     }

@@ -1,0 +1,14 @@
+
+
+extend type Mutation {
+    """커버곡을 업로드합니다"""
+    uploadCoverFile(
+        input: UploadCoverFileInput!
+    ): URL!
+}
+
+"""uploadCoverFile Mutation의 input"""
+input UploadCoverFileInput {
+    "파일"
+    file: Upload!
+}

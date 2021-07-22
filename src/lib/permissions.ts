@@ -54,6 +54,7 @@ export const permissions = shield({
         updateSong: isValidCode,
         uploadInstrument: isValidCode,
         updateInstrument: isValidCode,
+        uploadCoverFile: isLogin
     },
     Query: {
         findId: and(not(isLogin), canSend),

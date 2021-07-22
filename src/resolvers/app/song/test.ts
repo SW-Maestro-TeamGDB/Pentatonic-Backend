@@ -23,7 +23,7 @@ const uri: string[] = []
 const songIds: string[] = []
 const instrumentIds: string[] = []
 describe("Penta-Tonic music Services", () => {
-    before(async () => {
+    after(async () => {
         const db = await DB.get() as Db
         await Promise.all([
             db.collection("song").deleteMany({}),
