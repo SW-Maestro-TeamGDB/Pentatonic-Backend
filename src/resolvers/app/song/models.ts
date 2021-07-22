@@ -43,6 +43,38 @@ export interface UploadInstrumentInput {
     }
 }
 
+export interface GetSongByNameInput {
+    input: {
+        name: string
+        level: number
+        genre: string
+    }
+}
+
+export interface GetSongByArtistInput {
+    input: {
+        artist: string
+        genre?: string
+        level?: number
+    }
+}
+
+export interface GetSongByArtistQuery {
+    artist: {
+        $regex: RegExp
+    }
+    genre?: string
+    level?: number
+}
+
+export interface GetSongByNameQuery {
+    name: {
+        $regex: RegExp
+    }
+    genre?: string
+    level?: number
+}
+
 export interface UpdateInstrumentInput {
     input: {
         code: string

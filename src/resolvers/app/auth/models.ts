@@ -17,12 +17,6 @@ export interface CheckUsernameInput {
     }
 }
 
-
-interface PasswordInput {
-    password: string
-}
-
-
 export interface FindIdInput {
     input: {
         phoneNumber: string
