@@ -8,7 +8,7 @@ import { deepStrictEqual as equal } from "assert"
 import * as Redis from "config/connectRedis"
 
 const songIds: string[] = []
-const audioURI: string[] = []
+const coverURI: string[] = []
 const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
 let token: string = ""
 
@@ -32,7 +32,8 @@ describe("Library services test", () => {
         const db = await DB.get() as Db
         await Promise.all([
             db.collection("user").deleteMany({}),
-            db.collection("song").deleteMany({})
+            db.collection("song").deleteMany({}),
+            db.collection("library").deleteMany({})
         ])
     })
     describe("Before Register & upload", () => {
@@ -105,7 +106,7 @@ describe("Library services test", () => {
                 const { body } = await fileUpload(query, {
                     file: "src/test/viva/drum.mp3"
                 }, token)
-                audioURI.push(body.data.uploadCoverFile)
+                coverURI.push(body.data.uploadCoverFile)
             })
         })
         describe("Failure", () => {
@@ -122,6 +123,72 @@ describe("Library services test", () => {
                     file: "src/test/test.jpg"
                 }, token)
                 equal(body.errors[0].message, "mp3, m4a 파일이 아닙니다")
+            })
+        })
+    })
+    describe("Mutation uploadCover", () => {
+        describe("Success", () => {
+            it("Successfully uploaded a cover", async () => {
+                const query = `
+                    mutation {
+                        uploadCover(
+                            input: {
+                                cover: {
+                                    name: "승원이의 Viva La Vida Drum 커버",
+                                    songId: "${songIds[0]}",
+                                    coverURI: "${coverURI[0]}"
+                                }
+                            }
+                        ){
+                            name
+                            creatorId
+                            songId
+                            coverURI
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.uploadCover.name, "승원이의 Viva La Vida Drum 커버")
+                equal(body.data.uploadCover.songId, songIds[0])
+                equal(body.data.uploadCover.coverURI, coverURI[0])
+                equal(body.data.uploadCover.creatorId, "user1234")
+                equal(typeof body.data.uploadCover.coverId, "string")
+            })
+        })
+        describe("Failure", () => {
+            it("Fail to upload a cover", async () => {
+                const query = `
+                    mutation {
+                        uploadCover(
+                            input: {
+                                cover: {
+                                    name: "hawawa cover",
+                                    songId: "111111111111111111111111",
+                                    coverURI: "https://naver.com"
+                                }
+                            }
+                        ){
+                            name
+                            creatorId
+                            songId
+                            coverURI
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "음원 파일을 정상적으로 읽지 못했습니다")
             })
         })
     })

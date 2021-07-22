@@ -1,14 +1,51 @@
 
 
 extend type Mutation {
-    """커버곡을 업로드합니다"""
+    """커버 파일을 업로드"""
     uploadCoverFile(
         input: UploadCoverFileInput!
     ): URL!
+
+    """커버한 정보를 업로드"""
+    uploadCover(
+        input: UploadCoverInput!
+    ): Cover!
 }
 
 """uploadCoverFile Mutation의 input"""
 input UploadCoverFileInput {
     "파일"
     file: Upload!
+}
+
+"""커버 정보"""
+input CoverInput {
+    "커버의 제목 ex) 승원이의 viva la vida 바이올린 커버"
+    name: String!
+    "커버 파일의 주소"
+    coverURI: URL!
+    "어떤 노래에 커버를 하였는지 노래Id"
+    songId: ObjectID!
+}
+
+"""uploadCover Mutation의 input"""
+input UploadCoverInput {
+    "커버 정보"
+    cover: CoverInput!
+}
+
+"""커버한 데이터"""
+type Cover {
+    "커버한 곡의 Id"
+    songId: ObjectID!
+    "커버한 사람의 id"
+    creatorId: String!
+    "커버 파일의 주소"
+    coverURI: URL!
+    "고유 커버 Id"
+    coverId: ObjectID!
+    "커버의 길이"
+    duration: Float!
+    "커버의 제목"
+    name: String!
 }
