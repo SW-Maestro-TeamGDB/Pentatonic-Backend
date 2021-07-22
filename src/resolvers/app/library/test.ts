@@ -9,6 +9,7 @@ import * as Redis from "config/connectRedis"
 
 const songIds: string[] = []
 const coverURI: string[] = []
+const coverIds: string[] = []
 const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
 let token: string = ""
 
@@ -158,6 +159,7 @@ describe("Library services test", () => {
                 equal(body.data.uploadCover.songId, songIds[0])
                 equal(body.data.uploadCover.coverURI, coverURI[0])
                 equal(body.data.uploadCover.creatorId, "user1234")
+                coverIds.push(body.data.uploadCover.coverId)
                 equal(typeof body.data.uploadCover.coverId, "string")
             })
         })
@@ -189,6 +191,60 @@ describe("Library services test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.errors[0].message, "음원 파일을 정상적으로 읽지 못했습니다")
+            })
+        })
+    })
+    describe("Mutation updateCover", () => {
+        describe("Success", () => {
+            it("Successfully updated a cover - 1", async () => {
+                const query = `
+                    mutation {
+                        updateCover(
+                            input: {
+                                cover: {
+                                    name: "Viva La Vida Drum 커버",
+                                    coverId: "${coverIds[0]}"
+                                }
+                            }
+                        ){
+                            name
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.updateCover.name, "Viva La Vida Drum 커버")
+                equal(body.data.updateCover.coverId, coverIds[0])
+            })
+            it("Successfully updated a cover - 2", async () => {
+                const query = `
+                    mutation {
+                        updateCover(
+                            input: {
+                                cover: {
+                                    coverId: "${coverIds[0]}"
+                                }
+                            }
+                        ){
+                            name
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                console.log(body)
+                equal(body.data.updateCover.name, "Viva La Vida Drum 커버")
+                equal(body.data.updateCover.coverId, coverIds[0])
             })
         })
     })
