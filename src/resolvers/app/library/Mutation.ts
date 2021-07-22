@@ -1,7 +1,10 @@
-import { UploadCoverFileInput } from "resolvers/app/library/models"
+import {
+    UploadCoverFileInput,
+    UploadCoverInput
+} from "resolvers/app/library/models"
 import { Context } from "config/types"
 import { ApolloError } from "apollo-server-express"
-import { uploadS3 } from "lib"
+import { uploadS3, getAudioDuration } from "lib"
 
 
 const isValidAudio = (name: string) => {
@@ -20,5 +23,25 @@ export const uploadCoverFile = async (parent: void, args: UploadCoverFileInput, 
     }
     const stream = file.createReadStream()
     const fileName = `${Date.now()}-${file.filename}`
-    return await uploadS3(stream, fileName, file.mimetype)
+    return uploadS3(stream, fileName, file.mimetype)
+}
+
+export const uploadCover = async (parent: void, args: UploadCoverInput, context: Context) => {
+    const {
+        name,
+        songId,
+        coverURI,
+    } = args.input.cover
+    const duration = await getAudioDuration(coverURI.href)
+    if (duration === 0) {
+        return new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
+    }
+    const creatorId = context.user.id
+    return context.db.collection("library").insertOne({
+        name,
+        songId,
+        coverURI: coverURI.href,
+        duration,
+        creatorId
+    }).then(({ ops }) => ops[0])
 }

@@ -2,6 +2,9 @@ import {
     Song as SongInterface,
     Instrument as InstrumentInterface
 } from "resolvers/app/song/models"
+import {
+    Cover as CoverInterface
+} from "resolvers/app/library/models"
 import { Context } from "config/types"
 
 export const Song = {
@@ -13,4 +16,8 @@ export const Song = {
 
 export const Instrument = {
     instId: (parent: InstrumentInterface) => parent._id
+}
+
+export const Cover = {
+    coverId: (parent: CoverInterface) => parent._id
 }
