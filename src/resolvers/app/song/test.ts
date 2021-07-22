@@ -682,5 +682,43 @@ describe("Penta-Tonic music Services", () => {
                 })
             })
         })
+        describe("Query getSongByWeeklyChallenge", () => {
+            describe("Success", () => {
+                it("Successfully get song by weekly challenge - 1", async () => {
+                    const query = `
+                        query{
+                            getSongByWeeklyChallenge(
+                                input: {
+                                    song: {
+                                        weeklyChallenge: true,
+                                    }
+                                }
+                            ){
+                                songId
+                                name
+                                album
+                                artist
+                                level
+                                weeklyChallenge
+                                instrument{
+                                    songId
+                                }
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.getSongByWeeklyChallenge[0].songId, songIds[0])
+                    equal(body.data.getSongByWeeklyChallenge[0].artist, "Coldplay")
+                    equal(body.data.getSongByWeeklyChallenge[0].instrument[0].songId, body.data.getSongByWeeklyChallenge[0].songId)
+                    equal(body.data.getSongByWeeklyChallenge[0].name, "Viva La Vida")
+                    equal(body.data.getSongByWeeklyChallenge[0].album, "Viva la Vida or Death and All His Friends")
+                    equal(body.data.getSongByWeeklyChallenge[0].level, 3)
+                    equal(body.data.getSongByWeeklyChallenge[0].weeklyChallenge, true)
+                })
+            })
+        })
     })
 })
