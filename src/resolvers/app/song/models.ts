@@ -102,9 +102,9 @@ export interface UpdateInstrumentInput {
         code: string
         instrument: {
             instId?: ObjectID
-            songId?: ObjectID
-            name?: string
-            instrumentURI?: URL
+            songId: ObjectID
+            name: string
+            instrumentURI: URL
         }
     }
 }
@@ -115,16 +115,16 @@ export interface UpdateSongInput {
     input: {
         code: string
         song: {
-            songId: ObjectID
-            name?: string
-            songImg?: URL
-            genre?: SongGenres
-            artist?: string
-            songURI?: URL
-            weeklyChallenge?: boolean
-            level?: number
-            releaseDate?: Date
-            album?: string
+            songId?: ObjectID
+            name: string
+            songImg: URL
+            genre: SongGenres
+            artist: string
+            songURI: URL
+            weeklyChallenge: boolean
+            level: number
+            releaseDate: Date
+            album: string
         }
     }
 }

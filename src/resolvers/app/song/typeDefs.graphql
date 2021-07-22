@@ -54,13 +54,15 @@ extend type Mutation {
 """
 input DeleteInstrument{
     "instrument의 id"
-    instrumentId: ObjectID!
+    instId: ObjectID!
 }
 
 """
 deleteInstrument Mutation의 input
 """
 input DeleteInstrumentInput{
+    "권한을 확인하기 위한 코드"
+    code: String!
     "삭제할 instrument의 정보"
     instrument: DeleteInstrument!
 }

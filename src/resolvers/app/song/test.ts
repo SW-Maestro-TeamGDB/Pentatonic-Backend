@@ -92,7 +92,46 @@ describe("Penta-Tonic music Services", () => {
     describe("Song Services test", () => {
         describe("Mutation uploadSong", () => {
             describe("Success", () => {
-                it("Successfully uploaded a song", async () => {
+                it("Successfully uploaded a song - 1", async () => {
+                    const query = `
+                        mutation{
+                            uploadSong(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    song: {
+                                        name: "name",
+                                        songURI: "${uri[0]}",
+                                        songImg: "${uri[1]}",
+                                        genre: "Pop",
+                                        artist: "artist",
+                                        weeklyChallenge: false,
+                                        releaseDate: "2019-01-01",
+                                        level: 2,
+                                        album: "Viva la Vida or Death and All His Friends"
+                                    }
+                                }
+                            ){
+                                songId
+                                songURI
+                                releaseDate
+                                songImg
+                                name
+                                level
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+
+                    equal(body.data.uploadSong.songURI, uri[0])
+                    equal(body.data.uploadSong.songImg, uri[1])
+                    equal(body.data.uploadSong.name, "name")
+                    equal(body.data.uploadSong.level, 2)
+                    songIds.push(body.data.uploadSong.songId)
+                })
+                it("Successfully uploaded a song - 2", async () => {
                     const query = `
                         mutation{
                             uploadSong(
@@ -281,7 +320,7 @@ describe("Penta-Tonic music Services", () => {
     describe("Instrument Services test", () => {
         describe("Mutation uploadInstrument", async () => {
             describe("Success", () => {
-                it("If you normally upload the instrument", async () => {
+                it("If you normally upload the instrument - 1", async () => {
                     const query = `
                         mutation{
                             uploadInstrument(
@@ -308,6 +347,35 @@ describe("Penta-Tonic music Services", () => {
                     equal(body.data.uploadInstrument.songId, songIds[0])
                     equal(body.data.uploadInstrument.instrumentURI, `${env.S3_URI}/song1-Guitar.mp3`)
                     equal(body.data.uploadInstrument.name, "viva la vida demo guitar")
+                    instrumentIds.push(body.data.uploadInstrument.instId)
+                })
+                it("If you normally upload the instrument - 2", async () => {
+                    const query = `
+                        mutation{
+                            uploadInstrument(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    instrument: {
+                                        name: "name",
+                                        instrumentURI: "${env.S3_URI}/song1-Guitar.mp3",
+                                        songId: "${songIds[1]}"
+                                    }
+                                }
+                            ){
+                                instId
+                                songId
+                                instrumentURI
+                                name
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.uploadInstrument.songId, songIds[1])
+                    equal(body.data.uploadInstrument.instrumentURI, `${env.S3_URI}/song1-Guitar.mp3`)
+                    equal(body.data.uploadInstrument.name, "name")
                     instrumentIds.push(body.data.uploadInstrument.instId)
                 })
             })
@@ -400,6 +468,52 @@ describe("Penta-Tonic music Services", () => {
                         .send(JSON.stringify({ query }))
                         .expect(200)
                     equal(body.errors[0].message, "음원 파일을 정상적으로 읽지 못했습니다")
+                })
+            })
+        })
+        describe("Mutation deleteSong", () => {
+            describe("Success", () => {
+                it("Successfully deleted a song", async () => {
+                    const query = `
+                        mutation{
+                            deleteSong(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    song: {
+                                        songId: "${songIds[1]}"
+                                    }
+                                }
+                            )
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.deleteSong, true)
+                })
+            })
+        })
+        describe("Mutation deleteInstrument", () => {
+            describe("Success", () => {
+                it("Successfully deleted an instrument", async () => {
+                    const query = `
+                        mutation{
+                            deleteInstrument(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    instrument: {
+                                        instId: "${instrumentIds[1]}"
+                                    }
+                                }
+                            )
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.deleteInstrument, true)
                 })
             })
         })

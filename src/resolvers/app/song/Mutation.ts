@@ -42,20 +42,21 @@ export const uploadSong = async (parent: void, args: UploadSongInput, context: C
 }
 
 export const updateSong = async (parent: void, args: UpdateSongInput, context: Context) => {
+    const _id = new ObjectID(args.input.song.songId)
+    delete args.input.song.songId
     const req = args.input.song
     const { db } = context
-    const _id = new ObjectID(req.songId)
     const song = await db.collection("song").findOne({ _id })
     for (const key in req) {
         if (key === "songURI") {
-            song.duration = await getAudioDuration(req?.songURI?.href as string)
+            song.duration = await getAudioDuration(req.songURI.href as string)
             if (song.duration === 0) {
                 return new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
             }
-            song.songURI = req?.songURI?.href
+            song.songURI = req.songURI.href
         }
         else if (key === "songImg") {
-            song.songImg = req?.songImg?.href
+            song.songImg = req.songImg.href
         }
         else {
             song[key] = req[key as SongKeys]
@@ -89,14 +90,14 @@ export const updateInstrument = async (parent: void, args: UpdateInstrumentInput
     delete args.input.instrument.instId
     for (const key in args.input.instrument) {
         if (key === "instrumentURI") {
-            instrument.duration = await getAudioDuration(args.input.instrument?.instrumentURI?.href as string)
-            instrument.instrumentURI = args.input.instrument?.instrumentURI?.href
+            instrument.duration = await getAudioDuration(args.input.instrument.instrumentURI.href as string)
+            instrument.instrumentURI = args.input.instrument.instrumentURI.href
             if (instrument.duration === 0) {
                 return new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
             }
         }
         else if (key === "songId") {
-            instrument.songId = new ObjectID(args.input.instrument?.songId)
+            instrument.songId = new ObjectID(args.input.instrument.songId)
         }
         else {
             instrument[key] = args.input.instrument[key as InstrumentKeys]
