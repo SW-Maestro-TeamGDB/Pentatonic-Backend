@@ -15,6 +15,14 @@ export interface Song {
     duration: number
 }
 
+export interface GetSongByWeeklyChallengeInput {
+    input: {
+        song: {
+            weeklyChallenge: boolean
+        }
+    }
+}
+
 export interface UploadSongInput {
     input: {
         code: string

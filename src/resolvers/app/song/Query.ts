@@ -3,7 +3,8 @@ import {
     GetSongByNameInput,
     GetSongByNameQuery,
     GetSongByArtistInput,
-    GetSongByArtistQuery
+    GetSongByArtistQuery,
+    GetSongByWeeklyChallengeInput
 } from "resolvers/app/song/models"
 
 export const getAllSongs = async (parent: void, args: void, context: Context) => {
@@ -37,4 +38,10 @@ export const getSongByArtist = async (parent: void, args: GetSongByArtistInput, 
         query.level = args.input.song.level
     }
     return await db.collection("song").find(query).toArray()
+}
+
+export const getSongByWeeklyChallenge = async (parent: void, args: GetSongByWeeklyChallengeInput, context: Context) => {
+    const { db } = context
+    const { weeklyChallenge } = args.input.song
+    return await db.collection("song").find({ weeklyChallenge }).toArray()
 }
