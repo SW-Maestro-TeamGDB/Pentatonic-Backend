@@ -14,13 +14,13 @@ export const getAllSongs = async (parent: void, args: void, context: Context) =>
 export const getSongByName = async (parent: void, args: GetSongByNameInput, context: Context) => {
     const { db } = context
     const query: GetSongByNameQuery = {
-        name: { $regex: new RegExp(args.input.name, "ig") }
+        name: { $regex: new RegExp(args.input.song.name, "ig") }
     }
-    if (args.input.genre !== undefined) {
-        query.genre = args.input.genre
+    if (args.input.song.genre !== undefined) {
+        query.genre = args.input.song.genre
     }
-    if (args.input.level !== undefined) {
-        query.level = args.input.level
+    if (args.input.song.level !== undefined) {
+        query.level = args.input.song.level
     }
     return await db.collection("song").find(query).toArray()
 }
@@ -28,13 +28,13 @@ export const getSongByName = async (parent: void, args: GetSongByNameInput, cont
 export const getSongByArtist = async (parent: void, args: GetSongByArtistInput, context: Context) => {
     const { db } = context
     const query: GetSongByArtistQuery = {
-        artist: { $regex: new RegExp(args.input.artist, "ig") }
+        artist: { $regex: new RegExp(args.input.song.artist, "ig") }
     }
-    if (args.input.genre !== undefined) {
-        query.genre = args.input.genre
+    if (args.input.song.genre !== undefined) {
+        query.genre = args.input.song.genre
     }
-    if (args.input.level !== undefined) {
-        query.level = args.input.level
+    if (args.input.song.level !== undefined) {
+        query.level = args.input.song.level
     }
     return await db.collection("song").find(query).toArray()
 }

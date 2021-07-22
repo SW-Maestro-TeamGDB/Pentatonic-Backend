@@ -5,10 +5,10 @@ import {
     UpdateSongInput,
     UploadInstrumentInput,
     UpdateInstrumentInput,
-    InstrumentKeys
+    InstrumentKeys,
+    DeleteSongInput
 } from "resolvers/app/song/models"
 import { Context } from "config/types"
-import env from "config/env"
 import { uploadS3, getAudioDuration } from "lib"
 import { ObjectID } from "mongodb"
 import { ApolloError } from "apollo-server-express"
@@ -103,4 +103,10 @@ export const updateInstrument = async (parent: void, args: UpdateInstrumentInput
     }
     await db.collection("instrument").updateOne({ _id }, { $set: instrument })
     return await db.collection("instrument").findOne({ _id })
+}
+
+export const deleteSong = async (parent: void, args: DeleteSongInput, context: Context) => {
+    const { db } = context
+    const _id = new ObjectID(args.input.song.songId)
+    return await db.collection("song").deleteOne({ _id }).then(({ deletedCount }) => deletedCount === 1)
 }

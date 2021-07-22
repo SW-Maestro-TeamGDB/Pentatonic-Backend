@@ -45,17 +45,30 @@ export interface UploadInstrumentInput {
 
 export interface GetSongByNameInput {
     input: {
-        name: string
-        level: number
-        genre: string
+        song: {
+            name: string
+            level: number
+            genre: string
+        }
+    }
+}
+
+export interface DeleteSongInput {
+    input: {
+        code: string
+        song: {
+            songId: ObjectID
+        }
     }
 }
 
 export interface GetSongByArtistInput {
     input: {
-        artist: string
-        genre?: string
-        level?: number
+        song: {
+            artist: string
+            genre?: string
+            level?: number
+        }
     }
 }
 

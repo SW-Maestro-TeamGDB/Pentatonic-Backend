@@ -440,9 +440,11 @@ describe("Penta-Tonic music Services", () => {
                         query{
                             getSongByName(
                                 input: {
-                                    name: "Viva La Vida",
-                                    level: 3,
-                                    genre: "Pop"
+                                    song: {
+                                        name: "Viva La Vida",
+                                        level: 3,
+                                        genre: "Pop"
+                                    }
                                 }
                             ){
                                 songId
@@ -470,7 +472,9 @@ describe("Penta-Tonic music Services", () => {
                         query{
                             getSongByName(
                                 input: {
-                                    name: "Viva La Vida"
+                                    song: {
+                                        name: "Viva La Vida"
+                                    }
                                 }
                             ){
                                 songId
@@ -502,9 +506,11 @@ describe("Penta-Tonic music Services", () => {
                         query{
                             getSongByArtist(
                                 input: {
-                                    artist: "coldplay",
-                                    level: 3,
-                                    genre: "Pop"
+                                    song: {
+                                        artist: "coldplay",
+                                        level: 3,
+                                        genre: "Pop"
+                                    }
                                 }
                             ){
                                 songId
@@ -529,12 +535,14 @@ describe("Penta-Tonic music Services", () => {
                     equal(body.data.getSongByArtist[0].album, "Viva la Vida or Death and All His Friends")
                     equal(body.data.getSongByArtist[0].level, 3)
                 })
-                it("Successfully get song by artist - 1", async () => {
+                it("Successfully get song by artist - 2", async () => {
                     const query = `
                         query{
                             getSongByArtist(
                                 input: {
-                                    artist: "coldplay"
+                                    song: {
+                                        artist: "coldplay"
+                                    }
                                 }
                             ){
                                 songId
