@@ -40,8 +40,30 @@ extend type Mutation {
     deleteSong(
         input: DeleteSongInput!
     ): Boolean!
+
+    """
+    Instrument을 삭제
+    """
+    deleteInstrument(
+        input: DeleteInstrumentInput!
+    ): Boolean!
 }
 
+"""
+삭제할 instrument의 정보
+"""
+input DeleteInstrument{
+    "instrument의 id"
+    instrumentId: ObjectID!
+}
+
+"""
+deleteInstrument Mutation의 input
+"""
+input DeleteInstrumentInput{
+    "삭제할 instrument의 정보"
+    instrument: DeleteInstrument!
+}
 """
 deleteSong Mutation의 input
 """

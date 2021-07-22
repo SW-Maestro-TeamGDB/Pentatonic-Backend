@@ -6,7 +6,8 @@ import {
     UploadInstrumentInput,
     UpdateInstrumentInput,
     InstrumentKeys,
-    DeleteSongInput
+    DeleteSongInput,
+    DeleteInstrumentInput
 } from "resolvers/app/song/models"
 import { Context } from "config/types"
 import { uploadS3, getAudioDuration } from "lib"
@@ -109,4 +110,10 @@ export const deleteSong = async (parent: void, args: DeleteSongInput, context: C
     const { db } = context
     const _id = new ObjectID(args.input.song.songId)
     return await db.collection("song").deleteOne({ _id }).then(({ deletedCount }) => deletedCount === 1)
+}
+
+export const deleteInstrument = async (parent: void, args: DeleteInstrumentInput, context: Context) => {
+    const { db } = context
+    const _id = new ObjectID(args.input.instrument.instId)
+    return await db.collection("instrument").deleteOne({ _id }).then(({ deletedCount }) => deletedCount === 1)
 }

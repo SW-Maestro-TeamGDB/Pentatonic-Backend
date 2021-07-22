@@ -32,6 +32,15 @@ export interface UploadSongInput {
     }
 }
 
+export interface DeleteInstrumentInput {
+    input: {
+        code: string,
+        instrument: {
+            instId: ObjectID
+        }
+    }
+}
+
 export interface UploadInstrumentInput {
     input: {
         code: string
