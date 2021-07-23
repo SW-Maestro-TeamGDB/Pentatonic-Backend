@@ -1,5 +1,3 @@
-
-
 extend type Mutation {
     """커버 파일을 업로드"""
     uploadCoverFile(
@@ -20,6 +18,43 @@ extend type Mutation {
     deleteCover(
         input: DeleteCoverInput!
     ): Boolean!
+}
+
+extend type Query {
+    """나의 커버 가져오기"""
+    getMyCover: [Cover!]!
+    """songId로 나의 커버 가져오기"""
+    getCoverBySongId(
+        input: GetCoverBySongIdInput!
+    ): [Cover!]!
+    """name으로 나의 커버 가져오기"""
+    getCoverByName(
+        input: GetCoverByNameInput!
+    ): [Cover!]!
+}
+
+"""커버 정보"""
+input GetCoverByName {
+    "이름"
+    name: String!
+}
+
+"""getCoverByName Mutation의 input"""
+input GetCoverByNameInput {
+    "커버 정보"
+    cover: GetCoverByName!
+}
+
+"""커버 정보"""
+input GetCoverBySongId {
+    "노래 id"
+    songId: ObjectID!
+}
+
+"""getCoverBySongId Mutation의 input"""
+input GetCoverBySongIdInput {
+    "커버 정보"
+    cover: GetCoverBySongId!
 }
 
 "삭제할 커버의 정보"
