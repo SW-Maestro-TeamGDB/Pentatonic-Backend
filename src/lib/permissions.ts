@@ -62,4 +62,4 @@ export const permissions = shield({
         findId: and(not(isLogin), canSend),
         getPersonalInformation: isLogin
     }
-})
+}, { allowExternalErrors: true })
