@@ -42,7 +42,7 @@ export const uploadCover = async (parent: void, args: UploadCoverInput, context:
     const creatorId = context.user.id
     return context.db.collection("library").insertOne({
         name,
-        songId,
+        songId: new ObjectID(songId),
         coverURI: coverURI.href,
         duration,
         creatorId

@@ -107,7 +107,7 @@ describe("Library services test", () => {
                     file: "src/test/viva/drum.mp3"
                 }, token)
                 coverURI.push(body.data.uploadCoverFile)
-            })
+            }).timeout(50000)
         })
         describe("Failure", () => {
             it("Fail to upload a cover file extensions error", async () => {
@@ -292,6 +292,86 @@ describe("Library services test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.data.deleteCover, true)
+            })
+        })
+    })
+    describe("Query getMyCovers", () => {
+        describe("Success", () => {
+            it("Successfully get my covers", async () => {
+                const query = `
+                    query {
+                        getMyCovers{
+                            songId
+                            name
+                            creatorId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.getMyCovers[0].songId, songIds[0])
+                equal(body.data.getMyCovers[0].name, "Viva La Vida Drum 커버")
+                equal(body.data.getMyCovers[0].creatorId, "user1234")
+            })
+        })
+    })
+    describe("Query getCoverBySongId", () => {
+        describe("Success", () => {
+            it("Successfully get a cover by songId", async () => {
+                const query = `
+                    query {
+                        getCoverBySongId(
+                            input: {
+                                cover: {
+                                    songId: "${songIds[0]}"
+                                }
+                            }
+                        ){
+                            name
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.getCoverBySongId[0].name, "Viva La Vida Drum 커버")
+                equal(body.data.getCoverBySongId[0].coverId, coverIds[0])
+            })
+        })
+    })
+    describe("Query getCoverByName", () => {
+        describe("Success", () => {
+            it("Successfully get a cover by name", async () => {
+                const query = `
+                    query {
+                        getCoverByName(
+                            input: {
+                                cover: {
+                                    name: "커버"
+                                }
+                            }
+                        ){
+                            name
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.getCoverByName[0].name, "Viva La Vida Drum 커버")
+                equal(body.data.getCoverByName[0].coverId, coverIds[0])
             })
         })
     })

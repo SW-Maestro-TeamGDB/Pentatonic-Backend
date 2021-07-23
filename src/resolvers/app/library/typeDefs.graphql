@@ -22,7 +22,7 @@ extend type Mutation {
 
 extend type Query {
     """나의 커버 가져오기"""
-    getMyCover: [Cover!]!
+    getMyCovers: [Cover!]!
     """songId로 나의 커버 가져오기"""
     getCoverBySongId(
         input: GetCoverBySongIdInput!

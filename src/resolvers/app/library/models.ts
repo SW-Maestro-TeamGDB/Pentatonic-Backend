@@ -49,3 +49,19 @@ export interface DeleteCoverInput {
         }
     }
 }
+
+export interface GetCoverBySongIdInput {
+    input: {
+        cover: {
+            songId: ObjectID
+        }
+    }
+}
+
+export interface GetCoverByNameInput {
+    input: {
+        cover: {
+            name: string
+        }
+    }
+}
