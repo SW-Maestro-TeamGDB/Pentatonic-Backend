@@ -33,18 +33,18 @@ const isValidPassword = (password: string) => {
 export const sendAuthCode = async (parent: void, args: SendAuthCodeInput, context: Context) => {
     const { phoneNumber } = args.input
     if (phoneNumber.startsWith("+82") === false) {
-        return new ApolloError("한국 번호가 아닙니다")
+        throw new ApolloError("한국 번호가 아닙니다")
     }
     const { db, redis } = context
     const user = await db.collection("user").findOne({ phoneNumber })
     if (args.input.isRegistration === true) {
         if (user !== null) {
-            return new ApolloError("이미 해당 전화번호로 가입한 유저가 있습니다")
+            throw new ApolloError("이미 해당 전화번호로 가입한 유저가 있습니다")
         }
     }
     else {
         if (user === null) {
-            return new ApolloError("해당 전화번호로 가입한 유저가 없습니다")
+            throw new ApolloError("해당 전화번호로 가입한 유저가 없습니다")
         }
     }
     const smsNumber = changePhoneNumber(phoneNumber)
@@ -57,7 +57,7 @@ export const sendAuthCode = async (parent: void, args: SendAuthCodeInput, contex
 export const register = async (parent: void, args: RegisterInput, context: Context) => {
     const { id, password, username, type } = args.input.user
     if (isValidPassword(password) === false) {
-        return new ApolloError("비밀번호가 조건에 맞지 않습니다")
+        throw new ApolloError("비밀번호가 조건에 맞지 않습니다")
     }
     const { db, redis } = context
     const { phoneNumber, authCode } = args.input
@@ -67,13 +67,13 @@ export const register = async (parent: void, args: RegisterInput, context: Conte
         checkId(undefined, { input: { user: { id } } }, context)
     ])
     if (validArgs[0] === null) {
-        return new ApolloError("휴대번호 인증을 다시해야합니다")
+        throw new ApolloError("휴대번호 인증을 다시해야합니다")
     }
     if (validArgs[1] !== true || validArgs[2] !== true) {
-        return new ApolloError("id 혹은 username 이 조건에 맞지 않습니다")
+        throw new ApolloError("id 혹은 username 이 조건에 맞지 않습니다")
     }
     if (validArgs[0] !== authCode.toString()) {
-        return new ApolloError("인증번호가 일치하지 않습니다")
+        throw new ApolloError("인증번호가 일치하지 않습니다")
     }
     const hash = createHashedPassword(password)
     await Promise.all([
@@ -103,21 +103,21 @@ export const login = async (parent: void, args: LoginInput, context: Context) =>
             id: user.id
         }, env.JWT_SECRET)
     }
-    return new ApolloError("잘못된 아이디 또는 비밀번호를 입력하셨습니다")
+    throw new ApolloError("잘못된 아이디 또는 비밀번호를 입력하셨습니다")
 }
 
 export const resetPassword = async (parent: void, args: ResetPasswordInput, context: Context) => {
     const { user, phoneNumber, authCode } = args.input
     if (isValidPassword(user.password) === false) {
-        return new ApolloError("비밀번호가 조건에 맞지 않습니다")
+        throw new ApolloError("비밀번호가 조건에 맞지 않습니다")
     }
     const { redis, db } = context
     const result = await redis.get(phoneNumber)
     if (result === null) {
-        return new ApolloError("휴대번호 인증을 다시해야합니다")
+        throw new ApolloError("휴대번호 인증을 다시해야합니다")
     }
     if (result !== authCode.toString()) {
-        return new ApolloError("인증번호가 일치하지 않습니다")
+        throw new ApolloError("인증번호가 일치하지 않습니다")
     }
     await Promise.all([
         redis.del(phoneNumber),
@@ -131,10 +131,10 @@ export const changePassword = async (parent: void, args: ChangePasswordInput, co
     const { password, changePassword } = args.input.user
     const userResult = await db.collection("user").findOne({ id: user.id })
     if (checkPassword(password, userResult.hash) === false) {
-        return new ApolloError("비밀번호가 올바르지 않습니다")
+        throw new ApolloError("비밀번호가 올바르지 않습니다")
     }
     if (isValidPassword(changePassword) === false) {
-        return new ApolloError("비밀번호가 양식에 맞지 않습니다")
+        throw new ApolloError("비밀번호가 양식에 맞지 않습니다")
     }
     await db.collection("user").updateOne({ id: user.id }, { $set: { hash: createHashedPassword(changePassword) } })
     return true
@@ -145,7 +145,7 @@ export const deleteAccount = async (parent: void, args: DeleteAccountInput, cont
     const result = await db.collection("user").findOne({ id: user.id })
     const { password } = args.input.user
     if (checkPassword(password, result.hash) === false) {
-        return new ApolloError("비밀번호가 올바르지 않습니다")
+        throw new ApolloError("비밀번호가 올바르지 않습니다")
     }
     return db.collection("user").deleteOne({ id: user.id }).then(({ result }) => result.n === 1)
 }

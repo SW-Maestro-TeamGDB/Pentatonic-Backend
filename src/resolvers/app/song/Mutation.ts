@@ -1,11 +1,11 @@
 import {
     UploadSongInput,
     UploadDefaultImgInput,
-    SongKeys,
+    UpdateSongQurey,
     UpdateSongInput,
     UploadInstrumentInput,
     UpdateInstrumentInput,
-    InstrumentKeys,
+    UpdateInstrumentQuery,
     DeleteSongInput,
     DeleteInstrumentInput
 } from "resolvers/app/song/models"
@@ -25,7 +25,7 @@ export const uploadSong = async (parent: void, args: UploadSongInput, context: C
     const { db } = context
     const duration = await getAudioDuration(songURI.href)
     if (duration === 0) {
-        return new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
+        throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
     }
     return db.collection("song").insertOne({
         name,
@@ -44,38 +44,38 @@ export const uploadSong = async (parent: void, args: UploadSongInput, context: C
 export const updateSong = async (parent: void, args: UpdateSongInput, context: Context) => {
     const _id = new ObjectID(args.input.song.songId)
     delete args.input.song.songId
-    const req = args.input.song
-    const { db } = context
-    const song = await db.collection("song").findOne({ _id })
-    for (const key in req) {
-        if (key === "songURI") {
-            song.duration = await getAudioDuration(req.songURI.href as string)
-            if (song.duration === 0) {
-                return new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
-            }
-            song.songURI = req.songURI.href
-        }
-        else if (key === "songImg") {
-            song.songImg = req.songImg.href
-        }
-        else {
-            song[key] = req[key as SongKeys]
-        }
+    if (Object.keys(args.input.song).length === 0) {
+        return context.db.collection("song").findOne({ _id })
     }
-    delete song._id
-    return db.collection("song").findOneAndUpdate({ _id }, { $set: song }, { returnDocument: "after" }).then(({ value }) => value)
+    const { songURI, songImg, ...song } = args.input.song
+    const { db } = context
+    const query: UpdateSongQurey = {
+        $set: song
+    }
+    if (songURI !== undefined) {
+        const duration = await getAudioDuration(songURI.href)
+        if (duration === 0) {
+            throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
+        }
+        query.$set.duration = duration
+        query.$set.songURI = songURI.href
+    }
+    if (songImg !== undefined) {
+        query.$set.songImg = songImg.href
+    }
+    return db.collection("song").findOneAndUpdate({ _id }, query, { returnDocument: "after" }).then(({ value }) => value)
 }
 
 export const uploadInstrument = async (parent: void, args: UploadInstrumentInput, context: Context) => {
-    const { name, instrumentURI, songId } = args.input.instrument
+    const { name, instURI, songId } = args.input.instrument
     const { db } = context
-    const duration = await getAudioDuration(instrumentURI.href)
+    const duration = await getAudioDuration(instURI.href)
     if (duration === 0) {
-        return new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
+        throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
     }
     return db.collection("instrument").insertOne({
         name,
-        instrumentURI: instrumentURI.href,
+        instURI: instURI.href,
         songId: new ObjectID(songId),
         duration
     }).then(({ ops }) => ops[0])
@@ -84,25 +84,25 @@ export const uploadInstrument = async (parent: void, args: UploadInstrumentInput
 export const updateInstrument = async (parent: void, args: UpdateInstrumentInput, context: Context) => {
     const { db } = context
     const _id = new ObjectID(args.input.instrument.instId)
-    const instrument = await db.collection("instrument").findOne({ _id })
-    delete instrument._id
     delete args.input.instrument.instId
-    for (const key in args.input.instrument) {
-        if (key === "instrumentURI") {
-            instrument.duration = await getAudioDuration(args.input.instrument.instrumentURI.href as string)
-            instrument.instrumentURI = args.input.instrument.instrumentURI.href
-            if (instrument.duration === 0) {
-                return new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
-            }
-        }
-        else if (key === "songId") {
-            instrument.songId = new ObjectID(args.input.instrument.songId)
-        }
-        else {
-            instrument[key] = args.input.instrument[key as InstrumentKeys]
+    if (Object.keys(args.input.instrument).length === 0) {
+        return context.db.collection("instrument").findOne({ _id })
+    }
+    const { instURI, songId, ...instrument } = args.input.instrument
+    const query: UpdateInstrumentQuery = {
+        $set: instrument
+    }
+    if (instURI !== undefined) {
+        query.$set.duration = await getAudioDuration(instURI.href as string)
+        query.$set.instURI = instURI.href
+        if (query.$set.duration === 0) {
+            throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
         }
     }
-    return db.collection("instrument").findOneAndUpdate({ _id }, { $set: instrument }, { returnDocument: "after" }).then(({ value }) => value)
+    if (songId !== undefined) {
+        query.$set.songId = new ObjectID(songId)
+    }
+    return db.collection("instrument").findOneAndUpdate({ _id }, query, { returnDocument: "after" }).then(({ value }) => value)
 }
 
 export const deleteSong = async (parent: void, args: DeleteSongInput, context: Context) => {

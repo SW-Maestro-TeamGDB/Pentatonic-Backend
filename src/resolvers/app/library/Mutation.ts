@@ -1,8 +1,7 @@
 import {
     UploadCoverFileInput,
     UploadCoverInput,
-    UpdateCoverInput,
-    UpdateCoverQuery
+    UpdateCoverInput
 } from "resolvers/app/library/models"
 import { Context } from "config/types"
 import { ApolloError } from "apollo-server-express"
@@ -22,7 +21,7 @@ const isValidAudio = (name: string) => {
 export const uploadCoverFile = async (parent: void, args: UploadCoverFileInput, context: Context) => {
     const file = await args.input.file
     if (isValidAudio(file.filename) === false) {
-        return new ApolloError("mp3, m4a 파일이 아닙니다")
+        throw new ApolloError("mp3, m4a 파일이 아닙니다")
     }
     const stream = file.createReadStream()
     const fileName = `${Date.now()}-${file.filename}`
@@ -37,7 +36,7 @@ export const uploadCover = async (parent: void, args: UploadCoverInput, context:
     } = args.input.cover
     const duration = await getAudioDuration(coverURI.href)
     if (duration === 0) {
-        return new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
+        throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
     }
     const creatorId = context.user.id
     return context.db.collection("library").insertOne({
