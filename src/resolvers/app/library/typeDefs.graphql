@@ -2,35 +2,35 @@ extend type Mutation {
     """커버 파일을 업로드"""
     uploadCoverFile(
         input: UploadCoverFileInput!
-    ): URL!
+    ): URL
 
     """커버 정보를 업로드"""
     uploadCover(
         input: UploadCoverInput!
-    ): Cover!
+    ): Cover
 
     """커버를 수정"""
     updateCover(
         input: UpdateCoverInput!
-    ): Cover!
+    ): Cover
 
     """커버를 삭제"""
     deleteCover(
         input: DeleteCoverInput!
-    ): Boolean!
+    ): Boolean
 }
 
 extend type Query {
     """나의 커버 가져오기"""
-    getMyCovers: [Cover!]!
+    getMyCovers: [Cover!]
     """songId로 나의 커버 가져오기"""
     getCoverBySongId(
         input: GetCoverBySongIdInput!
-    ): [Cover!]!
+    ): [Cover!]
     """name으로 나의 커버 가져오기"""
     getCoverByName(
         input: GetCoverByNameInput!
-    ): [Cover!]!
+    ): [Cover!]
 }
 
 """커버 정보"""

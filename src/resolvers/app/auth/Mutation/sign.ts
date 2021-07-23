@@ -69,9 +69,6 @@ export const register = async (parent: void, args: RegisterInput, context: Conte
     if (validArgs[0] === null) {
         throw new ApolloError("휴대번호 인증을 다시해야합니다")
     }
-    if (validArgs[1] !== true || validArgs[2] !== true) {
-        throw new ApolloError("id 혹은 username 이 조건에 맞지 않습니다")
-    }
     if (validArgs[0] !== authCode.toString()) {
         throw new ApolloError("인증번호가 일치하지 않습니다")
     }

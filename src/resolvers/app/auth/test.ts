@@ -178,7 +178,7 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다")
+                    equal(body.errors[0].message, "중복인 id 입니다")
                 })
                 it("If there is already a username", async () => {
                     const query = `
@@ -202,7 +202,7 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다")
+                    equal(body.errors[0].message, "중복인 username 입니다")
                 })
                 it("If your phone number is already registered", async () => {
                     const query = `
@@ -250,7 +250,7 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다")
+                    equal(body.errors[0].message, "username 길이는 2 이상이여야합니다")
                 })
                 it("If the id format is invalid - 2", async () => {
                     const query = `
@@ -274,7 +274,7 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다")
+                    equal(body.errors[0].message, "id는 길이는 6 이상이여야합니다")
                 })
                 it("If the user name format is invalid - 3", async () => {
                     const query = `
@@ -298,7 +298,7 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "id 혹은 username 이 조건에 맞지 않습니다")
+                    equal(body.errors[0].message, "id 형식이 올바르지 않습니다")
                 })
                 it("If the password format is invalid - 1", async () => {
                     const query = `
@@ -1040,7 +1040,7 @@ describe("User auth service test", () => {
                     })
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.errors[0].message, "username 이 올바르지 않습니다")
+                equal(body.errors[0].message, "중복인 username 입니다")
             })
         })
     })

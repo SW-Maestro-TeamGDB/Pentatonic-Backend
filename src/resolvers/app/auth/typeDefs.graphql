@@ -4,7 +4,7 @@ type Mutation{
     """
     register(
         input: RegisterInput!
-    ): JWT!
+    ): JWT
 
     """
     인증번호를 전송합니다 (발송성공 ? true : false)
@@ -12,49 +12,49 @@ type Mutation{
     sendAuthCode(
         "휴대번호 정보를 입력해야합니다" 
         input: sendAuthCodeInput!
-    ): Boolean!
+    ): Boolean
 
     """
     로그인
     """
     login(
         input: LoginInput!
-    ): JWT!
+    ): JWT
 
     """
     비밀번호를 재설정 합니다
     """
     resetPassword(
         input: ResetPasswordInput!
-    ): Boolean!
+    ): Boolean
 
     """
     비밀번호를 변경합니다
     """
     changePassword(
         input: ChangePasswordInput!
-    ): Boolean!
+    ): Boolean
 
     """
     이미지를 Upload하고 URL을 반환합니다
     """
     uploadImageFile(
         input: UploadImageInput!
-    ): URL!
+    ): URL
 
     """
     사용자의 프로필을 변경합니다
     """
     changeProfile(
         input: ChangeProfileInput!
-    ): PersonalInformation!
+    ): PersonalInformation
 
     """
     계정을 삭제합니다
     """
     deleteAccount(
         input: DeleteAccountInput!
-    ): Boolean!
+    ): Boolean
 }
 
 """
@@ -95,24 +95,24 @@ type Query{
     """
     checkId(
         input: CheckIdInput!
-    ): Boolean!
+    ): Boolean
 
     """
     username이 조건에 맞는지 확인합니다
     """
     checkUsername(
         input: CheckUsernameInput!
-    ): Boolean!
+    ): Boolean
 
     """자신의 정보를 가져옵니다"""
-    getPersonalInformation: PersonalInformation!
+    getPersonalInformation: PersonalInformation
 
     """
     아이디를 검색합니다
     """
     findId(
         input: FindIdInput!
-    ): FindIdResult!
+    ): FindIdResult
 }
 
 """

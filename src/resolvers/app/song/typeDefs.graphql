@@ -4,49 +4,49 @@ extend type Mutation {
     """
     uploadDefaultFile(
         input: UploadDefaultFileInput!
-    ): URL!
+    ): URL
 
     """
     Song을 업로드
     """
     uploadSong(
         input: UploadSongInput!
-    ): Song!
+    ): Song
 
     """
     Song을 업데이트
     """
     updateSong(
         input: UpdateSongInput!
-    ): Song!
+    ): Song
 
     """
     Song과 같이 제공되는 Instrument를 업로드
     """
     uploadInstrument(
         input: UploadInstrumentInput!
-    ): Instrument!
+    ): Instrument
 
     """
     Song과 같이 제공되는 Instrument를 업데이트
     """
     updateInstrument(
         input: UpdateInstrumentInput!
-    ): Instrument!
+    ): Instrument
 
     """
     Song을 삭제
     """
     deleteSong(
         input: DeleteSongInput!
-    ): Boolean!
+    ): Boolean
 
     """
     Instrument을 삭제
     """
     deleteInstrument(
         input: DeleteInstrumentInput!
-    ): Boolean!
+    ): Boolean
 }
 
 """
@@ -86,23 +86,23 @@ input DeleteSong {
 
 extend type Query {
     """Penta-Tonic에 있는 모든 곡을 불러오기"""
-    getAllSongs: [Song!]!
+    getAllSongs: [Song!]
 
     """name을 바탕으로 곡 가져오기"""
     getSongByName(
         input: GetSongByNameInput!
-    ): [Song!]!
+    ): [Song!]
 
     """Artist를 바탕으로 곡 가져오기"""
     getSongByArtist(
         input: GetSongByArtistInput!
-    ): [Song!]!
+    ): [Song!]
 
 
     """weeklyChallenge를 바탕으로 곡 가져오기"""
     getSongByWeeklyChallenge(
         input: GetSongByWeeklyChallengeInput!
-    ): [Song!]!
+    ): [Song!]
 }
 
 """

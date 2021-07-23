@@ -67,7 +67,7 @@ const start = async () => {
                 sendVariableValues: { all: true }
             })
         ],
-        debug: true
+        debug: false
     })
 
     server.applyMiddleware({
