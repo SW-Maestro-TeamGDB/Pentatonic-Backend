@@ -349,7 +349,7 @@ describe("User auth service test", () => {
                     equal(body.errors[0].message, "비밀번호가 조건에 맞지 않습니다")
                 })
                 it("The authentication number does not match", async () => {
-                    await (redis as Redis).setex(`${phoneNumber}:auth`, 60, "123432")
+                    await (redis as Redis).setex(`${phoneNumber}`, 60, "123432")
                     const query = `
                         mutation{
                             register(
@@ -448,19 +448,38 @@ describe("User auth service test", () => {
     describe("User information find service", () => {
         describe("Query findId", () => {
             describe("Success", () => {
-                it("If you have sent an ID find authentication number", async () => {
-                    const query = ` 
-                    query{ 
-                        findId(
-                            input: {
-                                phoneNumber:"${phoneNumber}",
-                                authCode: 123432
-                            }
-                        ){
-                            id
+                it("Send message when information is available", async () => {
+                    const query = `
+                        mutation{
+                            sendAuthCode(
+                                input: {
+                                    phoneNumber: "${phoneNumber}",
+                                    isRegistration: false
+                                }
+                            )
                         }
-                    }
-                `
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.sendAuthCode, true)
+                })
+                it("If you have sent an ID find authentication number", async () => {
+                    await (redis as Redis).setex(`${phoneNumber}`, 60, "123432")
+                    const query = ` 
+                        query{ 
+                            findId(
+                                input: {
+                                    phoneNumber:"${phoneNumber}",
+                                    authCode: 123432
+                                }
+                            ){
+                                id
+                            }
+                        }
+                    `
                     const { body } = await request(app)
                         .post("/api")
                         .set({ "Content-Type": "application/json" })
@@ -471,6 +490,7 @@ describe("User auth service test", () => {
             })
             describe("Failure", () => {
                 it("If find a user who does not exist", async () => {
+                    await (redis as Redis).setex("canSend-::ffff:127.0.0.1", 60, `[${Date.now()},0]`)
                     const query = `
                         mutation{
                             sendAuthCode(
@@ -489,7 +509,6 @@ describe("User auth service test", () => {
                     equal(body.errors[0].message, "해당 전화번호로 가입한 유저가 없습니다")
                 })
                 it("If you are looking for a user who does not exist", async () => {
-                    await (redis as Redis).setex("canSend-::ffff:127.0.0.1", 60, `[${Date.now()},0]`)
                     const query = ` 
                         query{ 
                             findId(
@@ -918,7 +937,7 @@ describe("User auth service test", () => {
                         changeProfile(
                             input: {
                                 user: {
-
+                                    introduce: "테스트 자기소개 글 입니다!"
                                 }
                             }
                         ){
@@ -927,6 +946,35 @@ describe("User auth service test", () => {
                             type
                         }
                     }
+            `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set({
+                        "Content-Type": "application/json",
+                        "Authorization": token[0]
+                    })
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                const result = body.data.changeProfile
+                equal(result.username, "SeungWon")
+                equal(result.type, 3)
+                equal(result.introduce, "테스트 자기소개 글 입니다!")
+            })
+            it("If you are not updating anything", async () => {
+                const query = `
+                mutation{
+                    changeProfile(
+                        input: {
+                            user: {
+                                
+                            }
+                        }
+                    ){
+                        username
+                        introduce
+                        type
+                    }
+                }
             `
                 const { body } = await request(app)
                     .post("/api")

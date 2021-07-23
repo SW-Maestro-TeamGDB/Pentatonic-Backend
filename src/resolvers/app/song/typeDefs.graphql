@@ -171,7 +171,7 @@ input UpdateInstrumentArgs{
     "instrument의 name"
     name: String
     "파일의 주소"
-    instrumentURI: URL
+    instURI: URL
 }
 """
 updateInstrument Mutation의 input
@@ -213,7 +213,7 @@ type Instrument {
     "해당 연주가 업로드 되어있는 노래에 대한 id"
     songId: ObjectID!
     "instreumt의 URI"
-    instrumentURI: URL!
+    instURI: URL!
     "instrument의 이름"
     name: String!
     "파일의 길이"
@@ -281,7 +281,7 @@ input UploadInstrumentArgs {
     "Instrument의 name"
     name: String!
     "Instrument의 음원 URI"
-    instrumentURI: URL!
+    instURI: URL!
 }
 
 """

@@ -281,6 +281,60 @@ describe("Penta-Tonic music Services", () => {
                     equal(body.data.updateSong.level, 3)
                     equal(body.data.updateSong.releaseDate, "2008-06-12")
                 })
+                it("If nothing is updated", async () => {
+                    const query = `
+                        mutation{
+                            updateSong(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    song: {
+                                        songId: "${songIds[0]}"
+                                    }
+                                }
+                            ){
+                                songId
+                                songURI
+                                releaseDate
+                                songImg
+                                name
+                                level
+                                releaseDate
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.updateSong.songURI, env.S3_URI + "/result.mp3")
+                    equal(body.data.updateSong.songId, songIds[0])
+                    equal(body.data.updateSong.songImg, uri[1])
+                    equal(body.data.updateSong.name, "Viva La Vida")
+                    equal(body.data.updateSong.level, 3)
+                    equal(body.data.updateSong.releaseDate, "2008-06-12")
+                })
+                it("If only one update is made", async () => {
+                    const query = `
+                        mutation{
+                            updateSong(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    song: {
+                                        songId: "${songIds[0]}",
+                                        name: "Viva La Vida"
+                                    }
+                                }
+                            ){
+                                name
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.updateSong.name, "Viva La Vida")
+                })
             })
             describe("Failure", () => {
                 it("If you didn't read the sound source file normally", async () => {
@@ -327,14 +381,14 @@ describe("Penta-Tonic music Services", () => {
                                     code: "${env.JWT_SECRET}",
                                     instrument: {
                                         name: "viva la vida demo guitar",
-                                        instrumentURI: "${env.S3_URI}/song1-Guitar.mp3",
+                                        instURI: "${env.S3_URI}/song1-Guitar.mp3",
                                         songId: "${songIds[0]}"
                                     }
                                 }
                             ){
                                 instId
                                 songId
-                                instrumentURI
+                                instURI
                                 name
                             }
                         }`
@@ -344,7 +398,7 @@ describe("Penta-Tonic music Services", () => {
                         .send(JSON.stringify({ query }))
                         .expect(200)
                     equal(body.data.uploadInstrument.songId, songIds[0])
-                    equal(body.data.uploadInstrument.instrumentURI, `${env.S3_URI}/song1-Guitar.mp3`)
+                    equal(body.data.uploadInstrument.instURI, `${env.S3_URI}/song1-Guitar.mp3`)
                     equal(body.data.uploadInstrument.name, "viva la vida demo guitar")
                     instrumentIds.push(body.data.uploadInstrument.instId)
                 })
@@ -356,14 +410,14 @@ describe("Penta-Tonic music Services", () => {
                                     code: "${env.JWT_SECRET}",
                                     instrument: {
                                         name: "name",
-                                        instrumentURI: "${env.S3_URI}/song1-Guitar.mp3",
+                                        instURI: "${env.S3_URI}/song1-Guitar.mp3",
                                         songId: "${songIds[1]}"
                                     }
                                 }
                             ){
                                 instId
                                 songId
-                                instrumentURI
+                                instURI
                                 name
                             }
                         }`
@@ -373,7 +427,7 @@ describe("Penta-Tonic music Services", () => {
                         .send(JSON.stringify({ query }))
                         .expect(200)
                     equal(body.data.uploadInstrument.songId, songIds[1])
-                    equal(body.data.uploadInstrument.instrumentURI, `${env.S3_URI}/song1-Guitar.mp3`)
+                    equal(body.data.uploadInstrument.instURI, `${env.S3_URI}/song1-Guitar.mp3`)
                     equal(body.data.uploadInstrument.name, "name")
                     instrumentIds.push(body.data.uploadInstrument.instId)
                 })
@@ -387,14 +441,14 @@ describe("Penta-Tonic music Services", () => {
                                     code: "${env.JWT_SECRET}",
                                     instrument: {
                                         name: "viva la vida demo guitar",
-                                        instrumentURI: "${uri[1]}",
+                                        instURI: "${uri[1]}",
                                         songId: "${songIds[0]}"
                                     }
                                 }
                             ){
                                     instId
                                     songId
-                                    instrumentURI
+                                    instURI
                                     name
                             }
                         }`
@@ -418,14 +472,14 @@ describe("Penta-Tonic music Services", () => {
                                     instrument: {
                                         name: "Viva La Vida demo Drum",
                                         instId: "${instrumentIds[0]}",
-                                        instrumentURI: "${env.S3_URI}/song1-Drum.mp3",
+                                        instURI: "${env.S3_URI}/song1-Drum.mp3",
                                         songId: "${songIds[0]}"
                                     }
                                 }
                             ){
                                 instId
                                 songId
-                                instrumentURI
+                                instURI
                                 name
                             }
                         }`
@@ -436,9 +490,52 @@ describe("Penta-Tonic music Services", () => {
                         .expect(200)
 
                     equal(body.data.updateInstrument.songId, songIds[0])
-                    equal(body.data.updateInstrument.instrumentURI, `${env.S3_URI}/song1-Drum.mp3`)
+                    equal(body.data.updateInstrument.instURI, `${env.S3_URI}/song1-Drum.mp3`)
                     equal(body.data.updateInstrument.name, "Viva La Vida demo Drum")
                     equal(body.data.updateInstrument.instId, instrumentIds[0])
+                })
+                it("If nothing is updated", async () => {
+                    const query = `
+                        mutation{
+                            updateInstrument(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    instrument: {
+                                        instId: "${instrumentIds[0]}"
+                                    }
+                                }
+                            ){
+                                name
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.updateInstrument.name, "Viva La Vida demo Drum")
+                })
+                it("If only one update is made normally", async () => {
+                    const query = `
+                        mutation{
+                            updateInstrument(
+                                input: {
+                                    code: "${env.JWT_SECRET}",
+                                    instrument: {
+                                        instId: "${instrumentIds[0]}",
+                                        name: "Viva La Vida demo Guitar"
+                                    }
+                                }
+                            ){
+                                name
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.updateInstrument.name, "Viva La Vida demo Guitar")
                 })
             })
             describe("Failure", () => {
@@ -451,14 +548,14 @@ describe("Penta-Tonic music Services", () => {
                                     instrument: {
                                         name: "viva la vida demo guitar",
                                         instId: "${instrumentIds[0]}",
-                                        instrumentURI: "${uri[1]}",
+                                        instURI: "${uri[1]}",
                                         songId: "${songIds[0]}"
                                     }
                                 }
                             ){
                                 instId
                                 songId
-                                instrumentURI
+                                instURI
                             }
                         }`
                     const { body } = await request(app)

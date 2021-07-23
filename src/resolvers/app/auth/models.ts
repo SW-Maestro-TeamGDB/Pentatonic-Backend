@@ -71,16 +71,32 @@ export interface UploadImageInput {
         file: File
     }
 }
+
+export type ChangeProfileKeys = keyof ChangeProfileQuery["$set"]
+
+export type UpdateProfileType = {
+    [key in ChangeProfileKeys]: string | URL | number
+}
+
 export interface ChangeProfileInput {
     input: {
         user: {
-            username: string
-            profileURI: URL
-            introduce: string
-            type: number
+            username?: string
+            profileURI?: URL
+            introduce?: string
+            type?: number
         }
     }
 }
+export interface ChangeProfileQuery {
+    $set: {
+        profileURI?: string
+        username?: string
+        introduce?: string
+        type?: number
+    }
+}
+
 
 export interface DeleteAccountInput {
     input: {
@@ -90,9 +106,6 @@ export interface DeleteAccountInput {
     }
 }
 
-export interface IdInput {
-    id: string
-}
 
 
 export interface SendAuthCodeInput {

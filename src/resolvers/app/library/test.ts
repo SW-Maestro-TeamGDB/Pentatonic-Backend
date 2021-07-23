@@ -242,7 +242,6 @@ describe("Library services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                console.log(body)
                 equal(body.data.updateCover.name, "Viva La Vida Drum 커버")
                 equal(body.data.updateCover.coverId, coverIds[0])
             })

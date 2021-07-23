@@ -55,7 +55,7 @@ export interface UploadInstrumentInput {
         instrument: {
             songId: ObjectID
             name: string
-            instrumentURI: URL
+            instURI: URL
         }
     }
 }
@@ -110,29 +110,53 @@ export interface UpdateInstrumentInput {
         code: string
         instrument: {
             instId?: ObjectID
-            songId: ObjectID
-            name: string
-            instrumentURI: URL
+            songId?: ObjectID
+            name?: string
+            instURI?: URL
         }
     }
 }
 
 export type InstrumentKeys = keyof UploadInstrumentInput["input"]["instrument"]
 
+export interface UpdateSongQurey {
+    $set: {
+        name?: string
+        songImg?: string
+        genre?: SongGenres
+        artist?: string
+        songURI?: string
+        weeklyChallenge?: boolean
+        level?: number
+        releaseDate?: Date
+        album?: string
+        duration?: number
+    }
+}
+
+export interface UpdateInstrumentQuery {
+    $set: {
+        name?: string
+        duration?: number
+        songId?: ObjectID
+        instURI?: string
+    }
+}
+
 export interface UpdateSongInput {
     input: {
         code: string
         song: {
             songId?: ObjectID
-            name: string
-            songImg: URL
-            genre: SongGenres
-            artist: string
-            songURI: URL
-            weeklyChallenge: boolean
-            level: number
-            releaseDate: Date
-            album: string
+            name?: string
+            songImg?: URL
+            genre?: SongGenres
+            artist?: string
+            songURI?: URL
+            weeklyChallenge?: boolean
+            level?: number
+            releaseDate?: Date
+            album?: string
         }
     }
 }
@@ -159,7 +183,7 @@ type SongGenres = typeof SongGenres[keyof typeof SongGenres]
 export interface Instrument {
     _id: ObjectID
     songId: ObjectID
-    instrumentURI: URL
+    instURI: URL
     name: string
     duration: number
 }
