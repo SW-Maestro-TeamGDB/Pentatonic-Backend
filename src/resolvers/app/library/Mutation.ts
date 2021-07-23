@@ -1,7 +1,8 @@
 import {
     UploadCoverFileInput,
     UploadCoverInput,
-    UpdateCoverInput
+    UpdateCoverInput,
+    DeleteCoverInput
 } from "resolvers/app/library/models"
 import { Context } from "config/types"
 import { ApolloError } from "apollo-server-express"
@@ -64,3 +65,9 @@ export const updateCover = async (parent: void, args: UpdateCoverInput, context:
         creatorId: context.user.id
     })
 }
+
+export const deleteCover = async (parent: void, args: DeleteCoverInput, context: Context) =>
+    context.db.collection("library").deleteOne({
+        _id: new ObjectID(args.input.cover.coverId),
+        creatorId: context.user.id
+    }).then(({ deletedCount }) => deletedCount === 1)

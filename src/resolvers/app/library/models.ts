@@ -41,3 +41,11 @@ export interface Cover {
     duration: number
     _id: ObjectID
 }
+
+export interface DeleteCoverInput {
+    input: {
+        cover: {
+            coverId: ObjectID
+        }
+    }
+}

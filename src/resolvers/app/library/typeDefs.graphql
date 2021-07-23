@@ -15,7 +15,23 @@ extend type Mutation {
     updateCover(
         input: UpdateCoverInput!
     ): Cover!
+
+    """커버를 삭제"""
+    deleteCover(
+        input: DeleteCoverInput!
+    ): Boolean!
 }
+
+"삭제할 커버의 정보"
+input DeleteCover{
+    "커버의 id"
+    coverId: ObjectID!
+}
+"""deleteCover Mutation의 input"""
+input DeleteCoverInput {
+    "삭제할 커버의 정보"
+    cover: DeleteCover!
+}   
 
 "업데이트할 커버의 정보"
 input UpdateCover {

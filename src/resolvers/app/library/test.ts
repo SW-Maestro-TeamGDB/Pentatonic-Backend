@@ -1,6 +1,5 @@
 import request from "supertest"
 import app from "test"
-import fetch from "node-fetch"
 import env from "config/env"
 import { Db } from "mongodb"
 import DB from "config/connectDB"
