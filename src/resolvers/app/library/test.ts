@@ -129,7 +129,7 @@ describe("Library services test", () => {
     })
     describe("Mutation uploadCover", () => {
         describe("Success", () => {
-            it("Successfully uploaded a cover", async () => {
+            it("Successfully uploaded a cover - 1", async () => {
                 const query = `
                     mutation {
                         uploadCover(
@@ -159,6 +159,31 @@ describe("Library services test", () => {
                 equal(body.data.uploadCover.songId, songIds[0])
                 equal(body.data.uploadCover.coverURI, coverURI[0])
                 equal(body.data.uploadCover.creatorId, "user1234")
+                coverIds.push(body.data.uploadCover.coverId)
+                equal(typeof body.data.uploadCover.coverId, "string")
+            })
+            it("Successfully uploaded a cover - 2", async () => {
+                const query = `
+                    mutation {
+                        uploadCover(
+                            input: {
+                                cover: {
+                                    name: "승원이의 Viva La Vida Drum 커버 - 2",
+                                    songId: "${songIds[0]}",
+                                    coverURI: "${coverURI[0]}"
+                                }
+                            }
+                        ){
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
                 coverIds.push(body.data.uploadCover.coverId)
                 equal(typeof body.data.uploadCover.coverId, "string")
             })
@@ -244,6 +269,30 @@ describe("Library services test", () => {
                     .expect(200)
                 equal(body.data.updateCover.name, "Viva La Vida Drum 커버")
                 equal(body.data.updateCover.coverId, coverIds[0])
+            })
+        })
+    })
+    describe("Mutation deleteCover", () => {
+        describe("Success", () => {
+            it("Successfully deleted a cover", async () => {
+                const query = `
+                    mutation {
+                        deleteCover(
+                            input: {
+                                cover: {
+                                    coverId: "${coverIds[1]}"
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.deleteCover, true)
             })
         })
     })
