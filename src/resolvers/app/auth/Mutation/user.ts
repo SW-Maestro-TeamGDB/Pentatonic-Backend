@@ -31,11 +31,8 @@ export const changeProfile = async (parent: void, args: ChangeProfileInput, cont
         $set: user
     }
     if (username !== undefined) {
-        if (await checkUsername(undefined, { input: { user: { username } } }, { db }) === true) {
-            query.$set.username = username
-        } else {
-            throw new ApolloError("username 이 올바르지 않습니다")
-        }
+        await checkUsername(undefined, { input: { user: { username } } }, { db })
+        query.$set.username = username
     }
     if (profileURI !== undefined) {
         query.$set.profileURI = profileURI.href
