@@ -4,13 +4,18 @@ import {
     GetSongByNameQuery,
     GetSongByArtistInput,
     GetSongByArtistQuery,
-    GetSongByWeeklyChallengeInput
+    GetSongByWeeklyChallengeInput,
+    getSongBySongIdInput
 } from "resolvers/app/song/models"
+import { ObjectID } from "mongodb"
 
 export const getAllSongs = async (parent: void, args: void, context: Context) =>
     context.db.collection("song").find({}).toArray()
 
-
+export const getSongBySongId = async (parent: void, args: getSongBySongIdInput, context: Context) =>
+    context.db.collection("song").findOne({
+        _id: new ObjectID(args.input.song.songId)
+    })
 export const getSongByName = async (parent: void, args: GetSongByNameInput, context: Context) => {
     const { db } = context
     const query: GetSongByNameQuery = {

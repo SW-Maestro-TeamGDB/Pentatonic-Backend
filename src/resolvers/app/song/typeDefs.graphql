@@ -103,6 +103,25 @@ extend type Query {
     getSongByWeeklyChallenge(
         input: GetSongByWeeklyChallengeInput!
     ): [Song!]
+
+    """SongId를 바탕으로 곡 가져오기"""
+    getSongBySongId(
+        input: GetSongBySongIdInput!
+    ): Song
+}
+
+"노래에 대한 정보"
+input GetSongBySongId {
+    "song의 id"
+    songId: ObjectID!
+}
+
+"""
+GetSongBySongId Query에 사용되는 input
+"""
+input GetSongBySongIdInput {
+    "노래에 대한 정보"
+    song: GetSongBySongId!
 }
 
 """

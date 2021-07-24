@@ -48,8 +48,7 @@ export const sendAuthCode = async (parent: void, args: SendAuthCodeInput, contex
         }
     }
     const smsNumber = changePhoneNumber(phoneNumber)
-    const result = await smsRequest(smsNumber)
-    if (result === false) return false
+    const result = await smsRequest(smsNumber) as string
     await redis.setex(phoneNumber, 180, result)
     return true
 }

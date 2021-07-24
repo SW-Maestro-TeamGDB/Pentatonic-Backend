@@ -817,5 +817,42 @@ describe("Penta-Tonic music Services", () => {
                 })
             })
         })
+        describe("Query getSongBySongId", () => {
+            describe("Success", () => {
+                it("Successfully get song by song id - 1", async () => {
+                    const query = `
+                        query{
+                            getSongBySongId(
+                                input: {
+                                    song: {
+                                        songId: "${songIds[0]}",
+                                    }
+                                }
+                            ){
+                                songId
+                                name
+                                album
+                                artist
+                                level
+                                instrument{
+                                    songId
+                                }
+                            }
+                        }`
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+
+                    equal(body.data.getSongBySongId.songId, songIds[0])
+                    equal(body.data.getSongBySongId.artist, "Coldplay")
+                    equal(body.data.getSongBySongId.instrument[0].songId, body.data.getSongBySongId.songId)
+                    equal(body.data.getSongBySongId.name, "Viva La Vida")
+                    equal(body.data.getSongBySongId.album, "Viva la Vida or Death and All His Friends")
+                    equal(body.data.getSongBySongId.level, 3)
+                })
+            })
+        })
     })
 })

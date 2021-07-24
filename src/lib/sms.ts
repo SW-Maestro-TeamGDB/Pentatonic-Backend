@@ -20,7 +20,7 @@ const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min
 export const smsRequest = async (smsNumber: string) => {
     const randNumber = rand(100000, 999999).toString()
     const timeStamp = Date.now().toString()
-    const result = await fetch(`https://sens.apigw.ntruss.com/sms/v2/services/${env.SMS_KEY}/messages`, {
+    await fetch(`https://sens.apigw.ntruss.com/sms/v2/services/${env.SMS_KEY}/messages`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json; charset=utf-8",
@@ -39,8 +39,7 @@ export const smsRequest = async (smsNumber: string) => {
             }]
         })
     })
-    const resultJson = await result.json()
-    return resultJson.statusName === "success" ? randNumber : false
+    return randNumber
 }
 
 export const changePhoneNumber = (phoneNumber: string) => `010${phoneNumber.slice(5, phoneNumber.length)}`

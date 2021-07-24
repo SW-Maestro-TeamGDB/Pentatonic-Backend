@@ -187,3 +187,12 @@ export interface Instrument {
     name: string
     duration: number
 }
+
+
+export interface getSongBySongIdInput {
+    input: {
+        song: {
+            songId: ObjectID
+        }
+    }
+}
