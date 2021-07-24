@@ -61,6 +61,9 @@ export const permissions = shield({
     },
     Query: {
         findId: and(not(isLogin), canSend),
-        getPersonalInformation: isLogin
+        getPersonalInformation: isLogin,
+        getMyCovers: isLogin,
+        getCoverBySongId: isLogin,
+        getCoverByName: isLogin
     }
 }, { allowExternalErrors: true })
