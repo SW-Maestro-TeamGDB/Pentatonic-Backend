@@ -615,243 +615,146 @@ describe("Penta-Tonic music Services", () => {
         })
     })
     describe("Query test", () => {
-        describe("Query getAllSongs", () => {
-            describe("Success", () => {
-                it("Successfully get all songs", async () => {
-                    const query = `
-                        query{
-                           getAllSongs{
-                                songId
-                                name
-                                album
-                                level
-                                instrument{
-                                    songId
-                                }
+        describe("Query querySong", () => {
+            it("Get all songs sorted by date asc", async () => {
+                const query = `
+                    query{
+                        querySong(
+                            filter: {
+                                type: ALL,
+                                sort: DATE_ASC
                             }
-                        }`
-                    const { body } = await request(app)
-                        .post("/api")
-                        .set("Content-Type", "application/json")
-                        .send(JSON.stringify({ query }))
-                        .expect(200)
-                    equal(body.data.getAllSongs[0].songId, songIds[0])
-                    equal(body.data.getAllSongs[0].instrument[0].songId, body.data.getAllSongs[0].songId)
-                    equal(body.data.getAllSongs[0].name, "Viva La Vida")
-                    equal(body.data.getAllSongs[0].album, "Viva la Vida or Death and All His Friends")
-                    equal(body.data.getAllSongs[0].level, 3)
-                })
+                        ){
+                            name
+                        }
+                    }`
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.querySong[0].name, "Viva La Vida")
             })
-        })
-        describe("Query getSongByName", () => {
-            describe("Success", () => {
-                it("Successfully get song by name - 1", async () => {
-                    const query = `
-                        query{
-                            getSongByName(
-                                input: {
-                                    song: {
-                                        name: "Viva La Vida",
-                                        level: 3,
-                                        genre: "Pop"
-                                    }
-                                }
-                            ){
-                                songId
-                                name
-                                album
-                                level
-                                instrument{
-                                    songId
-                                }
+            it("Get all songs sorted by date desc", async () => {
+                const query = `
+                    query{
+                        querySong(
+                            filter: {
+                                type: ALL,
+                                sort: DATE_DESC
                             }
-                        }`
-                    const { body } = await request(app)
-                        .post("/api")
-                        .set("Content-Type", "application/json")
-                        .send(JSON.stringify({ query }))
-                        .expect(200)
-                    equal(body.data.getSongByName[0].songId, songIds[0])
-                    equal(body.data.getSongByName[0].instrument[0].songId, body.data.getSongByName[0].songId)
-                    equal(body.data.getSongByName[0].name, "Viva La Vida")
-                    equal(body.data.getSongByName[0].album, "Viva la Vida or Death and All His Friends")
-                    equal(body.data.getSongByName[0].level, 3)
-                })
-                it("Successfully get song by name - 2", async () => {
-                    const query = `
-                        query{
-                            getSongByName(
-                                input: {
-                                    song: {
-                                        name: "Viva La Vida"
-                                    }
-                                }
-                            ){
-                                songId
-                                name
-                                album
-                                level
-                                instrument{
-                                    songId
-                                }
-                            }
-                        }`
-                    const { body } = await request(app)
-                        .post("/api")
-                        .set("Content-Type", "application/json")
-                        .send(JSON.stringify({ query }))
-                        .expect(200)
-                    equal(body.data.getSongByName[0].songId, songIds[0])
-                    equal(body.data.getSongByName[0].instrument[0].songId, body.data.getSongByName[0].songId)
-                    equal(body.data.getSongByName[0].name, "Viva La Vida")
-                    equal(body.data.getSongByName[0].album, "Viva la Vida or Death and All His Friends")
-                    equal(body.data.getSongByName[0].level, 3)
-                })
+                        ){
+                            name
+                        }
+                    }`
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.querySong[0].name, "Viva La Vida")
             })
-        })
-        describe("Query getSongByArtist", () => {
-            describe("Success", () => {
-                it("Successfully get song by artist - 1", async () => {
-                    const query = `
-                        query{
-                            getSongByArtist(
-                                input: {
-                                    song: {
-                                        artist: "coldplay",
-                                        level: 3,
-                                        genre: "Pop"
-                                    }
-                                }
-                            ){
-                                songId
-                                name
-                                album
-                                artist
-                                level
-                                instrument{
-                                    songId
-                                }
-                            }
-                        }`
-                    const { body } = await request(app)
-                        .post("/api")
-                        .set("Content-Type", "application/json")
-                        .send(JSON.stringify({ query }))
-                        .expect(200)
-                    equal(body.data.getSongByArtist[0].songId, songIds[0])
-                    equal(body.data.getSongByArtist[0].artist, "Coldplay")
-                    equal(body.data.getSongByArtist[0].instrument[0].songId, body.data.getSongByArtist[0].songId)
-                    equal(body.data.getSongByArtist[0].name, "Viva La Vida")
-                    equal(body.data.getSongByArtist[0].album, "Viva la Vida or Death and All His Friends")
-                    equal(body.data.getSongByArtist[0].level, 3)
-                })
-                it("Successfully get song by artist - 2", async () => {
-                    const query = `
-                        query{
-                            getSongByArtist(
-                                input: {
-                                    song: {
-                                        artist: "coldplay"
-                                    }
-                                }
-                            ){
-                                songId
-                                name
-                                album
-                                artist
-                                level
-                                instrument{
-                                    songId
-                                }
-                            }
-                        }`
-                    const { body } = await request(app)
-                        .post("/api")
-                        .set("Content-Type", "application/json")
-                        .send(JSON.stringify({ query }))
-                        .expect(200)
-                    equal(body.data.getSongByArtist[0].songId, songIds[0])
-                    equal(body.data.getSongByArtist[0].artist, "Coldplay")
-                    equal(body.data.getSongByArtist[0].instrument[0].songId, body.data.getSongByArtist[0].songId)
-                    equal(body.data.getSongByArtist[0].name, "Viva La Vida")
-                    equal(body.data.getSongByArtist[0].album, "Viva la Vida or Death and All His Friends")
-                    equal(body.data.getSongByArtist[0].level, 3)
-                })
-            })
-        })
-        describe("Query getSongByWeeklyChallenge", () => {
-            describe("Success", () => {
-                it("Successfully get song by weekly challenge - 1", async () => {
-                    const query = `
-                        query{
-                            getSongByWeeklyChallenge(
-                                input: {
-                                    song: {
-                                        weeklyChallenge: true,
-                                    }
-                                }
-                            ){
-                                songId
-                                name
-                                album
-                                artist
-                                level
-                                weeklyChallenge
-                                instrument{
-                                    songId
-                                }
-                            }
-                        }`
-                    const { body } = await request(app)
-                        .post("/api")
-                        .set("Content-Type", "application/json")
-                        .send(JSON.stringify({ query }))
-                        .expect(200)
-                    equal(body.data.getSongByWeeklyChallenge[0].songId, songIds[0])
-                    equal(body.data.getSongByWeeklyChallenge[0].artist, "Coldplay")
-                    equal(body.data.getSongByWeeklyChallenge[0].instrument[0].songId, body.data.getSongByWeeklyChallenge[0].songId)
-                    equal(body.data.getSongByWeeklyChallenge[0].name, "Viva La Vida")
-                    equal(body.data.getSongByWeeklyChallenge[0].album, "Viva la Vida or Death and All His Friends")
-                    equal(body.data.getSongByWeeklyChallenge[0].level, 3)
-                    equal(body.data.getSongByWeeklyChallenge[0].weeklyChallenge, true)
-                })
-            })
-        })
-        describe("Query getSongBySongId", () => {
-            describe("Success", () => {
-                it("Successfully get song by song id - 1", async () => {
-                    const query = `
-                        query{
-                            getSongBySongId(
-                                input: {
-                                    song: {
-                                        songId: "${songIds[0]}",
-                                    }
-                                }
-                            ){
-                                songId
-                                name
-                                album
-                                artist
-                                level
-                                instrument{
-                                    songId
-                                }
-                            }
-                        }`
-                    const { body } = await request(app)
-                        .post("/api")
-                        .set("Content-Type", "application/json")
-                        .send(JSON.stringify({ query }))
-                        .expect(200)
 
-                    equal(body.data.getSongBySongId.songId, songIds[0])
-                    equal(body.data.getSongBySongId.artist, "Coldplay")
-                    equal(body.data.getSongBySongId.instrument[0].songId, body.data.getSongBySongId.songId)
-                    equal(body.data.getSongBySongId.name, "Viva La Vida")
-                    equal(body.data.getSongBySongId.album, "Viva la Vida or Death and All His Friends")
-                    equal(body.data.getSongBySongId.level, 3)
-                })
+            it("Get song using name filter", async () => {
+                const query = `
+                    query{
+                        querySong(
+                            filter: {
+                                type: NAME,
+                                content: "viva"
+                            }
+                        ){
+                            name
+                        } 
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.querySong[0].name, "Viva La Vida")
+            })
+
+            it("Get song using name & level & genre filter", async () => {
+                const query = `
+                    query{
+                        querySong(
+                            filter: {
+                                type: NAME,
+                                content: "viva",
+                                genre: "Pop",
+                                level: 3
+                            }
+                        ){
+                            name
+                        } 
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.querySong[0].name, "Viva La Vida")
+            })
+            it("Get song using artist filter", async () => {
+                const query = `
+                    query{
+                        querySong(
+                            filter: {
+                                type: ARTIST,
+                                content: "cold"
+                            }
+                        ){
+                            name
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.querySong[0].name, "Viva La Vida")
+            })
+            it("Get song using empty artist filter", async () => {
+                const query = `
+                    query{
+                        querySong(
+                            filter: {
+                                type: ARTIST
+                            }
+                        ){
+                            name
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.querySong[0].name, "Viva La Vida")
+            })
+        })
+        describe("Query getSong", () => {
+            it("request getSong - 1", async () => {
+                const query = `
+                query{
+                    getSong(
+                        songId: "${songIds[0]}"
+                    ){
+                        name
+                    }
+                }
+            `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.getSong.name, "Viva La Vida")
             })
         })
     })

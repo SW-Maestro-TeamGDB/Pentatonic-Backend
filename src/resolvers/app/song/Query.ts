@@ -1,50 +1,22 @@
 import { Context } from "config/types"
 import {
-    GetSongByNameInput,
-    GetSongByNameQuery,
-    GetSongByArtistInput,
-    GetSongByArtistQuery,
-    GetSongByWeeklyChallengeInput,
-    getSongBySongIdInput
+    QuerySongInput,
+    GetSongInput
 } from "resolvers/app/song/models"
 import { ObjectID } from "mongodb"
 
-export const getAllSongs = async (parent: void, args: void, context: Context) =>
-    context.db.collection("song").find({}).toArray()
-
-export const getSongBySongId = async (parent: void, args: getSongBySongIdInput, context: Context) =>
-    context.db.collection("song").findOne({
-        _id: new ObjectID(args.input.song.songId)
-    })
-export const getSongByName = async (parent: void, args: GetSongByNameInput, context: Context) => {
-    const { db } = context
-    const query: GetSongByNameQuery = {
-        name: { $regex: new RegExp(args.input.song.name, "ig") }
+export const querySong = async (parent: void, args: QuerySongInput, context: Context) => {
+    const { type, content, sort, ...data } = args.filter
+    const _id = sort === "DATE_ASC" ? 1 : -1
+    if (type === "ALL") {
+        return context.db.collection("song").find(data).sort({ _id }).toArray()
     }
-    if (args.input.song.genre !== undefined) {
-        query.genre = args.input.song.genre
+    const query = {
+        [type.toLowerCase()]: { $regex: new RegExp(content || "", "ig") },
+        ...data
     }
-    if (args.input.song.level !== undefined) {
-        query.level = args.input.song.level
-    }
-    return db.collection("song").find(query).toArray()
+    return context.db.collection("song").find(query).sort({ _id }).toArray()
 }
 
-export const getSongByArtist = async (parent: void, args: GetSongByArtistInput, context: Context) => {
-    const { db } = context
-    const query: GetSongByArtistQuery = {
-        artist: { $regex: new RegExp(args.input.song.artist, "ig") }
-    }
-    if (args.input.song.genre !== undefined) {
-        query.genre = args.input.song.genre
-    }
-    if (args.input.song.level !== undefined) {
-        query.level = args.input.song.level
-    }
-    return db.collection("song").find(query).toArray()
-}
-
-export const getSongByWeeklyChallenge = async (parent: void, args: GetSongByWeeklyChallengeInput, context: Context) =>
-    context.db.collection("song").find({
-        weeklyChallenge: args.input.song.weeklyChallenge
-    }).toArray()
+export const getSong = async (parent: void, args: GetSongInput, context: Context) =>
+    context.db.collection("song").findOne({ _id: new ObjectID(args.songId) })

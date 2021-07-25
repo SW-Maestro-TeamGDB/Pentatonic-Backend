@@ -85,98 +85,33 @@ input DeleteSong {
 }
 
 extend type Query {
-    """Penta-Tonic에 있는 모든 곡을 불러오기"""
-    getAllSongs: [Song!]
+    getSong(
+        songId: ObjectID!
+    ): Song!
 
-    """name을 바탕으로 곡 가져오기"""
-    getSongByName(
-        input: GetSongByNameInput!
-    ): [Song!]
-
-    """Artist를 바탕으로 곡 가져오기"""
-    getSongByArtist(
-        input: GetSongByArtistInput!
-    ): [Song!]
-
-
-    """weeklyChallenge를 바탕으로 곡 가져오기"""
-    getSongByWeeklyChallenge(
-        input: GetSongByWeeklyChallengeInput!
-    ): [Song!]
-
-    """SongId를 바탕으로 곡 가져오기"""
-    getSongBySongId(
-        input: GetSongBySongIdInput!
-    ): Song
+    querySong(
+        filter: QuerySongInput! 
+    ): [Song!] 
 }
 
-"노래에 대한 정보"
-input GetSongBySongId {
-    "song의 id"
-    songId: ObjectID!
+enum GetSongsFilter{
+    ALL
+    NAME
+    ARTIST
 }
 
-"""
-GetSongBySongId Query에 사용되는 input
-"""
-input GetSongBySongIdInput {
-    "노래에 대한 정보"
-    song: GetSongBySongId!
+enum SORT_OPTION{
+    DATE_DESC
+    DATE_ASC
 }
 
-"""
-GetSongByWeeklyChallenge Query에 사용되는 input
-"""
-input GetSongByWeeklyChallengeInput {
-    "노래에 대한 정보"
-    song: GetSongByWeeklyChallenge!
-}
-
-"""
-노래에 대한 정보
-"""
-input GetSongByWeeklyChallenge {
-    "weeklyChallenge 여부"
-    weeklyChallenge: Boolean!
-}
-
-"""
-getSongByName Query에 사용되는 input
-"""
-input GetSongByNameInput {
-    "노래에 대한 정보"
-    song: GetSongByName!
-}
-
-"""
-제목으로 노래를 검색할때 입력받는 정보
-"""
-input GetSongByName {
-    "검색할 곡의 제목"
-    name: String!
-    "난이도"
+input QuerySongInput {
+    type: GetSongsFilter!
+    content: String 
     level: Int
-    "장르"
     genre: String
-}
-
-"""
-Artist로 노래를 검색할때 입력받는 정보
-"""
-input GetSongByArtist {
-    "검색할 곡의 제목"
-    artist: String!
-    "난이도"
-    level: Int
-    "장르"
-    genre: String
-}
-
-"""
-getSongByArtist Query에 사용되는 input
-"""
-input GetSongByArtistInput {
-    song: GetSongByArtist!
+    weeklyChallenge: Boolean
+    sort: SORT_OPTION! = DATE_DESC
 }
 
 """

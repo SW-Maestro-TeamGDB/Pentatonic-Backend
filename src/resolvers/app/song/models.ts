@@ -15,13 +15,22 @@ export interface Song {
     duration: number
 }
 
-export interface GetSongByWeeklyChallengeInput {
-    input: {
-        song: {
-            weeklyChallenge: boolean
-        }
+
+export interface QuerySongInput {
+    filter: {
+        type: "ALL" | "ARTIST" | "NAME",
+        level?: number
+        genre?: number
+        content?: string
+        weeklyChallenge?: boolean
+        sort: "DATE_ASC" | "DATE_DESC"
     }
 }
+
+export interface GetSongInput {
+    songId: ObjectID
+}
+
 
 export interface UploadSongInput {
     input: {
@@ -60,15 +69,6 @@ export interface UploadInstrumentInput {
     }
 }
 
-export interface GetSongByNameInput {
-    input: {
-        song: {
-            name: string
-            level: number
-            genre: string
-        }
-    }
-}
 
 export interface DeleteSongInput {
     input: {
@@ -79,31 +79,7 @@ export interface DeleteSongInput {
     }
 }
 
-export interface GetSongByArtistInput {
-    input: {
-        song: {
-            artist: string
-            genre?: string
-            level?: number
-        }
-    }
-}
 
-export interface GetSongByArtistQuery {
-    artist: {
-        $regex: RegExp
-    }
-    genre?: string
-    level?: number
-}
-
-export interface GetSongByNameQuery {
-    name: {
-        $regex: RegExp
-    }
-    genre?: string
-    level?: number
-}
 
 export interface UpdateInstrumentInput {
     input: {
@@ -186,13 +162,4 @@ export interface Instrument {
     instURI: URL
     name: string
     duration: number
-}
-
-
-export interface getSongBySongIdInput {
-    input: {
-        song: {
-            songId: ObjectID
-        }
-    }
 }
