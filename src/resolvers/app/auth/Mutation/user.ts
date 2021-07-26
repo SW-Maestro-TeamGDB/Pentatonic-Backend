@@ -5,8 +5,6 @@ import {
     ChangeProfileInput,
     UploadImageInput,
     ChangeProfileQuery,
-    ChangeProfileKeys,
-    UpdateProfileType
 } from "resolvers/app/auth/models"
 import { isValidUsername } from "resolvers/app/auth/Query"
 import { isValidImage, uploadS3 } from "lib"

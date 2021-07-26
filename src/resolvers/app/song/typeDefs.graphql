@@ -100,11 +100,6 @@ enum GetSongsFilter{
     ARTIST
 }
 
-enum SORT_OPTION{
-    DATE_DESC
-    DATE_ASC
-}
-
 input QuerySongInput {
     type: GetSongsFilter!
     content: String 
