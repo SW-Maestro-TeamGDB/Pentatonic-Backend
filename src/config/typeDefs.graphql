@@ -1,0 +1,23 @@
+scalar Id
+scalar Password
+scalar Username
+scalar Upload
+
+enum SORT_OPTION{
+    DATE_DESC
+    DATE_ASC
+}
+
+enum SESSION_TYPE{
+    VOCAL
+    ACOUSTIC_GUITAR
+    ELECTRIC_GUITAR
+    BASE
+    DRUM
+    KEYBOARD
+    VIOLIN
+    CELLO
+    GAYAGEUM
+    HAEGEUM
+    GEOMUNGO
+}

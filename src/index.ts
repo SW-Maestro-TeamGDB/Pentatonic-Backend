@@ -9,6 +9,7 @@ import { createServer } from "http"
 import depthLimit from "graphql-depth-limit"
 import DB from "config/connectDB"
 import * as redis from "config/connectRedis"
+import { customScalar } from "config/scalars"
 
 import { makeExecutableSchema } from "@graphql-tools/schema"
 import { loadFilesSync } from "@graphql-tools/load-files"
@@ -31,11 +32,11 @@ app.use("/api-docs", express.static("docs"))
 
 const schema = makeExecutableSchema({
     typeDefs: `
-        scalar Upload \n
         ${graphqlScalars.typeDefs.join('\n')}
         ${typeDefs}
     `,
     resolvers: {
+        ...customScalar,
         ...resolvers,
         Upload: GraphQLUpload as import("graphql").GraphQLScalarType,
         ...graphqlScalars.resolvers

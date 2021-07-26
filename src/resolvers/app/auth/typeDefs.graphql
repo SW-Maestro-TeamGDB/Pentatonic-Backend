@@ -68,11 +68,11 @@ type Query{
     ): FindIdResult
 
     isValidId(
-        id: ID!
+        id: Id!
     ): Boolean
 
     isValidUsername(
-        username: String!
+        username: Username!
     ): Boolean!
 
     checkAuthCode(
@@ -86,9 +86,9 @@ type Query{
 """
 type PersonalInformation {
     "아이디"
-    id: String!
+    id: Id!
     "유저 네임"
-    username: String!
+    username: Username!
     "프로필 사진"
     profileURI: URL!
     "휴대번호"
@@ -106,7 +106,7 @@ FindId Query 의 반환 결과입니다
 """
 type FindIdResult{
     "아이디"
-    id: String!
+    id: Id!
 }
 
 """
@@ -143,11 +143,11 @@ input ResetPasswordInput {
 """
 input RegisterArgs {
     "유저 네임"
-    username: String!
+    username: Username!
     "유저 아이디"
-    id: String!
+    id: Id!
     "유저 비밀번호"
-    password: String!
+    password: Password!
     "회원 유형"
     type: Int!
 }
@@ -171,10 +171,10 @@ input RegisterInput {
 """
 input LoginArgs {
     "계정의 id 입니다"
-    id: String!
+    id: Id!
 
     "계정의 password 입니다"
-    password: String!
+    password: Password!
 }
 
 """
@@ -188,7 +188,7 @@ input LoginInput {
 """비밀번호를 입력하는 input 입니다"""
 input PasswordArgs {
     "계정의 password 입니다"
-    password: String!
+    password: Password!
 }
 
 """
@@ -196,9 +196,9 @@ input PasswordArgs {
 """
 input ChangePasswordArgs{
     "변경할 비밀번호 입니다"
-    changePassword: String!
+    changePassword: Password!
     "현 비밀번호 입니다"
-    password: String!
+    password: Password!
 }
 
 """
@@ -214,7 +214,7 @@ input ChangePasswordInput {
 """
 input ChangeProfileArgs {
     "계정의 username 입니다"
-    username: String
+    username: Username
     "계정의 profileURI 입니다"
     profileURI: URL
     "계정의 자기소개 글 입니다"
