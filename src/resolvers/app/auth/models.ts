@@ -1,27 +1,17 @@
 import { File } from "config/types"
 
 
-export interface CheckIdInput {
-    input: {
-        user: {
-            id: string
-        }
-    }
+export interface IsValidIdInput {
+    id: string
 }
 
-export interface CheckUsernameInput {
-    input: {
-        user: {
-            username: string
-        }
-    }
+export interface IsValidUsernameInput {
+    username: string
 }
 
 export interface FindIdInput {
-    input: {
-        phoneNumber: string
-        authCode: number
-    }
+    phoneNumber: string
+    authCode: number
 }
 
 export interface ResetPasswordInput {

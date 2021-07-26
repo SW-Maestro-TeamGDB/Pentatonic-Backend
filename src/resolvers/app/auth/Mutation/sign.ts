@@ -15,7 +15,7 @@ import {
     SendAuthCodeInput,
     DeleteAccountInput
 } from "resolvers/app/auth/models"
-import { checkUsername, checkId } from "resolvers/app/auth/Query"
+import { isValidId, isValidUsername } from "resolvers/app/auth/Query"
 import { Context } from "config/types"
 const specialCharacters = "\"'\\!@#$%^&*()_-=+/?.><,[{]}|;:"
 const isValidPassword = (password: string) => {
@@ -62,8 +62,8 @@ export const register = async (parent: void, args: RegisterInput, context: Conte
     const { phoneNumber, authCode } = args.input
     const validArgs = await Promise.all([
         redis.get(phoneNumber),
-        checkUsername(undefined, { input: { user: { username } } }, { db }),
-        checkId(undefined, { input: { user: { id } } }, context)
+        isValidUsername(undefined, { username }, { db }),
+        isValidId(undefined, { id }, context)
     ])
     if (validArgs[0] === null) {
         throw new ApolloError("휴대번호 인증을 다시해야합니다")

@@ -8,7 +8,7 @@ import {
     ChangeProfileKeys,
     UpdateProfileType
 } from "resolvers/app/auth/models"
-import { checkUsername } from "resolvers/app/auth/Query"
+import { isValidUsername } from "resolvers/app/auth/Query"
 import { isValidImage, uploadS3 } from "lib"
 
 export const uploadImageFile = async (parent: void, file: UploadImageInput) => {
@@ -31,7 +31,7 @@ export const changeProfile = async (parent: void, args: ChangeProfileInput, cont
         $set: user
     }
     if (username !== undefined) {
-        await checkUsername(undefined, { input: { user: { username } } }, { db })
+        await isValidUsername(undefined, { username }, { db })
         query.$set.username = username
     }
     if (profileURI !== undefined) {

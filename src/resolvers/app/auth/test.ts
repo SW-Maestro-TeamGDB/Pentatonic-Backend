@@ -471,10 +471,8 @@ describe("User auth service test", () => {
                     const query = ` 
                         query{ 
                             findId(
-                                input: {
-                                    phoneNumber:"${phoneNumber}",
-                                    authCode: 123432
-                                }
+                                phoneNumber:"${phoneNumber}",
+                                authCode: 123432
                             ){
                                 id
                             }
@@ -512,10 +510,8 @@ describe("User auth service test", () => {
                     const query = ` 
                         query{ 
                             findId(
-                                input:{
-                                    phoneNumber:"+82100000000000",
-                                    authCode: 123432
-                                }
+                                phoneNumber:"+82100000000000",
+                                authCode: 123432
                             ){
                                 id
                             }
@@ -533,10 +529,8 @@ describe("User auth service test", () => {
                     const query = ` 
                         query{ 
                             findId(
-                                input:{
-                                    phoneNumber:"${phoneNumber}",
-                                    authCode: 666666
-                                }
+                                phoneNumber:"${phoneNumber}",
+                                authCode: 666666
                             ){
                                 id
                             }

@@ -1,13 +1,13 @@
 import { ApolloError } from "apollo-server-express"
 import {
-    CheckIdInput,
-    CheckUsernameInput,
+    IsValidIdInput,
+    IsValidUsernameInput,
     FindIdInput
 } from "resolvers/app/auth/models"
 import { Context } from "config/types"
 
-export const checkUsername = async (parent: void, args: CheckUsernameInput, context: any) => {
-    const { username } = args.input.user
+export const isValidUsername = async (parent: void, args: IsValidUsernameInput, context: any) => {
+    const { username } = args
     if (username.length < 2) throw new ApolloError("username 길이는 2 이상이여야합니다")
     const { db } = context
     const result = await db.collection("user").findOne({ username })
@@ -18,7 +18,7 @@ export const checkUsername = async (parent: void, args: CheckUsernameInput, cont
 }
 
 
-const isValidId = (id: string) => {
+const checkId = (id: string) => {
     for (const c of id) {
         if ('a' <= c && c <= 'z') continue
         if ('A' <= c && c <= 'Z') continue
@@ -28,12 +28,12 @@ const isValidId = (id: string) => {
     return true
 }
 
-export const checkId = async (parent: void, args: CheckIdInput, context: Context) => {
-    const { id } = args.input.user
+export const isValidId = async (parent: void, args: IsValidIdInput, context: Context) => {
+    const { id } = args
     if (id.length < 6) {
         throw new ApolloError("id는 길이는 6 이상이여야합니다")
     }
-    if (isValidId(id) === false) {
+    if (checkId(id) === false) {
         throw new ApolloError("id 형식이 올바르지 않습니다")
     }
     const result = await context.db.collection("user").findOne({ id })
@@ -44,7 +44,7 @@ export const checkId = async (parent: void, args: CheckIdInput, context: Context
 }
 
 export const findId = async (parent: void, args: FindIdInput, context: Context) => {
-    const { phoneNumber, authCode } = args.input
+    const { phoneNumber, authCode } = args
     const { redis, db } = context
     const result = await redis.get(phoneNumber)
     if (result === null) {
