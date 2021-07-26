@@ -48,7 +48,7 @@ const GraphQLId = new GraphQLScalarType({
         if (ast.kind === Kind.STRING) {
             return isValidId(ast.value)
         }
-        return null
+        throw new ApolloError("Id는 String입니다")
     },
 })
 
@@ -61,7 +61,7 @@ const GraphQLPassword = new GraphQLScalarType({
         if (ast.kind === Kind.STRING) {
             return isValidPassword(ast.value)
         }
-        return null
+        throw new UserInputError("Password는 String입니다")
     }
 })
 
@@ -74,7 +74,7 @@ const GraphQLUsername = new GraphQLScalarType({
         if (ast.kind === Kind.STRING) {
             return isValidUsername(ast.value)
         }
-        return null
+        throw new UserInputError("Username은 String입니다")
     }
 })
 
