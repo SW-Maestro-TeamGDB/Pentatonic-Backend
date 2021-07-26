@@ -87,7 +87,7 @@ input DeleteSong {
 extend type Query {
     getSong(
         songId: ObjectID!
-    ): Song!
+    ): Song
 
     querySong(
         filter: QuerySongInput! 

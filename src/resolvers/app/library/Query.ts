@@ -1,7 +1,8 @@
 import { Context } from "config/types"
 import {
     QueryCoverInput,
-    CoverQuery
+    CoverQuery,
+    GetCoverInput
 } from "resolvers/app/library/models"
 import { ObjectID } from "mongodb"
 
@@ -19,3 +20,9 @@ export const queryCover = async (parent: void, args: QueryCoverInput, context: C
     }
     return context.db.collection("library").find(query).sort({ _id }).toArray()
 }
+
+export const getCover = async (parent: void, args: GetCoverInput, context: Context) =>
+    context.db.collection("library").findOne({
+        creatorId: context.user.id,
+        _id: new ObjectID(args.coverId)
+    })

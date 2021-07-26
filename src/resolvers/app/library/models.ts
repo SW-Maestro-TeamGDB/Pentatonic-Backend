@@ -2,6 +2,9 @@ import { File } from "config/types"
 import { ObjectID } from "mongodb"
 
 
+export interface GetCoverInput {
+    coverId: ObjectID
+}
 
 export interface QueryCoverInput {
     filter: {

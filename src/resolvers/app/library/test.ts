@@ -413,4 +413,24 @@ describe("Library services test", () => {
             })
         })
     })
+    describe("Query queryCover", () => {
+        it("successfully getCover query", async () => {
+            const query = `
+                query {
+                    getCover(
+                        coverId: "${coverIds[0]}"
+                    ){
+                        coverId
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getCover.coverId, coverIds[0])
+        })
+    })
 })
