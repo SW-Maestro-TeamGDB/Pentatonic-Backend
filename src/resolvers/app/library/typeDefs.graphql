@@ -46,6 +46,7 @@ enum CoverFilter{
 input QueryCoverInput {
     type: CoverFilter!
     content: String
+    sort: SORT_OPTION! = DATE_DESC
 }
 
 """커버 정보"""

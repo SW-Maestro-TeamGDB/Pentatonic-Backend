@@ -1,24 +1,21 @@
 import { Context } from "config/types"
 import {
-    GetCoverBySongIdInput,
-    GetCoverByNameInput
+    QueryCoverInput,
+    CoverQuery
 } from "resolvers/app/library/models"
 import { ObjectID } from "mongodb"
 
-export const getMyCovers = async (parent: void, args: void, context: Context) =>
-    context.db.collection("library").find({
+export const queryCover = async (parent: void, args: QueryCoverInput, context: Context) => {
+    const { type, content, sort } = args.filter
+    const _id = sort === "DATE_ASC" ? 1 : -1
+    const query: CoverQuery = {
         creatorId: context.user.id
-    }).toArray()
-
-
-export const getCoverBySongId = async (parent: void, args: GetCoverBySongIdInput, context: Context) =>
-    context.db.collection("library").find({
-        songId: new ObjectID(args.input.cover.songId),
-        creatorId: context.user.id,
-    }).toArray()
-
-export const getCoverByName = async (parent: void, args: GetCoverByNameInput, context: Context) =>
-    context.db.collection("library").find({
-        creatorId: context.user.id,
-        name: { $regex: new RegExp(args.input.cover.name, "ig") },
-    }).toArray()
+    }
+    if (type === "SONG_ID") {
+        query.songId = new ObjectID(content)
+    }
+    if (type === "NAME") {
+        query.name = { $regex: new RegExp(content || "", "ig") }
+    }
+    return context.db.collection("library").find(query).sort({ _id }).toArray()
+}

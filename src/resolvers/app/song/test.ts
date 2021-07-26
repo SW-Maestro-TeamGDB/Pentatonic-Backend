@@ -626,6 +626,10 @@ describe("Penta-Tonic music Services", () => {
                             }
                         ){
                             name
+                            songId
+                            instrument {
+                                songId
+                            }
                         }
                     }`
                 const { body } = await request(app)
@@ -634,6 +638,7 @@ describe("Penta-Tonic music Services", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.data.querySong[0].name, "Viva La Vida")
+                equal(body.data.querySong[0].songId, body.data.querySong[0].instrument[0].songId)
             })
             it("Get all songs sorted by date desc", async () => {
                 const query = `
