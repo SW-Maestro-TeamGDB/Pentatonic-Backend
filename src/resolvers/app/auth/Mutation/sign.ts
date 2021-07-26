@@ -17,18 +17,6 @@ import {
 } from "resolvers/app/auth/models"
 import { isValidId, isValidUsername } from "resolvers/app/auth/Query"
 import { Context } from "config/types"
-const specialCharacters = "\"'\\!@#$%^&*()_-=+/?.><,[{]}|;:"
-const isValidPassword = (password: string) => {
-    if (password.length < 6) return false
-    for (const c of password) {
-        if ('a' <= c && c <= 'z') continue
-        if ('A' <= c && c <= 'Z') continue
-        if ('0' <= c && c <= '9') continue
-        if (specialCharacters.includes(c)) continue
-        return false
-    }
-    return true
-}
 
 export const sendAuthCode = async (parent: void, args: SendAuthCodeInput, context: Context) => {
     const { phoneNumber } = args.input
@@ -55,9 +43,6 @@ export const sendAuthCode = async (parent: void, args: SendAuthCodeInput, contex
 
 export const register = async (parent: void, args: RegisterInput, context: Context) => {
     const { id, password, username, type } = args.input.user
-    if (isValidPassword(password) === false) {
-        throw new ApolloError("비밀번호가 조건에 맞지 않습니다")
-    }
     const { db, redis } = context
     const { phoneNumber, authCode } = args.input
     const validArgs = await Promise.all([
@@ -104,9 +89,6 @@ export const login = async (parent: void, args: LoginInput, context: Context) =>
 
 export const resetPassword = async (parent: void, args: ResetPasswordInput, context: Context) => {
     const { user, phoneNumber, authCode } = args.input
-    if (isValidPassword(user.password) === false) {
-        throw new ApolloError("비밀번호가 조건에 맞지 않습니다")
-    }
     const { redis, db } = context
     const result = await redis.get(phoneNumber)
     if (result === null) {
@@ -128,9 +110,6 @@ export const changePassword = async (parent: void, args: ChangePasswordInput, co
     const userResult = await db.collection("user").findOne({ id: user.id })
     if (checkPassword(password, userResult.hash) === false) {
         throw new ApolloError("비밀번호가 올바르지 않습니다")
-    }
-    if (isValidPassword(changePassword) === false) {
-        throw new ApolloError("비밀번호가 양식에 맞지 않습니다")
     }
     await db.collection("user").updateOne({ id: user.id }, { $set: { hash: createHashedPassword(changePassword) } })
     return true

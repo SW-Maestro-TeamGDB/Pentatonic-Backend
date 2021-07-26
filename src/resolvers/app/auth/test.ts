@@ -9,7 +9,7 @@ import { Redis, JWTUser } from "config/types"
 import DB from "config/connectDB"
 import jwt from "jsonwebtoken"
 import { Db } from "mongodb"
-
+import { includes } from "test/utils"
 const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
 
 
@@ -249,8 +249,8 @@ describe("User auth service test", () => {
                         .post("/api")
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
-                        .expect(200)
-                    equal(body.errors[0].message, "username 길이는 2 이상이여야합니다")
+                        .expect(400)
+                    includes(body.errors[0].message, "username의 길이는 6이상 14이하여야 합니다")
                 })
                 it("If the id format is invalid - 2", async () => {
                     const query = `
@@ -273,10 +273,10 @@ describe("User auth service test", () => {
                         .post("/api")
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
-                        .expect(200)
-                    equal(body.errors[0].message, "id는 길이는 6 이상이여야합니다")
+                        .expect(400)
+                    includes(body.errors[0].message, "id의 길이는 6이상 14이하여야 합니다")
                 })
-                it("If the user name format is invalid - 3", async () => {
+                it("If the username format is invalid - 3", async () => {
                     const query = `
                         mutation{
                             register(
@@ -297,8 +297,8 @@ describe("User auth service test", () => {
                         .post("/api")
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
-                        .expect(200)
-                    equal(body.errors[0].message, "id 형식이 올바르지 않습니다")
+                        .expect(400)
+                    includes(body.errors[0].message, "id는 영문 소문자, 대문자, 숫자여야합니다")
                 })
                 it("If the password format is invalid - 1", async () => {
                     const query = `
@@ -321,8 +321,8 @@ describe("User auth service test", () => {
                         .post("/api")
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
-                        .expect(200)
-                    equal(body.errors[0].message, "비밀번호가 조건에 맞지 않습니다")
+                        .expect(400)
+                    includes(body.errors[0].message, "Password의 길이는 6이상 14이하여야 합니다")
                 })
                 it("If the password format is invalid - 2", async () => {
                     const query = `
@@ -345,8 +345,8 @@ describe("User auth service test", () => {
                         .post("/api")
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
-                        .expect(200)
-                    equal(body.errors[0].message, "비밀번호가 조건에 맞지 않습니다")
+                        .expect(400)
+                    includes(body.errors[0].message, "Password는 영문 소문자, 대문자, 숫자, 특수문자여야 합니다")
                 })
                 it("The authentication number does not match", async () => {
                     await (redis as Redis).setex(`${phoneNumber}`, 60, "123432")
@@ -695,8 +695,8 @@ describe("User auth service test", () => {
                         .post("/api")
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
-                        .expect(200)
-                    equal(body.errors[0].message, "비밀번호가 조건에 맞지 않습니다")
+                        .expect(400)
+                    includes(body.errors[0].message, "Password의 길이는 6이상 14이하여야 합니다")
                 })
                 it("If there is no record requesting the authentication number", async () => {
                     const query = `
@@ -835,8 +835,8 @@ describe("User auth service test", () => {
                         "Authorization": token[0]
                     })
                     .send(JSON.stringify({ query }))
-                    .expect(200)
-                equal(body.errors[0].message, "비밀번호가 양식에 맞지 않습니다")
+                    .expect(400)
+                includes(body.errors[0].message, "Password는 영문 소문자, 대문자, 숫자, 특수문자여야 합니다")
             })
         })
     })

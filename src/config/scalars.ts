@@ -1,4 +1,4 @@
-import { UserInputError } from "apollo-server-errors"
+import { UserInputError, ApolloError } from "apollo-server-errors"
 import { GraphQLScalarType, Kind } from "graphql"
 
 const isValidId = (value: string) => {
@@ -24,7 +24,7 @@ const isValidPassword = (value: string) => {
             throw new UserInputError("Password는 영문 소문자, 대문자, 숫자, 특수문자여야 합니다")
         }
     }
-    return true
+    return value
 }
 
 const isValidUsername = (value: string) => {
