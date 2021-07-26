@@ -31,6 +31,21 @@ extend type Query {
     getCoverByName(
         input: GetCoverByNameInput!
     ): [Cover!]
+
+    queryCover(
+        filter: QueryCoverInput!
+    ): [Cover!]
+}
+
+enum CoverFilter{
+    ALL
+    NAME
+    SONG_ID
+}
+
+input QueryCoverInput {
+    type: CoverFilter!
+    content: String
 }
 
 """커버 정보"""

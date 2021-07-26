@@ -74,6 +74,11 @@ type Query{
     isValidUsername(
         username: String!
     ): Boolean!
+
+    checkAuthCode(
+        phoneNumber: PhoneNumber!,
+        authCode: Int!
+    ): Boolean!
 }
 
 """

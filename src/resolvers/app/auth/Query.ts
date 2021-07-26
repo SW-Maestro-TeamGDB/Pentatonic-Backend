@@ -62,4 +62,13 @@ export const findId = async (parent: void, args: FindIdInput, context: Context) 
     }
 }
 
-export const getPersonalInformation = (parent: void, args: void, context: Context) => context.db.collection("user").findOne({ id: context.user.id })
+export const getPersonalInformation = (parent: void, args: void, context: Context) =>
+    context.db.collection("user").findOne({ id: context.user.id })
+
+
+
+export const checkAuthCode = async (parent: void, args: FindIdInput, context: Context) => {
+    const { phoneNumber, authCode } = args
+    const result = await context.redis.get(phoneNumber)
+    return result === authCode.toString()
+}

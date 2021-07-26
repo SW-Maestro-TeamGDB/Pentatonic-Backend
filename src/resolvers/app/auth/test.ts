@@ -446,6 +446,46 @@ describe("User auth service test", () => {
         })
     })
     describe("User information find service", () => {
+        describe("Query checkAuthCode", () => {
+            describe("Success", () => {
+                it("checkAuthCode return true - 1", async () => {
+                    await (redis as Redis).setex(`${phoneNumber}`, 60, "123432")
+                    const query = `
+                        query{
+                            checkAuthCode(
+                                phoneNumber: "${phoneNumber}",
+                                authCode: 123432
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.checkAuthCode, true)
+                })
+            })
+            describe("Failure", () => {
+                it("checkAuthCoe return false - 1", async () => {
+                    const query = `
+                        query{
+                            checkAuthCode(
+                                phoneNumber: "${phoneNumber}",
+                                authCode: 123433
+                            )
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.checkAuthCode, false)
+                })
+            })
+        })
+
         describe("Query findId", () => {
             describe("Success", () => {
                 it("Send message when information is available", async () => {
