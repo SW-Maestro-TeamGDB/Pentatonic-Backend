@@ -73,7 +73,7 @@ type Query{
 
     isValidUsername(
         username: String!
-    ): Boolean!
+    ): Boolean
 
     checkAuthCode(
         phoneNumber: PhoneNumber!,
