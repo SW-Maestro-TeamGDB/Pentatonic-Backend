@@ -295,40 +295,15 @@ describe("Library services test", () => {
             })
         })
     })
-    describe("Query getMyCovers", () => {
+    describe("Query queryCover", () => {
         describe("Success", () => {
-            it("Successfully get my covers", async () => {
+            it("Successfully queried a cover filter type = ALL sort = DATE_ASC", async () => {
                 const query = `
                     query {
-                        getMyCovers{
-                            songId
-                            name
-                            creatorId
-                        }
-                    }
-                `
-                const { body } = await request(app)
-                    .post("/api")
-                    .set("Content-Type", "application/json")
-                    .set("Authorization", token)
-                    .send(JSON.stringify({ query }))
-                    .expect(200)
-                equal(body.data.getMyCovers[0].songId, songIds[0])
-                equal(body.data.getMyCovers[0].name, "Viva La Vida Drum 커버")
-                equal(body.data.getMyCovers[0].creatorId, "user1234")
-            })
-        })
-    })
-    describe("Query getCoverBySongId", () => {
-        describe("Success", () => {
-            it("Successfully get a cover by songId", async () => {
-                const query = `
-                    query {
-                        getCoverBySongId(
-                            input: {
-                                cover: {
-                                    songId: "${songIds[0]}"
-                                }
+                        queryCover(
+                            filter: {
+                                type: ALL,
+                                sort: DATE_ASC
                             }
                         ){
                             name
@@ -342,21 +317,17 @@ describe("Library services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.data.getCoverBySongId[0].name, "Viva La Vida Drum 커버")
-                equal(body.data.getCoverBySongId[0].coverId, coverIds[0])
+
+                equal(body.data.queryCover[0].name, "Viva La Vida Drum 커버")
+                equal(body.data.queryCover[0].coverId, coverIds[0])
             })
-        })
-    })
-    describe("Query getCoverByName", () => {
-        describe("Success", () => {
-            it("Successfully get a cover by name", async () => {
+            it("Successfully queried a cover filter type = NAME", async () => {
                 const query = `
                     query {
-                        getCoverByName(
-                            input: {
-                                cover: {
-                                    name: "커버"
-                                }
+                        queryCover(
+                            filter: {
+                                type: NAME,
+                                content: "커버"
                             }
                         ){
                             name
@@ -370,9 +341,96 @@ describe("Library services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.data.getCoverByName[0].name, "Viva La Vida Drum 커버")
-                equal(body.data.getCoverByName[0].coverId, coverIds[0])
+                equal(body.data.queryCover[0].name, "Viva La Vida Drum 커버")
+                equal(body.data.queryCover[0].coverId, coverIds[0])
             })
+            it("Successfully queried a cover filter type = NAME & empty content", async () => {
+                const query = `
+                    query {
+                        queryCover(
+                            filter: {
+                                type: NAME
+                            }
+                        ){
+                            name
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.queryCover[0].name, "Viva La Vida Drum 커버")
+                equal(body.data.queryCover[0].coverId, coverIds[0])
+            })
+            it("Successfully queried a cover type = SONG_ID - 1", async () => {
+                const query = `
+                    query {
+                        queryCover(
+                            filter: {
+                                type: SONG_ID,
+                                content: "111111111111111111111111"
+                            }
+                        ){
+                            name
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.queryCover.length, 0)
+            })
+            it("Successfully queried a cover type = SONG_ID - 2", async () => {
+                const query = `
+                    query {
+                        queryCover(
+                            filter: {
+                                type: SONG_ID,
+                                content: "${songIds[0]}"
+                            }
+                        ){
+                            name
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.queryCover[0].name, "Viva La Vida Drum 커버")
+                equal(body.data.queryCover[0].coverId, coverIds[0])
+            })
+        })
+    })
+    describe("Query queryCover", () => {
+        it("successfully getCover query", async () => {
+            const query = `
+                query {
+                    getCover(
+                        coverId: "${coverIds[0]}"
+                    ){
+                        coverId
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getCover.coverId, coverIds[0])
         })
     })
 })

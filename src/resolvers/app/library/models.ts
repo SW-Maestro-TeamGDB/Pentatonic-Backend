@@ -2,9 +2,15 @@ import { File } from "config/types"
 import { ObjectID } from "mongodb"
 
 
-export interface UpdateCoverQuery {
-    $set: {
-        name?: string
+export interface GetCoverInput {
+    coverId: ObjectID
+}
+
+export interface QueryCoverInput {
+    filter: {
+        type: "ALL" | "NAME" | "SONG_ID"
+        content?: string
+        sort: "DATE_DESC" | "DATE_ASC"
     }
 }
 
@@ -50,18 +56,10 @@ export interface DeleteCoverInput {
     }
 }
 
-export interface GetCoverBySongIdInput {
-    input: {
-        cover: {
-            songId: ObjectID
-        }
-    }
-}
 
-export interface GetCoverByNameInput {
-    input: {
-        cover: {
-            name: string
-        }
-    }
+
+export interface CoverQuery {
+    creatorId: string
+    name?: { "$regex"?: RegExp }
+    songId?: ObjectID
 }
