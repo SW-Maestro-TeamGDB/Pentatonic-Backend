@@ -141,7 +141,7 @@ describe("Library services test", () => {
                             }
                         ){
                             name
-                            creatorId
+                            coverBy
                             songId
                             coverURI
                             coverId
@@ -157,7 +157,7 @@ describe("Library services test", () => {
                 equal(body.data.uploadCover.name, "승원이의 Viva La Vida Drum 커버")
                 equal(body.data.uploadCover.songId, songIds[0])
                 equal(body.data.uploadCover.coverURI, coverURI[0])
-                equal(body.data.uploadCover.creatorId, "user1234")
+                equal(body.data.uploadCover.coverBy, "user1234")
                 coverIds.push(body.data.uploadCover.coverId)
                 equal(typeof body.data.uploadCover.coverId, "string")
             })
@@ -201,7 +201,6 @@ describe("Library services test", () => {
                             }
                         ){
                             name
-                            creatorId
                             songId
                             coverURI
                             coverId

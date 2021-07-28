@@ -59,7 +59,7 @@ export interface DeleteCoverInput {
 
 
 export interface CoverQuery {
-    creatorId: string
+    coverBy: string
     name?: { "$regex"?: RegExp }
     songId?: ObjectID
 }

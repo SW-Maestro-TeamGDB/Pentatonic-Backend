@@ -5,6 +5,10 @@ import {
 import {
     Cover as CoverInterface
 } from "resolvers/app/library/models"
+import {
+    Band as BandInterface
+} from "resolvers/app/band/models"
+
 import { Context } from "config/types"
 
 export const Song = {
@@ -20,4 +24,13 @@ export const Instrument = {
 
 export const Cover = {
     coverId: (parent: CoverInterface) => parent._id
+}
+
+export const Band = {
+    bandId: (parent: BandInterface) => parent._id,
+    song: (parent: BandInterface, args: void, context: Context) => context.db.collection("song").findOne({
+        _id: parent.songId
+    }),
+    session: (parent: BandInterface) => []
+
 }

@@ -39,13 +39,13 @@ export const uploadCover = async (parent: void, args: UploadCoverInput, context:
     if (duration === 0) {
         throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
     }
-    const creatorId = context.user.id
+    const coverBy = context.user.id
     return context.db.collection("library").insertOne({
         name,
         songId: new ObjectID(songId),
         coverURI: coverURI.href,
         duration,
-        creatorId
+        coverBy
     }).then(({ ops }) => ops[0])
 }
 
@@ -57,17 +57,17 @@ export const updateCover = async (parent: void, args: UpdateCoverInput, context:
     if (name !== undefined) {
         return context.db.collection("library").findOneAndUpdate({
             _id: new ObjectID(coverId),
-            creatorId: context.user.id
+            coverBy: context.user.id
         }, { $set: { name } }, { returnDocument: "after" }).then(({ value }) => value)
     }
     return context.db.collection("library").findOne({
         _id: new ObjectID(coverId),
-        creatorId: context.user.id
+        coverBy: context.user.id
     })
 }
 
 export const deleteCover = async (parent: void, args: DeleteCoverInput, context: Context) =>
     context.db.collection("library").deleteOne({
         _id: new ObjectID(args.input.cover.coverId),
-        creatorId: context.user.id
+        coverBy: context.user.id
     }).then(({ deletedCount }) => deletedCount === 1)

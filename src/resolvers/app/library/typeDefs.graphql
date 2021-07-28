@@ -95,7 +95,7 @@ type Cover {
     "커버한 곡의 Id"
     songId: ObjectID!
     "커버한 사람의 id"
-    creatorId: String!
+    coverBy: String!
     "커버 파일의 주소"
     coverURI: URL!
     "고유 커버 Id"

@@ -1,0 +1,60 @@
+type SongLink {
+    songId: ObjectID!
+    name: String!
+    songURI: URL!
+    songImg: URL!
+    genre: String!
+    artist: String!
+    album: String!
+    weeklyChallenge: Boolean!
+    duration: Float!
+    level: Int!
+    releaseDate: Date!
+}
+
+type UserLink {
+    userId: ObjectID!
+    username: Username!
+    prime: Boolean!
+    type: Int!
+}
+
+type Band {
+    bandId: ObjectID!
+    song: SongLink!
+    name: String!
+    introduce: String!
+    creatorId: UserLink!
+    backGroundURI: URL!
+    createDate: Date!
+    session: Session!
+}
+
+type Session {
+    position: String!
+    maxMember: Int!
+    cover: [Cover!]!
+}
+
+input SessionConfigInput {
+    session: SESSION_TYPE!
+    maxMember: Int!
+}   
+
+input BandInput {
+    name: String!
+    introduce: String!
+    backGroundURI: URL! = "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg"
+    songId: ObjectID!
+}
+
+input CreateBandInput {
+    sessionConfig: [SessionConfigInput!]!
+    band: BandInput!
+}
+
+extend type Mutation {
+    createBand(
+        input: CreateBandInput!
+    ): Band
+}
