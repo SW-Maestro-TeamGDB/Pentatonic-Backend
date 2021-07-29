@@ -2,11 +2,12 @@ import {
     UploadCoverFileInput,
     UploadCoverInput,
     UpdateCoverInput,
-    DeleteCoverInput
+    DeleteCoverInput,
+    ChangeCoverQuery
 } from "resolvers/app/library/models"
 import { Context } from "config/types"
 import { ApolloError } from "apollo-server-express"
-import { uploadS3, getAudioDuration } from "lib"
+import { uploadS3, getAudioDuration, snakeToCamel } from "lib"
 import { ObjectID } from "mongodb"
 
 
@@ -34,6 +35,7 @@ export const uploadCover = async (parent: void, args: UploadCoverInput, context:
         name,
         songId,
         coverURI,
+        position
     } = args.input.cover
     const duration = await getAudioDuration(coverURI.href)
     if (duration === 0) {
@@ -45,25 +47,28 @@ export const uploadCover = async (parent: void, args: UploadCoverInput, context:
         songId: new ObjectID(songId),
         coverURI: coverURI.href,
         duration,
+        position,
         coverBy
     }).then(({ ops }) => ops[0])
 }
 
 export const updateCover = async (parent: void, args: UpdateCoverInput, context: Context) => {
-    const {
-        coverId,
-        name
-    } = args.input.cover
-    if (name !== undefined) {
-        return context.db.collection("library").findOneAndUpdate({
+    const { coverId, ...cover } = args.input.cover
+    if (0 === Object.keys(cover).length) {
+        return context.db.collection("library").findOne({
             _id: new ObjectID(coverId),
             coverBy: context.user.id
-        }, { $set: { name } }, { returnDocument: "after" }).then(({ value }) => value)
+        })
     }
-    return context.db.collection("library").findOne({
+    const query: ChangeCoverQuery = {
+        $set: {
+            ...cover
+        }
+    }
+    return context.db.collection("library").findOneAndUpdate({
         _id: new ObjectID(coverId),
         coverBy: context.user.id
-    })
+    }, query, { returnDocument: "after" }).then(({ value }) => value)
 }
 
 export const deleteCover = async (parent: void, args: DeleteCoverInput, context: Context) =>

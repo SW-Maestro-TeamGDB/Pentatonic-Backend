@@ -18,6 +18,9 @@ export const queryCover = async (parent: void, args: QueryCoverInput, context: C
     if (type === "NAME") {
         query.name = { $regex: new RegExp(content || "", "ig") }
     }
+    if (type === "POSITION") {
+        query.position = content
+    }
     return context.db.collection("library").find(query).sort({ _id }).toArray()
 }
 
