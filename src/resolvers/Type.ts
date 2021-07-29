@@ -13,9 +13,13 @@ import { Context } from "config/types"
 
 export const Song = {
     songId: (parent: SongInterface) => parent._id,
-    instrument: (parent: SongInterface, args: void, context: Context) => {
-        return context.loaders.instrumentsLoader.load(parent._id)
-    }
+    instrument: (parent: SongInterface, args: void, context: Context) =>
+        context.loaders.instrumentsLoader.load(parent._id)
+
+}
+
+export const SongLink = {
+    songId: (parent: SongInterface) => parent._id
 }
 
 export const Instrument = {
@@ -28,9 +32,7 @@ export const Cover = {
 
 export const Band = {
     bandId: (parent: BandInterface) => parent._id,
-    song: (parent: BandInterface, args: void, context: Context) => context.db.collection("song").findOne({
-        _id: parent.songId
-    }),
+    song: (parent: BandInterface, args: void, context: Context) =>
+        context.loaders.songsLoader.load(parent.songId),
     session: (parent: BandInterface) => []
-
 }

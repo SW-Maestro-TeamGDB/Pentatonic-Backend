@@ -8,7 +8,7 @@ import { ObjectID } from "mongodb"
 
 export const createBand = async (parent: void, args: CreateBandInput, context: Context) => {
     const sessionArr: SessionInformation = sessionParse(args.input.sessionConfig)
-    await context.db.collection("band").insertOne({
+    return await context.db.collection("band").insertOne({
         creatorId: context.user.id,
         name: args.input.band.name,
         introduce: args.input.band.introduce,

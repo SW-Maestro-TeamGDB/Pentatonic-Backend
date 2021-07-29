@@ -58,3 +58,7 @@ extend type Mutation {
         input: CreateBandInput!
     ): Band
 }
+
+extend type Query{
+    exampleQuery: [Band!]
+}
