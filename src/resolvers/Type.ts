@@ -41,5 +41,6 @@ export const Band = {
     bandId: (parent: BandInterface) => parent._id,
     song: (parent: BandInterface, args: void, context: Context) =>
         context.loaders.songsLoader.load(parent.songId),
-    session: (parent: BandInterface) => []
+    session: (parent: BandInterface) => [],
+    creator: (parent: BandInterface, args: void, context: Context) => context.loaders.userLoader1.load(parent.creatorId)
 }

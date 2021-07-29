@@ -3,6 +3,7 @@ import { ObjectID } from "mongodb"
 
 export interface User {
     _id: ObjectID
+    id: string
 }
 
 export interface IsValidIdInput {

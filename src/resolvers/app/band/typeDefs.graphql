@@ -24,7 +24,7 @@ type Band {
     song: SongLink!
     name: String!
     introduce: String!
-    creatorId: UserLink!
+    creator: UserLink!
     backGroundURI: URL!
     createDate: Date!
     session: Session!

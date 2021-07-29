@@ -38,4 +38,5 @@ export interface CreateBandInput {
 export interface Band {
     _id: ObjectID
     songId: ObjectID
+    creatorId: string
 }
