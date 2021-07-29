@@ -35,6 +35,7 @@ enum CoverFilter{
     ALL
     NAME
     SONG_ID
+    POSITION
 }
 
 input QueryCoverInput {
@@ -60,6 +61,7 @@ input UpdateCover {
     coverId: ObjectID!
     "커버의 이름"
     name: String
+    position: SESSION_TYPE
 }
 
 """updateCover Mutation의 input"""
@@ -82,6 +84,7 @@ input CoverInput {
     coverURI: URL!
     "어떤 노래에 커버를 하였는지 노래Id"
     songId: ObjectID!
+    position: SESSION_TYPE!
 }
 
 """uploadCover Mutation의 input"""
@@ -104,4 +107,5 @@ type Cover {
     duration: Float!
     "커버의 제목"
     name: String!
+    position: SESSION_TYPE!
 }
