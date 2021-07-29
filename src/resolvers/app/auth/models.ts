@@ -1,5 +1,9 @@
 import { File } from "config/types"
+import { ObjectID } from "mongodb"
 
+export interface User {
+    _id: ObjectID
+}
 
 export interface IsValidIdInput {
     id: string

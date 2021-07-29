@@ -8,6 +8,9 @@ import {
 import {
     Band as BandInterface
 } from "resolvers/app/band/models"
+import {
+    User as UserInterface
+} from "resolvers/app/auth/models"
 
 import { Context } from "config/types"
 
@@ -20,6 +23,10 @@ export const Song = {
 
 export const SongLink = {
     songId: (parent: SongInterface) => parent._id
+}
+
+export const UserLink = {
+    userId: (parent: UserInterface) => parent._id
 }
 
 export const Instrument = {
