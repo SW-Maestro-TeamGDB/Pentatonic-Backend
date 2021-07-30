@@ -29,7 +29,6 @@ export interface CreateBandInput {
             introduce: string
         }
         sessionConfig: SessionConfig[]
-        coverId: ObjectID
     }
 }
 
@@ -51,4 +50,32 @@ export interface BatchSesssion {
     position?: keyof SessionInformation
     maxMember?: number
     cover?: Session[]
+}
+
+export interface UpdateBandInput {
+    input: {
+        band: {
+            bandId: ObjectID
+            name?: string
+            creatorId?: string
+            introduce?: string
+            backGroundURI?: URL
+        }
+        sessionConfig?: {
+            session?: keyof SessionInformation
+            maxMember?: number
+        }
+    }
+}
+
+export interface JoinBandInput {
+    input: {
+        band: {
+            bandId: ObjectID
+        }
+        session: {
+            coverId: ObjectID
+            position: keyof SessionInformation
+        }
+    }
 }

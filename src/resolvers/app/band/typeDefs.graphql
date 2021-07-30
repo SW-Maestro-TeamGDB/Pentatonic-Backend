@@ -41,7 +41,7 @@ input SessionConfigInput {
     maxMember: Int!
 }   
 
-input BandInput {
+input CreateBandArgsInput {
     name: String!
     introduce: String!
     backGroundURI: URL! = "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg"
@@ -50,13 +50,48 @@ input BandInput {
 
 input CreateBandInput {
     sessionConfig: [SessionConfigInput!]!
-    band: BandInput!
+    band: CreateBandArgsInput!
+}
+
+input UpdateBandArgsInput {
+    bandId: ObjectID!
+    name: String
+    introduce: String
+    creatorId: Id
+    backGroundURI: URL
+}
+
+input UpdateBandInput {
+    band: UpdateBandArgsInput!
+    sessionConfig: [SessionConfigInput]
+}
+
+input JoinBandArgsInput {
+    bandId: ObjectID!
+}
+
+input JoinSessionInput{
+    coverId: ObjectID!
+    position: SESSION_TYPE!
+}
+
+input JoinBandInput {
+    band: JoinBandArgsInput!
+    session: JoinSessionInput!
 }
 
 extend type Mutation {
     createBand(
         input: CreateBandInput!
     ): Band
+
+    updateBand(
+        input: UpdateBandInput!
+    ): Band
+
+    joinBand(
+        input: JoinBandInput!
+    ): Boolean!
 }
 
 extend type Query{

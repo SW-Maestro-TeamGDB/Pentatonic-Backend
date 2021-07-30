@@ -58,7 +58,8 @@ export const permissions = shield({
         uploadCover: isLogin,
         updateCover: isLogin,
         deleteCover: isLogin,
-        createBand: isLogin
+        createBand: isLogin,
+        joinBand: isLogin
     },
     Query: {
         findId: and(not(isLogin), canSend),

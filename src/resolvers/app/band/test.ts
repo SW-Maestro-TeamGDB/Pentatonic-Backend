@@ -19,7 +19,8 @@ describe("Band services test", () => {
             db.collection("user").deleteMany({}),
             db.collection("song").deleteMany({}),
             db.collection("library").deleteMany({}),
-            db.collection("band").deleteMany({})
+            db.collection("band").deleteMany({}),
+            db.collection("session").deleteMany({})
         ])
     })
     describe("Before Register & upload", () => {
@@ -77,6 +78,58 @@ describe("Band services test", () => {
                 .expect(200)
             songIds.push(body.data.uploadSong.songId)
         })
+        it("Successfully uploaded a cover - 1", async () => {
+            const query = `
+                mutation {
+                    uploadCover(
+                        input: {
+                            cover: {
+                                name: "승원이의 Viva La Vida Drum 커버",
+                                songId: "${songIds[0]}",
+                                coverURI: "${env.S3_URI}/song1-Drum.mp3",
+                                position: DRUM
+                            }
+                        }
+                    ){
+                        coverId
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            coverIds.push(body.data.uploadCover.coverId)
+            equal(typeof body.data.uploadCover.coverId, "string")
+        })
+        it("Successfully uploaded a cover - 2", async () => {
+            const query = `
+                mutation {
+                    uploadCover(
+                        input: {
+                            cover: {
+                                name: "승원이의 Viva La Vida Violin 커버",
+                                songId: "${songIds[0]}",
+                                coverURI: "${env.S3_URI}/song1-Violin.mp3",
+                                position: VIOLIN
+                            }
+                        }
+                    ){
+                        coverId
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            coverIds.push(body.data.uploadCover.coverId)
+            equal(typeof body.data.uploadCover.coverId, "string")
+        })
     })
     describe("Mutation createBand", () => {
         describe("Success", () => {
@@ -92,7 +145,7 @@ describe("Band services test", () => {
                                 },
                                 sessionConfig:[
                                     {
-                                        session: GAYAGEUM,
+                                        session: DRUM,
                                         maxMember:1
                                     }
                                 ]
@@ -123,10 +176,136 @@ describe("Band services test", () => {
                 equal(body.data.createBand.name, "테스트 밴드입니다 >.<")
                 equal(body.data.createBand.song.name, "Viva La Vida")
                 equal(body.data.createBand.song.songId, songIds[0])
-                equal(body.data.createBand.session[0].position, "GAYAGEUM")
+                equal(body.data.createBand.session[0].position, "DRUM")
                 equal(body.data.createBand.creator.username, "pukuba")
                 equal(body.data.createBand.creator.userId, "user1234")
                 bandIds.push(body.data.createBand.bandId)
+            })
+        })
+    })
+    describe("Mutation joinBand", () => {
+        describe("Success", () => {
+            it("Successfully join band", async () => {
+                const query = `
+                    mutation{
+                        joinBand(
+                            input: {
+                                band:{
+                                    bandId:"${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[0]}",
+                                    position: DRUM
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.joinBand, true)
+            })
+        })
+        describe("Farilure", () => {
+            it("Fail to join band - invalid cover", async () => {
+                const query = `
+                    mutation{
+                        joinBand(
+                            input: {
+                                band:{
+                                    bandId:"${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "111111111111111111111111",
+                                    position: DRUM
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "커버내역이 존재하지 않습니다")
+            })
+            it("Fail to join band - user already", async () => {
+                const query = `
+                    mutation{
+                        joinBand(
+                            input: {
+                                band:{
+                                    bandId:"${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[0]}",
+                                    position: DRUM
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "이미 참여한 유저입니다")
+            })
+            it("Fail to join band - undfined bandId", async () => {
+                const query = `
+                    mutation{
+                        joinBand(
+                            input: {
+                                band:{
+                                    bandId:"111111111111111111111111"
+                                },
+                                session: {
+                                    coverId: "${coverIds[0]}",
+                                    position: DRUM
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "밴드가 존재하지 않습니다")
+            })
+            it("Fail to join band - full", async () => {
+                const query = `
+                    mutation{
+                        joinBand(
+                            input: {
+                                band:{
+                                    bandId:"${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[1]}",
+                                    position: VIOLIN
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "세션이 가득찾거나 존재하지 않습니다")
             })
         })
     })
