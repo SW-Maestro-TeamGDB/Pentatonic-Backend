@@ -4,7 +4,7 @@ export interface SessionInformation {
     vocal?: number
     acousticGuitar?: number
     electricGuitar?: number
-    base?: number
+    bass?: number
     drum?: number
     keyboard?: number
     violin?: number
@@ -33,10 +33,22 @@ export interface CreateBandInput {
     }
 }
 
-
-
 export interface Band {
     _id: ObjectID
     songId: ObjectID
     creatorId: string
+    sessions: SessionInformation
+}
+
+export interface Session {
+    bandId: ObjectID
+    coverId: ObjectID
+    _id: ObjectID
+    coverURI: URL
+}
+
+export interface BatchSesssion {
+    position?: keyof SessionInformation
+    maxMember?: number
+    cover?: Session[]
 }

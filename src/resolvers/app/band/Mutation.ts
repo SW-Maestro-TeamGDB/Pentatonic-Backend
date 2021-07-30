@@ -14,7 +14,7 @@ export const createBand = async (parent: void, args: CreateBandInput, context: C
         introduce: args.input.band.introduce,
         songId: new ObjectID(args.input.band.songId),
         backGroundURI: args.input.band.backGroundURI.href,
-        ...sessionArr,
+        sessions: { ...sessionArr },
         createDate: new Date()
     }).then(({ ops }) => ops[0])
 }
