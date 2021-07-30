@@ -17,7 +17,8 @@ import {
     getUser,
     instrumentsLoader,
     songsLoader,
-    userLoader1
+    userLoader1,
+    sessionsLoader
 } from "lib"
 import express from "express"
 import expressPlayground from "graphql-playground-middleware-express"
@@ -62,7 +63,8 @@ const server = new ApolloServer({
             loaders: {
                 songsLoader: songsLoader(),
                 instrumentsLoader: instrumentsLoader(),
-                userLoader1: userLoader1()
+                userLoader1: userLoader1(),
+                sessionsLoader: sessionsLoader()
             }
         }
     },

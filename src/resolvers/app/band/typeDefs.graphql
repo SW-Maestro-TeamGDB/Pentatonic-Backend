@@ -27,13 +27,13 @@ type Band {
     creator: UserLink!
     backGroundURI: URL!
     createDate: Date!
-    session: Session!
+    session: [Session]
 }
 
 type Session {
-    position: String!
+    position: SESSION_TYPE!
     maxMember: Int!
-    cover: [Cover!]!
+    cover: [Cover!]
 }
 
 input SessionConfigInput {

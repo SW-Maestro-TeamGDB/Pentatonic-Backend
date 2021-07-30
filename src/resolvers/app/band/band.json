@@ -24,6 +24,18 @@
                     }
                 ],
                 "maxMember": 3
+            },
+            {
+                "position": "guitar",
+                "cover": [
+                    {
+                        "coverBy": "UserLink",
+                        "coverURI": "~~~.~~.~~~",
+                        "duration": 123.123112,
+                        "coverId": "ObjectID(~~~)"
+                    }
+                ],
+                "maxMember": 3
             }
         ]
     }

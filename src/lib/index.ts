@@ -13,15 +13,17 @@ import {
 } from "resolvers/app/band/models"
 
 
-const snakeToCamel = (str: string) =>
-    str.toLowerCase().replace(/([-_][a-z])/g, group =>
+export const snakeToCamel = (str: string) =>
+    str.toLowerCase().replace(/([_][a-z])/g, group =>
         group
             .toUpperCase()
-            .replace('-', '')
             .replace('_', '')
     )
 
 
+export const camelToSnake = (str: string) => {
+    return str.replace(/([A-Z])/g, (m) => "_" + m[0]).toUpperCase()
+}
 
 export const sessionParse = (x: SessionConfig[]) => {
     const session: SessionInformation = {}
