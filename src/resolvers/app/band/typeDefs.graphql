@@ -80,6 +80,15 @@ input JoinBandInput {
     session: JoinSessionInput!
 }
 
+input OutSessionArgsInput {
+    coverId: ObjectID!
+}
+
+input OutBandInput{
+    band: JoinBandArgsInput!
+    session: OutSessionArgsInput!
+}
+
 extend type Mutation {
     createBand(
         input: CreateBandInput!
@@ -91,7 +100,11 @@ extend type Mutation {
 
     joinBand(
         input: JoinBandInput!
-    ): Boolean!
+    ): Boolean
+
+    outBand(
+        input: OutBandInput!
+    ): Boolean
 }
 
 extend type Query{

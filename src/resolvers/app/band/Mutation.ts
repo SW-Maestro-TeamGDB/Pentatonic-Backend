@@ -2,7 +2,7 @@ import { Context } from "config/types"
 import {
     CreateBandInput,
     SessionInformation,
-    UpdateBandInput,
+    OutBandInput,
     JoinBandInput
 } from "resolvers/app/band/models"
 import {
@@ -60,4 +60,35 @@ export const joinBand = async (parent: void, args: JoinBandInput, context: Conte
     } catch {
         throw new ApolloError("세션이 가득찾거나 존재하지 않습니다")
     }
+}
+
+export const outBand = async (parent: void, args: OutBandInput, context: Context) => {
+    const uid = context.user.id
+    const cover = await context.db.collection("library").findOne({
+        _id: new ObjectID(args.input.session.coverId)
+    })
+    if (cover !== null) {
+        const [session, band] = await Promise.all([
+            context.db.collection("session").findOne({
+                bandId: new ObjectID(args.input.band.bandId),
+                coverId: new ObjectID(args.input.session.coverId)
+            }),
+            context.db.collection("band").findOne({
+                _id: new ObjectID(args.input.band.bandId),
+                creatorId: uid
+            })
+        ])
+        if (session !== null) {
+            if (cover.coverBy.toString() === context.user.id || band.creatorId === context.user.id) {
+                return context.db.collection("session").deleteOne({
+                    bandId: new ObjectID(args.input.band.bandId),
+                    coverId: new ObjectID(args.input.session.coverId)
+                }).then(({ result }) => result.n === 1)
+            }
+            throw new ApolloError("권한이 없습니다")
+        } else {
+            throw new ApolloError("세션이 존재하지 않습니다")
+        }
+    }
+    throw new ApolloError("해당 커버가 존재하지 않습니다")
 }

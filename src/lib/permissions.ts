@@ -1,7 +1,7 @@
 import { rule, shield, not, and } from "graphql-shield"
 import { ApolloError } from "apollo-server-express"
-import { JWTUser } from "config/types"
-import { Db } from "mongodb"
+import { JWTUser, Context } from "config/types"
+import { Db, ObjectID } from "mongodb"
 import { Redis } from "config/types"
 import env from "config/env"
 
@@ -37,6 +37,15 @@ const isLogin = rule()(async (parent: void, args: void, { user, db }: { user: JW
 const isValidCode = rule()(async (parent: void, args: { input: { code: string } }) => {
     if (args.input.code !== env.JWT_SECRET) {
         return new ApolloError("관리자 코드가 알맞지 않습니다")
+    }
+    return true
+})
+
+const isBandCreator = rule()(async (parent: void, args: { input: { band: { bandId: ObjectID } } }, context: Context) => {
+    const { db } = context
+    const band = await db.collection("band").findOne({ _id: new ObjectID(args.input.band.bandId) })
+    if (band.creatorId !== context.user.id) {
+        return new ApolloError("방장이 아닙니다")
     }
     return true
 })

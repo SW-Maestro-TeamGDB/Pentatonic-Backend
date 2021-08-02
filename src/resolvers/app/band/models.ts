@@ -79,3 +79,15 @@ export interface JoinBandInput {
         }
     }
 }
+
+
+export interface OutBandInput {
+    input: {
+        band: {
+            bandId: ObjectID
+        }
+        session: {
+            coverId: ObjectID
+        }
+    }
+}
