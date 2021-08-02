@@ -309,4 +309,56 @@ describe("Band services test", () => {
             })
         })
     })
+    describe("Mutation outBand", () => {
+        describe("Success", () => {
+            it("Successfully out band", async () => {
+                const query = `
+                    mutation{
+                        outBand(
+                            input: {
+                                band:{
+                                    bandId:"${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[0]}"
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.outBand, true)
+            })
+        })
+        describe("Failure", () => {
+            it("nonexistent cover", async () => {
+                const query = `
+                mutation{
+                    outBand(
+                        input: {
+                            band:{
+                                bandId:"${bandIds[0]}"
+                            },
+                            session: {
+                                coverId: "${coverIds[0]}"
+                            }
+                        }
+                    )
+                }
+            `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "세션이 존재하지 않습니다")
+            })
+        })
+    })
 })
