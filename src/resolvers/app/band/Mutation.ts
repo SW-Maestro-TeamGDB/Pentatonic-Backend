@@ -79,7 +79,7 @@ export const outBand = async (parent: void, args: OutBandInput, context: Context
             })
         ])
         if (session !== null) {
-            if (cover.coverBy.toString() === context.user.id || band.creatorId === context.user.id) {
+            if (cover.coverBy.toString() === context.user.id || band !== null) {
                 return context.db.collection("session").deleteOne({
                     bandId: new ObjectID(args.input.band.bandId),
                     coverId: new ObjectID(args.input.session.coverId)

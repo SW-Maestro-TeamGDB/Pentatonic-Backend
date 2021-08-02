@@ -11,7 +11,7 @@ const coverIds: string[] = []
 const bandIds: string[] = []
 const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
 let token: string = ""
-
+let token1: string = ""
 describe("Band services test", () => {
     after(async () => {
         const db = await DB.get() as Db
@@ -24,7 +24,7 @@ describe("Band services test", () => {
         ])
     })
     describe("Before Register & upload", () => {
-        it("mock user register", async () => {
+        it("mock user register - 1", async () => {
             await Redis.setex(phoneNumber as string, 600, "123456")
             const query = `
             mutation{
@@ -48,6 +48,31 @@ describe("Band services test", () => {
                 .send(JSON.stringify({ query }))
                 .expect(200)
             token = body.data.register
+        })
+        it("mock user register - 2", async () => {
+            await Redis.setex("+82100000000" as string, 600, "123456")
+            const query = `
+            mutation{
+                register(
+                    input: {
+                        user:{
+                            id: "test1234",
+                            password: "test1234",
+                            username: "erolf01234",
+                            type: 1
+                        },
+                        phoneNumber: "+82100000000",
+                        authCode: 123456
+                    }
+                )
+            }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            token1 = body.data.register
         })
         it("Successfully uploaded a song", async () => {
             const query = `
@@ -130,6 +155,32 @@ describe("Band services test", () => {
             coverIds.push(body.data.uploadCover.coverId)
             equal(typeof body.data.uploadCover.coverId, "string")
         })
+        it("Successfully uploaded a cover - 3", async () => {
+            const query = `
+                mutation {
+                    uploadCover(
+                        input: {
+                            cover: {
+                                name: "승원이의 Viva La Vida Violin 커버",
+                                songId: "${songIds[0]}",
+                                coverURI: "${env.S3_URI}/song1-Violin.mp3",
+                                position: VIOLIN
+                            }
+                        }
+                    ){
+                        coverId
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token1)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            coverIds.push(body.data.uploadCover.coverId)
+            equal(typeof body.data.uploadCover.coverId, "string")
+        })
     })
     describe("Mutation createBand", () => {
         describe("Success", () => {
@@ -146,6 +197,10 @@ describe("Band services test", () => {
                                 sessionConfig:[
                                     {
                                         session: DRUM,
+                                        maxMember:1
+                                    },
+                                    {
+                                        session: VIOLIN,
                                         maxMember:1
                                     }
                                 ]
@@ -185,7 +240,7 @@ describe("Band services test", () => {
     })
     describe("Mutation joinBand", () => {
         describe("Success", () => {
-            it("Successfully join band", async () => {
+            it("Successfully join band - 1", async () => {
                 const query = `
                     mutation{
                         joinBand(
@@ -205,6 +260,30 @@ describe("Band services test", () => {
                     .post("/api")
                     .set("Content-Type", "application/json")
                     .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.joinBand, true)
+            })
+            it("Successfully join band - 2", async () => {
+                const query = `
+                    mutation{
+                        joinBand(
+                            input: {
+                                band:{
+                                    bandId:"${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[2]}",
+                                    position: VIOLIN
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token1)
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.data.joinBand, true)
@@ -310,8 +389,79 @@ describe("Band services test", () => {
         })
     })
     describe("Mutation outBand", () => {
+        describe("Failure", () => {
+            it("permission error", async () => {
+                const query = `
+                mutation{
+                    outBand(
+                        input: {
+                            band:{
+                                bandId:"${bandIds[0]}"
+                            },
+                            session: {
+                                coverId: "${coverIds[0]}"
+                            }
+                        }
+                    )
+                }
+            `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token1)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "권한이 없습니다")
+            })
+            it("nonexistent session", async () => {
+                const query = `
+                mutation{
+                    outBand(
+                        input: {
+                            band:{
+                                bandId:"111111111111111111111111"
+                            },
+                            session: {
+                                coverId: "${coverIds[0]}"
+                            }
+                        }
+                    )
+                }
+            `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "세션이 존재하지 않습니다")
+            })
+            it("nonexistent cover", async () => {
+                const query = `
+                mutation{
+                    outBand(
+                        input: {
+                            band:{
+                                bandId:"${bandIds[0]}"
+                            },
+                            session: {
+                                coverId: "111111111111111111111111"
+                            }
+                        }
+                    )
+                }
+            `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "해당 커버가 존재하지 않습니다")
+            })
+        })
         describe("Success", () => {
-            it("Successfully out band", async () => {
+            it("Successfully out band - 1", async () => {
                 const query = `
                     mutation{
                         outBand(
@@ -334,30 +484,28 @@ describe("Band services test", () => {
                     .expect(200)
                 equal(body.data.outBand, true)
             })
-        })
-        describe("Failure", () => {
-            it("nonexistent cover", async () => {
+            it("Successfully out band - 2", async () => {
                 const query = `
-                mutation{
-                    outBand(
-                        input: {
-                            band:{
-                                bandId:"${bandIds[0]}"
-                            },
-                            session: {
-                                coverId: "${coverIds[0]}"
+                    mutation{
+                        outBand(
+                            input: {
+                                band:{
+                                    bandId:"${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[2]}"
+                                }
                             }
-                        }
-                    )
-                }
-            `
+                        )
+                    }
+                `
                 const { body } = await request(app)
                     .post("/api")
                     .set("Content-Type", "application/json")
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.errors[0].message, "세션이 존재하지 않습니다")
+                equal(body.data.outBand, true)
             })
         })
     })
