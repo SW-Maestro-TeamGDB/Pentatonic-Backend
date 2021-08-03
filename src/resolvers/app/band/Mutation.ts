@@ -5,7 +5,8 @@ import {
     OutBandInput,
     JoinBandInput,
     UpdateBandInput,
-    UpdateBandQuery
+    UpdateBandQuery,
+    DeleteBandInput
 } from "resolvers/app/band/models"
 import {
     sessionParse,
@@ -64,7 +65,7 @@ export const joinBand = async (parent: void, args: JoinBandInput, context: Conte
     }
 }
 
-export const outBand = async (parent: void, args: OutBandInput, context: Context) => {
+export const leaveBand = async (parent: void, args: OutBandInput, context: Context) => {
     const uid = context.user.id
     const cover = await context.db.collection("library").findOne({
         _id: new ObjectID(args.input.session.coverId)
@@ -138,4 +139,17 @@ export const updateBand = async (parent: void, args: UpdateBandInput, context: C
     return context.db.collection("band").findOneAndUpdate({
         _id: new ObjectID(args.input.band.bandId)
     }, query, { returnDocument: "after" }).then(({ value }) => value)
+}
+
+export const deleteBand = async (parent: void, args: DeleteBandInput, context: Context) => {
+    const bandDeleteResult = await context.db.collection("band").deleteOne({
+        _id: new ObjectID(args.input.band.bandId),
+        creatorId: context.user.id
+    }).then(({ result }) => result.n === 1)
+    if (bandDeleteResult === true) {
+        await context.db.collection("session").deleteMany({
+            bandId: new ObjectID(args.input.band.bandId)
+        })
+    }
+    return bandDeleteResult
 }

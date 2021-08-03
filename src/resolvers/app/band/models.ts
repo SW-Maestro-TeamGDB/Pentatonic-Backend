@@ -101,3 +101,11 @@ export interface OutBandInput {
         }
     }
 }
+
+export interface DeleteBandInput {
+    input: {
+        band: {
+            bandId: ObjectID
+        }
+    }
+}
