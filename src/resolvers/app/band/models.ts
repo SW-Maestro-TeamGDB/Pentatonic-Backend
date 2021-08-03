@@ -129,3 +129,7 @@ export interface BandQuery {
         $regex?: RegExp
     }
 }
+
+export interface GetBandInput {
+    bandId: ObjectID
+}

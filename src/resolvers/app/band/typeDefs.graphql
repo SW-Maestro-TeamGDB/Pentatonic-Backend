@@ -132,4 +132,8 @@ extend type Query{
     queryBand(
         filter: QueryBandInput!
     ): [Band!]
+
+    getBand(
+        bandId: ObjectID!
+    ): Band
 }

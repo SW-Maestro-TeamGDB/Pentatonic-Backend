@@ -3,7 +3,8 @@ import {
     CreateBandInput,
     SessionInformation,
     QueryBandInput,
-    BandQuery
+    BandQuery,
+    GetBandInput
 } from "resolvers/app/band/models"
 import { snakeToCamel } from "lib"
 import { ObjectID } from "mongodb"
@@ -19,3 +20,6 @@ export const queryBand = async (parent: void, args: QueryBandInput, context: Con
     return context.db.collection("band").find(query).sort({ _id }).toArray()
 
 }
+
+export const getBand = async (parent: void, args: GetBandInput, context: Context) =>
+    context.db.collection("band").findOne({ _id: new ObjectID(args.bandId) })
