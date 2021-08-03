@@ -115,6 +115,21 @@ extend type Mutation {
     ): Boolean
 }
 
+
+enum BandFilter{
+    NAME
+    INTRODUCE
+    CREATOR_ID
+}
+
+input QueryBandInput {
+    type: BandFilter!
+    content: String
+    sort: SORT_OPTION! = DATE_DESC
+}
+
 extend type Query{
-    exampleQuery: [Band!]
+    queryBand(
+        filter: QueryBandInput!
+    ): [Band!]
 }

@@ -109,3 +109,23 @@ export interface DeleteBandInput {
         }
     }
 }
+
+export interface QueryBandInput {
+    filter: {
+        type: "NAME" | "INTRODUCE" | "CREATOR_ID"
+        content?: string
+        sort: "DATE_DESC" | "DATE_ASC"
+    }
+}
+
+export interface BandQuery {
+    name?: {
+        $regex?: RegExp
+    }
+    introduce?: {
+        $regex?: RegExp
+    }
+    creatorId?: {
+        $regex?: RegExp
+    }
+}
