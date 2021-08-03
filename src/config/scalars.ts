@@ -1,6 +1,6 @@
 import { UserInputError, ApolloError } from "apollo-server-errors"
 import { GraphQLScalarType, Kind } from "graphql"
-import Hangul from "korean-js/src/hangul"
+import Hangul from "hangul-js"
 
 const isValidId = (value: string) => {
     if (!(5 < value.length && value.length < 15)) {
