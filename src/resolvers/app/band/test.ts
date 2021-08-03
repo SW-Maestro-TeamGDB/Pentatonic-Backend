@@ -181,6 +181,32 @@ describe("Band services test", () => {
             coverIds.push(body.data.uploadCover.coverId)
             equal(typeof body.data.uploadCover.coverId, "string")
         })
+        it("Successfully uploaded a cover - 4", async () => {
+            const query = `
+                mutation {
+                    uploadCover(
+                        input: {
+                            cover: {
+                                name: "ㅇㅇ의 Viva La Vida Violin 커버",
+                                songId: "${songIds[0]}",
+                                coverURI: "${env.S3_URI}/song1-Drum.mp3",
+                                position: DRUM
+                            }
+                        }
+                    ){
+                        coverId
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token1)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            coverIds.push(body.data.uploadCover.coverId)
+            equal(typeof body.data.uploadCover.coverId, "string")
+        })
     })
     describe("Mutation createBand", () => {
         describe("Success", () => {
@@ -201,7 +227,7 @@ describe("Band services test", () => {
                                     },
                                     {
                                         session: VIOLIN,
-                                        maxMember:1
+                                        maxMember:2
                                     }
                                 ]
                             }
@@ -284,6 +310,30 @@ describe("Band services test", () => {
                     .post("/api")
                     .set("Content-Type", "application/json")
                     .set("Authorization", token1)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.joinBand, true)
+            })
+            it("Successfully join band - 3", async () => {
+                const query = `
+                    mutation{
+                        joinBand(
+                            input: {
+                                band:{
+                                    bandId:"${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[1]}",
+                                    position: VIOLIN
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.data.joinBand, true)
@@ -371,8 +421,8 @@ describe("Band services test", () => {
                                     bandId:"${bandIds[0]}"
                                 },
                                 session: {
-                                    coverId: "${coverIds[1]}",
-                                    position: VIOLIN
+                                    coverId: "${coverIds[3]}",
+                                    position: DRUM
                                 }
                             }
                         )
@@ -381,10 +431,150 @@ describe("Band services test", () => {
                 const { body } = await request(app)
                     .post("/api")
                     .set("Content-Type", "application/json")
-                    .set("Authorization", token)
+                    .set("Authorization", token1)
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.errors[0].message, "세션이 가득찾거나 존재하지 않습니다")
+            })
+        })
+    })
+    describe("Mutation updateBand", () => {
+        describe("Success", () => {
+            it("Successfully update band - 1", async () => {
+                const query = `
+                    mutation{
+                        updateBand(
+                            input: {
+                                band: {
+                                    bandId:"${bandIds[0]}",
+                                    name: "테스트 밴드 업데이트!!"
+                                }, 
+                                sessionConfig:[
+                                    {
+                                        session: DRUM,
+                                        maxMember:1
+                                    },
+                                    {
+                                        session: VIOLIN,
+                                        maxMember:2
+                                    },
+                                    {
+                                        session: KEYBOARD,
+                                        maxMember:1
+                                    }
+                                ]
+                            }
+                        ){
+                            name
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.updateBand.name, "테스트 밴드 업데이트!!")
+            })
+        })
+        describe("Failure", () => {
+            it("Fail to update band - invalid bandId", async () => {
+                const query = `
+                    mutation{
+                        updateBand(
+                            input: {
+                                band: {
+                                    bandId:"111111111111111111111111",
+                                    name: "테스트 밴드 업데이트!!"
+                                }
+                            }
+                        ){
+                            name
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "권한이 없거나 밴드가 올바르지 않습니다")
+            })
+            it("Fail to update band - permission error", async () => {
+                const query = `
+                    mutation{
+                        updateBand(
+                            input: {
+                                band: {
+                                    bandId:"${bandIds[0]}",
+                                    name: "테스트 밴드 업데이트!!"
+                                }
+                            }
+                        ){
+                            name
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token1)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "권한이 없거나 밴드가 올바르지 않습니다")
+            })
+            it("Fail to update band - Incorrect Session Update error - 1", async () => {
+                const query = `
+                    mutation{
+                        updateBand(
+                            input: {
+                                band: {
+                                    bandId:"${bandIds[0]}",
+                                    name: "테스트 밴드 업데이트!!"
+                                }, 
+                                sessionConfig:[]
+                            }
+                        ){
+                            name
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "현재 세션에 있는 유저를 없앤뒤 다시 수정해주세요")
+            })
+            it("Fail to update band - Incorrect Session Update error - 2", async () => {
+                const query = `
+                    mutation{
+                        updateBand(
+                            input: {
+                                band: {
+                                    bandId:"${bandIds[0]}",
+                                    name: "테스트 밴드 업데이트!!"
+                                }, 
+                                sessionConfig:[{
+                                    session: DRUM,
+                                    maxMember:0
+                                }]
+                            }
+                        ){
+                            name
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "현재 세션에 있는 유저를 없앤뒤 다시 수정해주세요")
             })
         })
     })

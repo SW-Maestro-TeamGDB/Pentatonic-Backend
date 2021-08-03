@@ -61,10 +61,20 @@ export interface UpdateBandInput {
             introduce?: string
             backGroundURI?: URL
         }
-        sessionConfig?: {
-            session?: keyof SessionInformation
-            maxMember?: number
-        }
+        sessionConfig: {
+            session: keyof SessionInformation
+            maxMember: number
+        }[]
+    }
+}
+
+export interface UpdateBandQuery {
+    $set: {
+        sessions?: SessionInformation
+        name?: string
+        creatorId?: string
+        introduce?: string
+        backGroundURI?: URL
     }
 }
 
