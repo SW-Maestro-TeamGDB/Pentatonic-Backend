@@ -694,6 +694,31 @@ describe("Band services test", () => {
             equal(body.data.getBand.name, "테스트 밴드 업데이트!!")
         })
     })
+    describe("Query getSong + band test", () => {
+        it("Successfully get band data", async () => {
+            const query = `
+                query{
+                    getSong(
+                        songId: "${songIds[0]}"
+                    ){
+                        songId
+                        band {
+                            song{
+                                songId
+                            }
+                        }
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getSong.songId, songIds[0])
+            equal(body.data.getSong.band[0].song.songId, songIds[0])
+        })
+    })
     describe("Mutation leaveBand", () => {
         describe("Failure", () => {
             it("permission error", async () => {
