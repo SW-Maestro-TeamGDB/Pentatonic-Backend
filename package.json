@@ -62,6 +62,7 @@
     "graphql-voyager": "^1.0.0-rc.31",
     "http": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
+    "korean-js": "^0.8.1",
     "mime-types": "^2.1.30",
     "mocha": "^8.2.1",
     "mongodb": "^3.6.3",

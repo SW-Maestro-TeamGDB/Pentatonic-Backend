@@ -2,11 +2,12 @@ import {
     UploadCoverFileInput,
     UploadCoverInput,
     UpdateCoverInput,
-    DeleteCoverInput
+    DeleteCoverInput,
+    ChangeCoverQuery
 } from "resolvers/app/library/models"
 import { Context } from "config/types"
 import { ApolloError } from "apollo-server-express"
-import { uploadS3, getAudioDuration } from "lib"
+import { uploadS3, getAudioDuration, snakeToCamel } from "lib"
 import { ObjectID } from "mongodb"
 
 
@@ -34,40 +35,44 @@ export const uploadCover = async (parent: void, args: UploadCoverInput, context:
         name,
         songId,
         coverURI,
+        position
     } = args.input.cover
     const duration = await getAudioDuration(coverURI.href)
     if (duration === 0) {
         throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
     }
-    const creatorId = context.user.id
+    const coverBy = context.user.id
     return context.db.collection("library").insertOne({
         name,
         songId: new ObjectID(songId),
         coverURI: coverURI.href,
         duration,
-        creatorId
+        position,
+        coverBy
     }).then(({ ops }) => ops[0])
 }
 
 export const updateCover = async (parent: void, args: UpdateCoverInput, context: Context) => {
-    const {
-        coverId,
-        name
-    } = args.input.cover
-    if (name !== undefined) {
-        return context.db.collection("library").findOneAndUpdate({
+    const { coverId, ...cover } = args.input.cover
+    if (0 === Object.keys(cover).length) {
+        return context.db.collection("library").findOne({
             _id: new ObjectID(coverId),
-            creatorId: context.user.id
-        }, { $set: { name } }, { returnDocument: "after" }).then(({ value }) => value)
+            coverBy: context.user.id
+        })
     }
-    return context.db.collection("library").findOne({
+    const query: ChangeCoverQuery = {
+        $set: {
+            ...cover
+        }
+    }
+    return context.db.collection("library").findOneAndUpdate({
         _id: new ObjectID(coverId),
-        creatorId: context.user.id
-    })
+        coverBy: context.user.id
+    }, query, { returnDocument: "after" }).then(({ value }) => value)
 }
 
 export const deleteCover = async (parent: void, args: DeleteCoverInput, context: Context) =>
     context.db.collection("library").deleteOne({
         _id: new ObjectID(args.input.cover.coverId),
-        creatorId: context.user.id
+        coverBy: context.user.id
     }).then(({ deletedCount }) => deletedCount === 1)

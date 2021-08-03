@@ -1,0 +1,139 @@
+type SongLink {
+    songId: ObjectID!
+    name: String!
+    songURI: URL!
+    songImg: URL!
+    genre: String!
+    artist: String!
+    album: String!
+    weeklyChallenge: Boolean!
+    duration: Float!
+    level: Int!
+    releaseDate: Date!
+}
+
+type UserLink {
+    userId: Id!
+    username: Username!
+    prime: Boolean!
+    type: Int!
+}
+
+type Band {
+    bandId: ObjectID!
+    song: SongLink!
+    name: String!
+    introduce: String!
+    creator: UserLink!
+    backGroundURI: URL!
+    createDate: Date!
+    session: [Session]
+}
+
+type Session {
+    position: SESSION_TYPE!
+    maxMember: Int!
+    cover: [Cover!]
+}
+
+input SessionConfigInput {
+    session: SESSION_TYPE!
+    maxMember: Int!
+}   
+
+input CreateBandArgsInput {
+    name: String!
+    introduce: String!
+    backGroundURI: URL! = "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg"
+    songId: ObjectID!
+}
+
+input CreateBandInput {
+    sessionConfig: [SessionConfigInput!]!
+    band: CreateBandArgsInput!
+}
+
+input UpdateBandArgsInput {
+    bandId: ObjectID!
+    name: String
+    introduce: String
+    creatorId: Id
+    backGroundURI: URL
+}
+
+input UpdateBandInput {
+    band: UpdateBandArgsInput!
+    sessionConfig: [SessionConfigInput]
+}
+
+input JoinBandArgsInput {
+    bandId: ObjectID!
+}
+
+input JoinSessionInput{
+    coverId: ObjectID!
+    position: SESSION_TYPE!
+}
+
+input JoinBandInput {
+    band: JoinBandArgsInput!
+    session: JoinSessionInput!
+}
+
+input LeaveSessionArgsInput {
+    coverId: ObjectID!
+}
+
+input LeaveBandInput{
+    band: JoinBandArgsInput!
+    session: LeaveSessionArgsInput!
+}
+
+input DeleteBandInput {
+    band: JoinBandArgsInput!
+}
+
+extend type Mutation {
+    createBand(
+        input: CreateBandInput!
+    ): Band
+
+    updateBand(
+        input: UpdateBandInput!
+    ): Band
+
+    joinBand(
+        input: JoinBandInput!
+    ): Boolean
+
+    leaveBand(
+        input: LeaveBandInput!
+    ): Boolean
+
+    deleteBand(
+        input: DeleteBandInput!
+    ): Boolean
+}
+
+
+enum BandFilter{
+    NAME
+    INTRODUCE
+    CREATOR_ID
+}
+
+input QueryBandInput {
+    type: BandFilter!
+    content: String
+    sort: SORT_OPTION! = DATE_DESC
+}
+
+extend type Query{
+    queryBand(
+        filter: QueryBandInput!
+    ): [Band!]
+
+    getBand(
+        bandId: ObjectID!
+    ): Band
+}

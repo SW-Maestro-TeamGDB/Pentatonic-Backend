@@ -11,6 +11,10 @@ export interface File {
 interface Loaders {
     loaders: {
         instrumentsLoader: DataLoader<ObjectID, any, ObjectID>
+        songsLoader: DataLoader<string, any, string>
+        userLoader1: DataLoader<string, any, string>
+        sessionsLoader: DataLoader<ObjectID, any, ObjectID>
+        bandsLoader: DataLoader<ObjectID, any, ObjectID>
     }
 }
 

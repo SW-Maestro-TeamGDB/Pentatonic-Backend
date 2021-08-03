@@ -1,7 +1,7 @@
 import { rule, shield, not, and } from "graphql-shield"
 import { ApolloError } from "apollo-server-express"
-import { JWTUser } from "config/types"
-import { Db } from "mongodb"
+import { JWTUser, Context } from "config/types"
+import { Db, ObjectID } from "mongodb"
 import { Redis } from "config/types"
 import env from "config/env"
 
@@ -57,7 +57,12 @@ export const permissions = shield({
         uploadCoverFile: isLogin,
         uploadCover: isLogin,
         updateCover: isLogin,
-        deleteCover: isLogin
+        deleteCover: isLogin,
+        createBand: isLogin,
+        joinBand: isLogin,
+        updateBand: isLogin,
+        leaveBand: isLogin,
+        deleteBand: isLogin
     },
     Query: {
         findId: and(not(isLogin), canSend),

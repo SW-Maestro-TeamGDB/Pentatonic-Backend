@@ -1,0 +1,42 @@
+{
+    "band": {
+        "name": "무지성 밴드",
+        "creator": "UserLink",
+        "introduce": "무지성으로 연주하는 무지성 밴드입니다",
+        "song": "SongLink",
+        "backGroundURI": "~~~.~~.~~~",
+        "createDate": "yyyy-mm-dd",
+        "session": [
+            {
+                "position": "vocal",
+                "cover": [
+                    {
+                        "coverBy": "UserLink",
+                        "coverURI": "~~~.~~.~~~",
+                        "duration": 123.123112,
+                        "coverId": "ObjectID(~~~)"
+                    },
+                    {
+                        "coverBy": "UserLink",
+                        "coverURI": "~~~.~~.~~~",
+                        "duration": 123.123112,
+                        "coverId": "ObjectID(~~~)"
+                    }
+                ],
+                "maxMember": 3
+            },
+            {
+                "position": "guitar",
+                "cover": [
+                    {
+                        "coverBy": "UserLink",
+                        "coverURI": "~~~.~~.~~~",
+                        "duration": 123.123112,
+                        "coverId": "ObjectID(~~~)"
+                    }
+                ],
+                "maxMember": 3
+            }
+        ]
+    }
+}

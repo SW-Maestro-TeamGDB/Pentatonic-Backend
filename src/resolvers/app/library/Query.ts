@@ -10,7 +10,7 @@ export const queryCover = async (parent: void, args: QueryCoverInput, context: C
     const { type, content, sort } = args.filter
     const _id = sort === "DATE_ASC" ? 1 : -1
     const query: CoverQuery = {
-        creatorId: context.user.id
+        coverBy: context.user.id
     }
     if (type === "SONG_ID") {
         query.songId = new ObjectID(content)
@@ -18,11 +18,14 @@ export const queryCover = async (parent: void, args: QueryCoverInput, context: C
     if (type === "NAME") {
         query.name = { $regex: new RegExp(content || "", "ig") }
     }
+    if (type === "POSITION") {
+        query.position = content
+    }
     return context.db.collection("library").find(query).sort({ _id }).toArray()
 }
 
 export const getCover = async (parent: void, args: GetCoverInput, context: Context) =>
     context.db.collection("library").findOne({
-        creatorId: context.user.id,
+        coverBy: context.user.id,
         _id: new ObjectID(args.coverId)
     })

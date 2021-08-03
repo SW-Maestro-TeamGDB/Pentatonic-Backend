@@ -12,7 +12,15 @@ import { customScalar } from "config/scalars"
 import { makeExecutableSchema } from "@graphql-tools/schema"
 import * as graphqlScalars from 'graphql-scalars'
 import { applyMiddleware } from "graphql-middleware"
-import { permissions, getUser, instrumentsLoader } from "lib"
+import {
+    permissions,
+    getUser,
+    instrumentsLoader,
+    songsLoader,
+    userLoader1,
+    sessionsLoader,
+    bandsLoader
+} from "lib"
 import express from "express"
 import expressPlayground from "graphql-playground-middleware-express"
 import bodyParser from "body-parser"
@@ -54,7 +62,11 @@ const server = new ApolloServer({
             user,
             ip,
             loaders: {
-                instrumentsLoader: instrumentsLoader()
+                songsLoader: songsLoader(),
+                instrumentsLoader: instrumentsLoader(),
+                userLoader1: userLoader1(),
+                sessionsLoader: sessionsLoader(),
+                bandsLoader: bandsLoader()
             }
         }
     },

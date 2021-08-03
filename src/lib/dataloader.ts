@@ -1,7 +1,12 @@
 import DataLoader from "dataloader"
 import DB from "config/connectDB"
 import { Instrument } from "resolvers/app/song/models"
+import { Song } from "resolvers/app/song/models"
+import { Band, Session, BatchSesssion, SessionInformation } from "resolvers/app/band/models"
 import { ObjectID, Db } from "mongodb"
+import { sessionMap } from "config/init"
+import { snakeToCamel, camelToSnake } from "lib"
+
 
 const batchLoadInstrumentFn = async (songIds: readonly ObjectID[]) => {
     const db = await DB.get() as Db
@@ -13,4 +18,74 @@ const batchLoadInstrumentFn = async (songIds: readonly ObjectID[]) => {
     return resultArray
 }
 
+
+const batchLoadSongFn = async (songIds: readonly ObjectID[]) => {
+    const objIds = songIds.map(s => new ObjectID(s))
+    const db = await DB.get() as Db
+    const songs: Song[] = await db.collection("song").find({ _id: { $in: objIds } }).toArray()
+    return songs
+}
+
+const batchLoadUserFn1 = async (userIds: readonly string[]) => {
+    const db = await DB.get() as Db
+    return await db.collection("user").find({ id: { $in: userIds } }).toArray()
+}
+
+
+const batchLoadSessionFn = async (bandIds: readonly ObjectID[]) => {
+    const db = await DB.get() as Db
+    const data = await Promise.all([
+        db.collection("session").find({ bandId: { $in: bandIds } }).toArray(),
+        db.collection("band").find({ _id: { $in: bandIds } }).toArray()
+    ])
+    const coverId = data[0].map((e) => e.coverId)
+    const library = await db.collection("library").find({ _id: { $in: coverId } }).toArray()
+    const table = new Map()
+    const resultArray: BatchSesssion[][] = Array.from(Array(bandIds.length), () => [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}])
+    bandIds.forEach((id, index) => {
+        table.set(id.toString(), index)
+    })
+    library.forEach(({ _id }, index) => {
+        table.set(_id.toString(), index)
+    })
+    data[1].forEach((band: Band) => {
+        for (const [k, v] of Object.entries(band.sessions)) {
+            const index = sessionMap[k as keyof SessionInformation], id = table.get(band._id.toString())
+            resultArray[id][index] = {
+                position: camelToSnake(k) as keyof SessionInformation,
+                maxMember: v,
+                cover: []
+            }
+        }
+    })
+    data[0].forEach((session: Session) => {
+        const id = table.get(session.bandId.toString()) as number
+        const coverId = session.coverId
+        const coverData = library[table.get(coverId.toString())]
+        const position = snakeToCamel(coverData.position) as keyof SessionInformation
+        (resultArray[id][sessionMap[position]]["cover"] as Session[]).push(coverData)
+    })
+    return resultArray.map((e: BatchSesssion[]) => e.filter((f: BatchSesssion) => Object.keys(f).length !== 0))
+}
+
+
+const batchLoadBandFn = async (songIds: readonly ObjectID[]) => {
+    const db = await DB.get() as Db
+    const mp = new Map()
+    songIds.forEach((x, idx) => mp.set(x.toString(), idx))
+    const resultArr: Band[][] = Array.from(Array(songIds.length), () => [])
+    const data = await db.collection("band").find({ songId: { $in: songIds } }).toArray()
+    data.forEach(x => {
+        const idx = mp.get(x.songId.toString())
+        resultArr[idx].push(x)
+    })
+    return resultArr
+}
+
+export const userLoader1 = () => new DataLoader(batchLoadUserFn1)
+export const songsLoader = () => new DataLoader(batchLoadSongFn)
 export const instrumentsLoader = () => new DataLoader(batchLoadInstrumentFn)
+
+export const bandsLoader = () => new DataLoader(batchLoadBandFn)
+
+export const sessionsLoader = () => new DataLoader(batchLoadSessionFn)

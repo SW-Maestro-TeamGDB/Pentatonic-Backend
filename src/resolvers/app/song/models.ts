@@ -1,5 +1,6 @@
 import { ObjectID } from "mongodb"
 import { File } from "config/types"
+import { Band } from "resolvers/app/band/models"
 
 export interface Song {
     _id: ObjectID
@@ -13,6 +14,7 @@ export interface Song {
     release: Date
     weeklyChallenge: boolean
     duration: number
+    band: Band
 }
 
 

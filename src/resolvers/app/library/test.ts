@@ -136,15 +136,17 @@ describe("Library services test", () => {
                                 cover: {
                                     name: "승원이의 Viva La Vida Drum 커버",
                                     songId: "${songIds[0]}",
-                                    coverURI: "${coverURI[0]}"
+                                    coverURI: "${coverURI[0]}",
+                                    position: DRUM
                                 }
                             }
                         ){
                             name
-                            creatorId
+                            coverBy
                             songId
                             coverURI
                             coverId
+                            position
                         }
                     }
                 `
@@ -157,7 +159,8 @@ describe("Library services test", () => {
                 equal(body.data.uploadCover.name, "승원이의 Viva La Vida Drum 커버")
                 equal(body.data.uploadCover.songId, songIds[0])
                 equal(body.data.uploadCover.coverURI, coverURI[0])
-                equal(body.data.uploadCover.creatorId, "user1234")
+                equal(body.data.uploadCover.coverBy, "user1234")
+                equal(body.data.uploadCover.position, "DRUM")
                 coverIds.push(body.data.uploadCover.coverId)
                 equal(typeof body.data.uploadCover.coverId, "string")
             })
@@ -169,7 +172,8 @@ describe("Library services test", () => {
                                 cover: {
                                     name: "승원이의 Viva La Vida Drum 커버 - 2",
                                     songId: "${songIds[0]}",
-                                    coverURI: "${coverURI[0]}"
+                                    coverURI: "${coverURI[0]}",
+                                    position: DRUM
                                 }
                             }
                         ){
@@ -196,12 +200,12 @@ describe("Library services test", () => {
                                 cover: {
                                     name: "hawawa cover",
                                     songId: "111111111111111111111111",
-                                    coverURI: "https://naver.com"
+                                    coverURI: "https://naver.com",
+                                    position: VOCAL
                                 }
                             }
                         ){
                             name
-                            creatorId
                             songId
                             coverURI
                             coverId
@@ -227,10 +231,12 @@ describe("Library services test", () => {
                             input: {
                                 cover: {
                                     name: "Viva La Vida Drum 커버",
+                                    position: DRUM,
                                     coverId: "${coverIds[0]}"
                                 }
                             }
                         ){
+                            position
                             name
                             coverId
                         }
@@ -242,6 +248,7 @@ describe("Library services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
+                equal(body.data.updateCover.position, "DRUM")
                 equal(body.data.updateCover.name, "Viva La Vida Drum 커버")
                 equal(body.data.updateCover.coverId, coverIds[0])
             })
@@ -255,6 +262,7 @@ describe("Library services test", () => {
                                 }
                             }
                         ){
+                            position
                             name
                             coverId
                         }
@@ -266,6 +274,7 @@ describe("Library services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
+                equal(body.data.updateCover.position, "DRUM")
                 equal(body.data.updateCover.name, "Viva La Vida Drum 커버")
                 equal(body.data.updateCover.coverId, coverIds[0])
             })
@@ -363,6 +372,31 @@ describe("Library services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
+                equal(body.data.queryCover[0].name, "Viva La Vida Drum 커버")
+                equal(body.data.queryCover[0].coverId, coverIds[0])
+            })
+            it("Successfully queried a cover filter type = POSITION", async () => {
+                const query = `
+                    query {
+                        queryCover(
+                            filter: {
+                                type: POSITION,
+                                content: "DRUM"
+                            }
+                        ){
+                            name
+                            coverId
+                            position
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.queryCover[0].position, "DRUM")
                 equal(body.data.queryCover[0].name, "Viva La Vida Drum 커버")
                 equal(body.data.queryCover[0].coverId, coverIds[0])
             })

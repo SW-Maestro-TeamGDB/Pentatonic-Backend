@@ -1,5 +1,6 @@
 import { File } from "config/types"
 import { ObjectID } from "mongodb"
+import { SessionInformation } from "resolvers/app/band/models"
 
 
 export interface GetCoverInput {
@@ -8,7 +9,7 @@ export interface GetCoverInput {
 
 export interface QueryCoverInput {
     filter: {
-        type: "ALL" | "NAME" | "SONG_ID"
+        type: "ALL" | "NAME" | "SONG_ID" | "POSITION"
         content?: string
         sort: "DATE_DESC" | "DATE_ASC"
     }
@@ -25,6 +26,7 @@ export interface UpdateCoverInput {
         cover: {
             coverId: ObjectID
             name: string
+            position: string
         }
     }
 }
@@ -35,13 +37,22 @@ export interface UploadCoverInput {
             songId: ObjectID
             name: string
             coverURI: URL
+            position: keyof SessionInformation
         }
     }
 }
 
+export interface ChangeCoverQuery {
+    $set: {
+        name?: string
+        position?: string
+    }
+}
+
+
 export interface Cover {
     songId: ObjectID
-    creatorId: string
+    coverBy: string
     coverURI: URL
     name: string
     duration: number
@@ -59,7 +70,8 @@ export interface DeleteCoverInput {
 
 
 export interface CoverQuery {
-    creatorId: string
+    coverBy: string
     name?: { "$regex"?: RegExp }
     songId?: ObjectID
+    position?: string
 }
