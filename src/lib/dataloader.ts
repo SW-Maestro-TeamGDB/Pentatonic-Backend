@@ -32,17 +32,17 @@ const batchLoadUserFn1 = async (userIds: readonly string[]) => {
 }
 
 
-const batchLoadSessionFn = async (bandId: readonly ObjectID[]) => {
+const batchLoadSessionFn = async (bandIds: readonly ObjectID[]) => {
     const db = await DB.get() as Db
     const data = await Promise.all([
-        db.collection("session").find({ bandId: { $in: bandId } }).toArray(),
-        db.collection("band").find({ _id: { $in: bandId } }).toArray()
+        db.collection("session").find({ bandId: { $in: bandIds } }).toArray(),
+        db.collection("band").find({ _id: { $in: bandIds } }).toArray()
     ])
     const coverId = data[0].map((e) => e.coverId)
     const library = await db.collection("library").find({ _id: { $in: coverId } }).toArray()
     const table = new Map()
-    const resultArray: BatchSesssion[][] = Array.from(Array(bandId.length), () => [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}])
-    bandId.forEach((id, index) => {
+    const resultArray: BatchSesssion[][] = Array.from(Array(bandIds.length), () => [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}])
+    bandIds.forEach((id, index) => {
         table.set(id.toString(), index)
     })
     library.forEach(({ _id }, index) => {
@@ -68,8 +68,24 @@ const batchLoadSessionFn = async (bandId: readonly ObjectID[]) => {
     return resultArray.map((e: BatchSesssion[]) => e.filter((f: BatchSesssion) => Object.keys(f).length !== 0))
 }
 
+
+const batchLoadBandFn = async (songIds: readonly ObjectID[]) => {
+    const db = await DB.get() as Db
+    const mp = new Map()
+    songIds.forEach((x, idx) => mp.set(x.toString(), idx))
+    const resultArr: Band[][] = Array.from(Array(songIds.length), () => [])
+    const data = await db.collection("band").find({ songId: { $in: songIds } }).toArray()
+    data.forEach(x => {
+        const idx = mp.get(x.songId.toString())
+        resultArr[idx].push(x)
+    })
+    return resultArr
+}
+
 export const userLoader1 = () => new DataLoader(batchLoadUserFn1)
 export const songsLoader = () => new DataLoader(batchLoadSongFn)
 export const instrumentsLoader = () => new DataLoader(batchLoadInstrumentFn)
+
+export const bandsLoader = () => new DataLoader(batchLoadBandFn)
 
 export const sessionsLoader = () => new DataLoader(batchLoadSessionFn)

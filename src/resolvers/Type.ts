@@ -17,7 +17,9 @@ import { Context } from "config/types"
 export const Song = {
     songId: (parent: SongInterface) => parent._id,
     instrument: (parent: SongInterface, args: void, context: Context) =>
-        context.loaders.instrumentsLoader.load(parent._id)
+        context.loaders.instrumentsLoader.load(parent._id),
+    band: (parent: SongInterface, args: void, context: Context) =>
+        context.loaders.bandsLoader.load(parent._id)
 
 }
 

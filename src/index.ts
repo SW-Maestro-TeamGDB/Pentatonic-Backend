@@ -21,7 +21,8 @@ import {
     instrumentsLoader,
     songsLoader,
     userLoader1,
-    sessionsLoader
+    sessionsLoader,
+    bandsLoader
 } from "lib"
 import express from "express"
 import expressPlayground from "graphql-playground-middleware-express"
@@ -66,7 +67,8 @@ const start = async () => {
                     songsLoader: songsLoader(),
                     instrumentsLoader: instrumentsLoader(),
                     userLoader1: userLoader1(),
-                    sessionsLoader: sessionsLoader()
+                    sessionsLoader: sessionsLoader(),
+                    bandsLoader: bandsLoader()
                 }
             }
         },
