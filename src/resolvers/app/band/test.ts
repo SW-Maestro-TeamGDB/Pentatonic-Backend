@@ -613,6 +613,87 @@ describe("Band services test", () => {
             })
         })
     })
+    describe("Query queryBand", () => {
+        it("Searching by Band Name & sort DATE_DESC", async () => {
+            const query = `
+                query{
+                    queryBand(
+                        filter: {
+                            type: NAME,
+                            content: "테스트"
+                        }
+                    ){
+                        name
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.queryBand[0].name.includes("테스트 밴드"), true)
+        })
+        it("Searching by Band creator & sort DATE_ASC", async () => {
+            const query = `
+                query{
+                    queryBand(
+                        filter: {
+                            type: CREATOR_ID,
+                            content: "pukuba",
+                            sort: DATE_ASC
+                        }
+                    ){
+                        name
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.queryBand.length, 0)
+        })
+        it("Searching by Band introduce & sort DATE_ASC", async () => {
+            const query = `
+                query{
+                    queryBand(
+                        filter: {
+                            type: INTRODUCE,
+                            content: "test",
+                            sort: DATE_ASC
+                        }
+                    ){
+                        name
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.queryBand[0].name, "테스트 밴드 업데이트!!")
+        })
+    })
+    describe("Query getBand", () => {
+        it("Search for bands with band ID", async () => {
+            const query = `
+                query{
+                    getBand(bandId: "${bandIds[0]}"){
+                        name
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getBand.name, "테스트 밴드 업데이트!!")
+        })
+    })
     describe("Mutation leaveBand", () => {
         describe("Failure", () => {
             it("permission error", async () => {
