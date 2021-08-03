@@ -195,6 +195,7 @@ type Song {
     instrument: [Instrument!]!
     "음원 발매의 날짜"
     releaseDate: Date!
+    band: [Band!]!
 }
 
 """
