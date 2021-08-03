@@ -41,15 +41,6 @@ const isValidCode = rule()(async (parent: void, args: { input: { code: string } 
     return true
 })
 
-const isBandCreator = rule()(async (parent: void, args: { input: { band: { bandId: ObjectID } } }, context: Context) => {
-    const { db } = context
-    const band = await db.collection("band").findOne({ _id: new ObjectID(args.input.band.bandId) })
-    if (band.creatorId !== context.user.id) {
-        return new ApolloError("방장이 아닙니다")
-    }
-    return true
-})
-
 export const permissions = shield({
     Mutation: {
         changePassword: isLogin,
@@ -68,7 +59,10 @@ export const permissions = shield({
         updateCover: isLogin,
         deleteCover: isLogin,
         createBand: isLogin,
-        joinBand: isLogin
+        joinBand: isLogin,
+        updateBand: isLogin,
+        leaveBand: isLogin,
+        deleteBand: isLogin
     },
     Query: {
         findId: and(not(isLogin), canSend),
