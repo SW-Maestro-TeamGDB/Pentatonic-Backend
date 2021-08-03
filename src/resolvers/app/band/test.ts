@@ -5,6 +5,7 @@ import { Db } from "mongodb"
 import { deepStrictEqual as equal } from "assert"
 import DB from "config/connectDB"
 import * as Redis from "config/connectRedis"
+import { Cover } from "resolvers/app/library/models"
 
 const songIds: string[] = []
 const coverIds: string[] = []
@@ -477,6 +478,40 @@ describe("Band services test", () => {
                     .expect(200)
                 equal(body.data.updateBand.name, "테스트 밴드 업데이트!!")
             })
+            it("Successfully update band - 2", async () => {
+                const query = `
+                    mutation{
+                        updateBand(
+                            input: {
+                                band: {
+                                    bandId:"${bandIds[0]}",
+                                    name: "테스트 밴드 업데이트!!"
+                                }, 
+                            }
+                        ){
+                            name
+                            session {
+                                position
+                                cover{
+                                    songId
+                                }
+                            }
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.updateBand.name, "테스트 밴드 업데이트!!")
+                for (const item of body.data.updateBand.session) {
+                    item.cover.forEach((x: Cover) => {
+                        equal(x.songId, songIds[0].toString())
+                    })
+                }
+            })
         })
         describe("Failure", () => {
             it("Fail to update band - invalid bandId", async () => {
@@ -578,12 +613,12 @@ describe("Band services test", () => {
             })
         })
     })
-    describe("Mutation outBand", () => {
+    describe("Mutation leaveBand", () => {
         describe("Failure", () => {
             it("permission error", async () => {
                 const query = `
                 mutation{
-                    outBand(
+                    leaveBand(
                         input: {
                             band:{
                                 bandId:"${bandIds[0]}"
@@ -606,7 +641,7 @@ describe("Band services test", () => {
             it("nonexistent session", async () => {
                 const query = `
                 mutation{
-                    outBand(
+                    leaveBand(
                         input: {
                             band:{
                                 bandId:"111111111111111111111111"
@@ -629,7 +664,7 @@ describe("Band services test", () => {
             it("nonexistent cover", async () => {
                 const query = `
                 mutation{
-                    outBand(
+                    leaveBand(
                         input: {
                             band:{
                                 bandId:"${bandIds[0]}"
@@ -654,7 +689,7 @@ describe("Band services test", () => {
             it("Successfully out band - 1", async () => {
                 const query = `
                     mutation{
-                        outBand(
+                        leaveBand(
                             input: {
                                 band:{
                                     bandId:"${bandIds[0]}"
@@ -672,12 +707,12 @@ describe("Band services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.data.outBand, true)
+                equal(body.data.leaveBand, true)
             })
             it("Successfully out band - 2", async () => {
                 const query = `
                     mutation{
-                        outBand(
+                        leaveBand(
                             input: {
                                 band:{
                                     bandId:"${bandIds[0]}"
@@ -695,7 +730,53 @@ describe("Band services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.data.outBand, true)
+                equal(body.data.leaveBand, true)
+            })
+        })
+    })
+    describe("Mutation deleteBand", () => {
+        describe("Success", () => {
+            it("Successfully delete band - 1", async () => {
+                const query = `
+                    mutation{
+                        deleteBand(
+                            input: {
+                                band:{
+                                    bandId:"${bandIds[0]}"
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.deleteBand, true)
+            })
+        })
+        describe("Failure", () => {
+            it("nonexistent band", async () => {
+                const query = `
+                mutation{
+                    deleteBand(
+                        input: {
+                            band:{
+                                bandId:"111111111111111111111111"
+                            }
+                        }
+                    )
+                }
+            `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.deleteBand, false)
             })
         })
     })
