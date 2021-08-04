@@ -138,7 +138,7 @@ describe("Band services test", () => {
                             cover: {
                                 name: "승원이의 Viva La Vida Violin 커버",
                                 songId: "${songIds[0]}",
-                                coverURI: "${env.S3_URI}/song1-Violin.mp3",
+                                coverURI: "${env.S3_URI}/violin.m4a",
                                 position: VIOLIN
                             }
                         }
@@ -155,7 +155,7 @@ describe("Band services test", () => {
                 .expect(200)
             coverIds.push(body.data.uploadCover.coverId)
             equal(typeof body.data.uploadCover.coverId, "string")
-        })
+        }).timeout(500000)
         it("Successfully uploaded a cover - 3", async () => {
             const query = `
                 mutation {
@@ -164,7 +164,7 @@ describe("Band services test", () => {
                             cover: {
                                 name: "승원이의 Viva La Vida Violin 커버",
                                 songId: "${songIds[0]}",
-                                coverURI: "${env.S3_URI}/song1-Violin.mp3",
+                                coverURI: "${env.S3_URI}/violin.m4a",
                                 position: VIOLIN
                             }
                         }
@@ -181,7 +181,7 @@ describe("Band services test", () => {
                 .expect(200)
             coverIds.push(body.data.uploadCover.coverId)
             equal(typeof body.data.uploadCover.coverId, "string")
-        })
+        }).timeout(500000)
         it("Successfully uploaded a cover - 4", async () => {
             const query = `
                 mutation {

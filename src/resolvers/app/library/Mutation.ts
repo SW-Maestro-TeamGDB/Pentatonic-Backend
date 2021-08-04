@@ -7,7 +7,11 @@ import {
 } from "resolvers/app/library/models"
 import { Context } from "config/types"
 import { ApolloError } from "apollo-server-express"
-import { uploadS3, getAudioDuration, snakeToCamel } from "lib"
+import {
+    uploadS3,
+    getAudioDuration,
+    denoiseFilter
+} from "lib"
 import { ObjectID } from "mongodb"
 
 
@@ -40,6 +44,9 @@ export const uploadCover = async (parent: void, args: UploadCoverInput, context:
     const duration = await getAudioDuration(coverURI.href)
     if (duration === 0) {
         throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
+    }
+    if (position !== "DRUM") {
+        coverURI.href = await denoiseFilter(coverURI.href) as string
     }
     const coverBy = context.user.id
     return context.db.collection("library").insertOne({

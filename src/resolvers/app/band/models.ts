@@ -14,6 +14,21 @@ export interface SessionInformation {
     geomungo?: number
 }
 
+const SessionDirection = {
+    VOCAL: 'VOCAL',
+    ACOUSTIC_GUITAR: 'ACOUSTIC_GUITAR',
+    ELECTRIC_GUITAR: 'ELECTRIC_GUITAR',
+    BASS: 'BASS',
+    DRUM: 'DRUM',
+    KEYBOARD: 'KEYBOARD',
+    VIOLIN: 'VIOLIN',
+    CELLO: 'CELLO',
+    GAYAGEUM: 'GAYAGEUM',
+    HAEGEUM: 'HAEGEUM',
+    GEOMUNGO: 'GEOMUNGO'
+} as const
+
+export type SessionType = typeof SessionDirection[keyof typeof SessionDirection]
 
 export interface SessionConfig {
     session: keyof SessionInformation

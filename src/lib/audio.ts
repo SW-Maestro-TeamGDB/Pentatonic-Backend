@@ -5,6 +5,25 @@ import { ApolloError } from "apollo-server-express"
 const exec = util.promisify(syncExec)
 import { unlink } from "fs"
 const deleteFile = util.promisify(unlink)
+
+export const denoiseFilter = async (audioURI: string) => {
+    const filename = audioURI.substring(audioURI.lastIndexOf("/") + 1)
+    try {
+        await exec(`
+            ffmpeg -i ${audioURI} -af "arnndn=m=src/lib/mp.rnnn" \
+            -c:a alac -strict -2 -b:a 360k \
+            ${filename} -y
+        `)
+        const [a, b] = filename.split(".")
+        const result = await uploadS3(filename, `${a}-1.${b}`, "audio/wav")
+        deleteFile(filename)
+        return result
+    } catch (e) {
+        deleteFile(filename)
+        throw new ApolloError(e)
+    }
+}
+
 export const mergeAudios = async (audios: string[], audioName: string) => {
     const ffmpegInputs = audios.map((uri: string) => `-i ${uri}`)
         .toString()

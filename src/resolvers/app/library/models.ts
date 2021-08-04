@@ -1,7 +1,6 @@
 import { File } from "config/types"
 import { ObjectID } from "mongodb"
-import { SessionInformation } from "resolvers/app/band/models"
-
+import { SessionType } from "resolvers/app/band/models"
 
 export interface GetCoverInput {
     coverId: ObjectID
@@ -31,13 +30,14 @@ export interface UpdateCoverInput {
     }
 }
 
+
 export interface UploadCoverInput {
     input: {
         cover: {
             songId: ObjectID
             name: string
             coverURI: URL
-            position: keyof SessionInformation
+            position: SessionType
         }
     }
 }

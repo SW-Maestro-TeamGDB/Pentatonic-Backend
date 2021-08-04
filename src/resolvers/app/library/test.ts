@@ -5,6 +5,7 @@ import { Db } from "mongodb"
 import DB from "config/connectDB"
 import { deepStrictEqual as equal } from "assert"
 import * as Redis from "config/connectRedis"
+import { includes } from "test/utils"
 
 const songIds: string[] = []
 const coverURI: string[] = []
@@ -189,7 +190,33 @@ describe("Library services test", () => {
                     .expect(200)
                 coverIds.push(body.data.uploadCover.coverId)
                 equal(typeof body.data.uploadCover.coverId, "string")
-            })
+            }).timeout(50000)
+            it("Successfully uploaded a cover - 3", async () => {
+                const query = `
+                    mutation {
+                        uploadCover(
+                            input: {
+                                cover: {
+                                    name: "승원이의 Viva La Vida Violin 커버 - 1",
+                                    songId: "${songIds[0]}",
+                                    coverURI: "${env.S3_URI}/violin.m4a",
+                                    position: VIOLIN
+                                }
+                            }
+                        ){
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                coverIds.push(body.data.uploadCover.coverId)
+                equal(typeof body.data.uploadCover.coverId, "string")
+            }).timeout(50000)
         })
         describe("Failure", () => {
             it("Fail to upload a cover", async () => {
@@ -219,6 +246,34 @@ describe("Library services test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.errors[0].message, "음원 파일을 정상적으로 읽지 못했습니다")
+            })
+            it("invalid coverURI", async () => {
+                const query = `
+                    mutation {
+                        uploadCover(
+                            input: {
+                                cover: {
+                                    name: "hawawa cover",
+                                    songId: "111111111111111111111111",
+                                    coverURI: "${env.S3_URI}/mr-1.wav",
+                                    position: VOCAL
+                                }
+                            }
+                        ){
+                            name
+                            songId
+                            coverURI
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(typeof body.errors[0].message, "string")
             })
         })
     })
@@ -350,8 +405,8 @@ describe("Library services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.data.queryCover[0].name, "Viva La Vida Drum 커버")
-                equal(body.data.queryCover[0].coverId, coverIds[0])
+                equal(body.data.queryCover[0].name, "승원이의 Viva La Vida Violin 커버 - 1")
+                equal(body.data.queryCover[0].coverId, coverIds[2])
             })
             it("Successfully queried a cover filter type = NAME & empty content", async () => {
                 const query = `
@@ -372,8 +427,8 @@ describe("Library services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.data.queryCover[0].name, "Viva La Vida Drum 커버")
-                equal(body.data.queryCover[0].coverId, coverIds[0])
+                equal(body.data.queryCover[0].name, "승원이의 Viva La Vida Violin 커버 - 1")
+                equal(body.data.queryCover[0].coverId, coverIds[2])
             })
             it("Successfully queried a cover filter type = POSITION", async () => {
                 const query = `
@@ -442,8 +497,8 @@ describe("Library services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.data.queryCover[0].name, "Viva La Vida Drum 커버")
-                equal(body.data.queryCover[0].coverId, coverIds[0])
+                equal(body.data.queryCover[0].name, "승원이의 Viva La Vida Violin 커버 - 1")
+                equal(body.data.queryCover[0].coverId, coverIds[2])
             })
         })
     })
