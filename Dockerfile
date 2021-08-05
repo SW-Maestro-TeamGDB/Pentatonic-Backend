@@ -1,7 +1,7 @@
 FROM node:14
 
 RUN apt-get update -y; \
-    add-apt-repository ppa:jonathonf/ffmpeg-4; \
+    add-apt-repository ppa:jonathonf/ffmpeg-4 -y; \
     apt-get install ffmpeg -y
 
 RUN mkdir -p /server
