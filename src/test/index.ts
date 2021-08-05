@@ -83,6 +83,6 @@ server.applyMiddleware({
 })
 
 const httpServer = createServer(app)
-httpServer.timeout = 50000
+httpServer.timeout = 500000
 
 export default httpServer
