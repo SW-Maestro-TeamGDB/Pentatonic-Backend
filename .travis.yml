@@ -18,7 +18,7 @@ branches:
 
 before_install:
   - sudo apt-get update
-  - sudo add-apt-repository ppa:jonathonf/ffmpeg-4
+  - sudo add-apt-repository ppa:jonathonf/ffmpeg-4 -y
   - sudo apt-get install ffmpeg -y
 
 install:
