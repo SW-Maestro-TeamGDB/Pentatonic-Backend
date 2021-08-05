@@ -1,0 +1,9 @@
+extend type Mutation {
+    mergeAudios(
+        input: MergeAudiosInput!
+    ): URL
+}
+
+input MergeAudiosInput {
+    audios: [URL!]!
+}
