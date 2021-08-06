@@ -1,4 +1,4 @@
-import { genSaltSync, hashSync, compareSync } from "bcrypt"
+import { genSaltSync, hashSync, compareSync } from "bcryptjs"
 import jwt from "jsonwebtoken"
 import env from "config/env"
 import { JWTUser } from "config/types"

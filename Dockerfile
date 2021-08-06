@@ -1,7 +1,7 @@
-FROM node:14
 
-RUN apt-get update -y; \
-    add-apt-repository ppa:jonathonf/ffmpeg-4 -y; \
+FROM sitespeedio/node:ubuntu-20.04-nodejs-14.17.1
+
+RUN apt-get update -y;\
     apt-get install ffmpeg -y
 
 RUN mkdir -p /server
@@ -10,9 +10,9 @@ WORKDIR /server
 
 ADD ./ /server
 
-RUN yarn install; \
-    yarn build
+RUN npm install; \
+    npm run build
 
 EXPOSE 3000
 
-CMD [ "yarn", "on" ]
+CMD [ "npm", "run", "on" ]
