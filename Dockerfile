@@ -1,7 +1,10 @@
-
-FROM sitespeedio/node:ubuntu-20.04-nodejs-14.17.1
-
-RUN apt-get update -y;\
+FROM ubuntu:18.04
+RUN apt-get update -y &&\
+    apt-get install curl -y &&\
+    curl -sL https://deb.nodesource.com/setup_14.x | bash && \
+    apt-get install nodejs software-properties-common -y &&\
+    add-apt-repository ppa:jonathonf/ffmpeg-4 -y&&\
+    apt-get update -y &&\
     apt-get install ffmpeg -y
 
 RUN mkdir -p /server
@@ -10,9 +13,10 @@ WORKDIR /server
 
 ADD ./ /server
 
-RUN npm install; \
-    npm run build
+RUN npm install -g yarn;\
+    yarn install; \
+    yarn build
 
 EXPOSE 3000
 
-CMD [ "npm", "run", "on" ]
+CMD ["yarn", "on" ]

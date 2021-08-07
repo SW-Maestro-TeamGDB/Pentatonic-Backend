@@ -7,7 +7,11 @@ language: node_js
 node_js:
   - stable
 
-dist: focal
+dist: xenial
+
+addons:
+  snaps:
+    - ffmpeg
 
 cache:
   directories:
@@ -17,10 +21,6 @@ branches:
   only:
     - master
     - develop
-
-before_install:
-  - sudo apt-get update
-  - sudo apt-get install ffmpeg -y
 
 install:
   - yarn global add codecov
