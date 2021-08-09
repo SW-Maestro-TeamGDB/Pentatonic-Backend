@@ -720,11 +720,11 @@ describe("Band services test", () => {
             equal(body.data.getSong.band[0].song.songId, songIds[0])
         })
     })
-    describe("Query getPersonalInfo", () => {
+    describe("Query getUserInfo", () => {
         it("Get all the information normally", async () => {
             const query = `
                 query{
-                    getPersonalInfo{
+                    getUserInfo{
                         id
                         username
                         band{
@@ -740,8 +740,8 @@ describe("Band services test", () => {
                 .set("Authorization", token)
                 .send(JSON.stringify({ query }))
                 .expect(200)
-            equal(body.data.getPersonalInfo.band[0].bandId, bandIds[0])
-            equal(body.data.getPersonalInfo.band[0].songId, songIds[0])
+            equal(body.data.getUserInfo.band[0].bandId, bandIds[0])
+            equal(body.data.getUserInfo.band[0].songId, songIds[0])
         })
     })
     describe("Mutation leaveBand", () => {

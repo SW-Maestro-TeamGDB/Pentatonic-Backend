@@ -23,7 +23,7 @@ export const Song = {
 
 }
 
-export const PersonalInfo = {
+export const UserInfo = {
     band: (parent: UserInterface, args: void, context: Context) => {
         const st = new Set()
         return context.db.collection("join").aggregate([
@@ -38,7 +38,6 @@ export const PersonalInfo = {
                 }
             }]).toArray().then(u => {
                 return u.flatMap(x => {
-                    console.log(x)
                     const _id = x.band[0]._id.toString()
                     if (st.has(_id)) {
                         return []
