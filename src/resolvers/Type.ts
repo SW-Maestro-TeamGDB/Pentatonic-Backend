@@ -37,13 +37,17 @@ export const PersonalInfo = {
                     as: "band"
                 }
             }]).toArray().then(u => u.flatMap(x => {
-                const _id = x.band[0]._id.toString()
-                if (st.has(_id)) {
+                try {
+                    const _id = x.band[0]._id.toString()
+                    if (st.has(_id)) {
+                        return []
+                    }
+                    else {
+                        st.add(_id)
+                        return x.band[0]
+                    }
+                } catch {
                     return []
-                }
-                else {
-                    st.add(_id)
-                    return x.band[0]
                 }
             }))
     }

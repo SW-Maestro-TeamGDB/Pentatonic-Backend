@@ -33,6 +33,8 @@ type Band {
 
 type BandLink {
     bandId: ObjectID!
+    songId: ObjectID!
+    creatorId: Id!
     name: String!
     introduce: String!
     backGroundURI: URL!
