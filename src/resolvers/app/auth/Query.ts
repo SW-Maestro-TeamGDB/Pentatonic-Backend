@@ -2,7 +2,8 @@ import { ApolloError } from "apollo-server-express"
 import {
     IsValidIdInput,
     IsValidUsernameInput,
-    FindIdInput
+    FindIdInput,
+    GetUserInfoInput
 } from "resolvers/app/auth/models"
 import { Context } from "config/types"
 
@@ -43,8 +44,8 @@ export const findId = async (parent: void, args: FindIdInput, context: Context) 
     }
 }
 
-export const getUserInfo = (parent: void, args: void, context: Context) =>
-    context.db.collection("user").findOne({ id: context.user.id })
+export const getUserInfo = (parent: void, args: GetUserInfoInput, context: Context) =>
+    context.db.collection("user").findOne({ id: args.userId || context.user.id })
 
 
 

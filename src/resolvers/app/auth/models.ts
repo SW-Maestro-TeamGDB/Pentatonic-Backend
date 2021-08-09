@@ -109,3 +109,7 @@ export interface SendAuthCodeInput {
         phoneNumber: string
     }
 }
+
+export interface GetUserInfoInput {
+    userId?: string
+}
