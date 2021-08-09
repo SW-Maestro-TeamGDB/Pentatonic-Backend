@@ -23,6 +23,36 @@ export const Song = {
 
 }
 
+export const PersonalInfo = {
+    band: async (parent: UserInterface, args: void, context: Context) => {
+        const st = new Set()
+        return context.db.collection("join").aggregate([
+            {
+                $match: { userId: parent.id }
+            }, {
+                $lookup: {
+                    from: "band",
+                    localField: "bandId",
+                    foreignField: "_id",
+                    as: "band"
+                }
+            }]).toArray().then(u => u.flatMap(x => {
+                const _id = x.band[0]._id.toString()
+                if (st.has(_id)) {
+                    return []
+                }
+                else {
+                    st.add(_id)
+                    return x.band[0]
+                }
+            }))
+    }
+}
+
+export const BandLink = {
+    bandId: (parent: BandInterface) => parent._id
+}
+
 export const SongLink = {
     songId: (parent: SongInterface) => parent._id
 }

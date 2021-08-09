@@ -1078,12 +1078,12 @@ describe("User auth service test", () => {
             })
         })
     })
-    describe("Query getPersonalInformation", () => {
+    describe("Query getPersonalInfo", () => {
         describe("Success", () => {
             it("If you bring my personal information normally", async () => {
                 const query = `
                     query{
-                        getPersonalInformation{
+                        getPersonalInfo{
                             id
                             username
                             type
@@ -1094,16 +1094,16 @@ describe("User auth service test", () => {
                     .get(`/api?query=${query}`)
                     .set({ "Authorization": token[0] })
                     .expect(200)
-                equal(body.data.getPersonalInformation.id, "test1234")
-                equal(body.data.getPersonalInformation.username, "SeungWon")
-                equal(body.data.getPersonalInformation.type, 3)
+                equal(body.data.getPersonalInfo.id, "test1234")
+                equal(body.data.getPersonalInfo.username, "SeungWon")
+                equal(body.data.getPersonalInfo.type, 3)
             })
         })
         describe("Failure", () => {
             it("If the token is not delivered normally", async () => {
                 const query = `
                     query{
-                        getPersonalInformation{
+                        getPersonalInfo{
                             id
                             username
                             type

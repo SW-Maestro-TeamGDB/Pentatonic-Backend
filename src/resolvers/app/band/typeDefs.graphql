@@ -15,6 +15,7 @@ type SongLink {
 type UserLink {
     userId: Id!
     username: Username!
+    profileURI: URL!
     prime: Boolean!
     type: Int!
 }
@@ -28,6 +29,14 @@ type Band {
     backGroundURI: URL!
     createDate: Date!
     session: [Session]
+}
+
+type BandLink {
+    bandId: ObjectID!
+    name: String!
+    introduce: String!
+    backGroundURI: URL!
+    createDate: Date!
 }
 
 type Session {

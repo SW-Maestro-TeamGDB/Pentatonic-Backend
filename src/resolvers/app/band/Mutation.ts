@@ -55,11 +55,19 @@ export const joinBand = async (parent: void, args: JoinBandInput, context: Conte
         if (!data[0]["sessions"][myPosition] || data[1].length >= data[0]["sessions"][myPosition]) {
             throw new Error()
         }
-        return await context.db.collection("session").insertOne({
-            bandId: new ObjectID(args.input.band.bandId),
-            position: args.input.session.position,
-            coverId: new ObjectID(args.input.session.coverId)
-        }).then(({ result }) => result.n === 1)
+        const result = await Promise.all([
+            context.db.collection("join").insertOne({
+                bandId: new ObjectID(args.input.band.bandId),
+                position: args.input.session.position,
+                userId: context.user.id
+            }),
+            context.db.collection("session").insertOne({
+                bandId: new ObjectID(args.input.band.bandId),
+                position: args.input.session.position,
+                coverId: new ObjectID(args.input.session.coverId)
+            }).then(({ result }) => result.n === 1)
+        ])
+        return result[1]
     } catch {
         throw new ApolloError("세션이 가득찾거나 존재하지 않습니다")
     }

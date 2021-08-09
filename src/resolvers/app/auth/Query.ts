@@ -43,7 +43,7 @@ export const findId = async (parent: void, args: FindIdInput, context: Context) 
     }
 }
 
-export const getPersonalInformation = (parent: void, args: void, context: Context) =>
+export const getPersonalInfo = (parent: void, args: void, context: Context) =>
     context.db.collection("user").findOne({ id: context.user.id })
 
 
