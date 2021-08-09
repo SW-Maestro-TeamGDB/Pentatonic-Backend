@@ -24,7 +24,7 @@ export const Song = {
 }
 
 export const PersonalInfo = {
-    band: async (parent: UserInterface, args: void, context: Context) => {
+    band: (parent: UserInterface, args: void, context: Context) => {
         const st = new Set()
         return context.db.collection("join").aggregate([
             {
@@ -36,8 +36,9 @@ export const PersonalInfo = {
                     foreignField: "_id",
                     as: "band"
                 }
-            }]).toArray().then(u => u.flatMap(x => {
-                try {
+            }]).toArray().then(u => {
+                return u.flatMap(x => {
+                    console.log(x)
                     const _id = x.band[0]._id.toString()
                     if (st.has(_id)) {
                         return []
@@ -46,10 +47,8 @@ export const PersonalInfo = {
                         st.add(_id)
                         return x.band[0]
                     }
-                } catch {
-                    return []
-                }
-            }))
+                })
+            })
     }
 }
 

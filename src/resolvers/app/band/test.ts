@@ -21,7 +21,8 @@ describe("Band services test", () => {
             db.collection("song").deleteMany({}),
             db.collection("library").deleteMany({}),
             db.collection("band").deleteMany({}),
-            db.collection("session").deleteMany({})
+            db.collection("session").deleteMany({}),
+            db.collection("join").deleteMany({})
         ])
     })
     describe("Before Register & upload", () => {

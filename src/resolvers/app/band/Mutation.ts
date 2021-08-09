@@ -91,10 +91,18 @@ export const leaveBand = async (parent: void, args: OutBandInput, context: Conte
         ])
         if (session !== null) {
             if (cover.coverBy.toString() === context.user.id || band !== null) {
-                return context.db.collection("session").deleteOne({
-                    bandId: new ObjectID(args.input.band.bandId),
-                    coverId: new ObjectID(args.input.session.coverId)
-                }).then(({ result }) => result.n === 1)
+                const result = await Promise.all([
+                    context.db.collection("join").deleteOne({
+                        bandId: new ObjectID(args.input.band.bandId),
+                        position: cover.position,
+                        userId: cover.coverBy
+                    }),
+                    context.db.collection("session").deleteOne({
+                        bandId: new ObjectID(args.input.band.bandId),
+                        coverId: new ObjectID(args.input.session.coverId)
+                    }).then(({ result }) => result.n === 1)
+                ])
+                return result[1]
             }
             throw new ApolloError("권한이 없습니다")
         } else {
@@ -155,9 +163,14 @@ export const deleteBand = async (parent: void, args: DeleteBandInput, context: C
         creatorId: context.user.id
     }).then(({ result }) => result.n === 1)
     if (bandDeleteResult === true) {
-        await context.db.collection("session").deleteMany({
-            bandId: new ObjectID(args.input.band.bandId)
-        })
+        await Promise.all([
+            context.db.collection("session").deleteMany({
+                bandId: new ObjectID(args.input.band.bandId)
+            }),
+            context.db.collection("join").deleteMany({
+                bandId: new ObjectID(args.input.band.bandId)
+            })
+        ])
     }
     return bandDeleteResult
 }
