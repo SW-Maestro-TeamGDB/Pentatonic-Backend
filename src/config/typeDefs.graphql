@@ -2,6 +2,7 @@ scalar Id
 scalar Password
 scalar Username
 scalar Upload
+scalar Name
 
 enum SORT_OPTION{
     DATE_DESC
