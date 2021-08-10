@@ -101,6 +101,7 @@ type UserInfo {
     "회원 유형"
     type: Int!
     band: [BandLink!]!
+    library: [Cover!]
 }
 
 """

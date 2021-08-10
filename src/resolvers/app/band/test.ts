@@ -721,7 +721,7 @@ describe("Band services test", () => {
         })
     })
     describe("Query getUserInfo", () => {
-        it("Get all the information normally", async () => {
+        it("If you normally bring my information", async () => {
             const query = `
                 query{
                     getUserInfo{
@@ -730,6 +730,11 @@ describe("Band services test", () => {
                         band{
                             bandId
                             songId
+                        }
+                        library{
+                            songId
+                            coverBy
+                            name
                         }
                     }
                 }
@@ -742,25 +747,53 @@ describe("Band services test", () => {
                 .expect(200)
             equal(body.data.getUserInfo.band[0].bandId, bandIds[0])
             equal(body.data.getUserInfo.band[0].songId, songIds[0])
+            body.data.getUserInfo.library.forEach((x: { coverBy: string }) => equal(x.coverBy, "user1234"))
+        })
+        it("If you normally bring in other people's information", async () => {
+            const query = `
+                query{
+                    getUserInfo(userId:"test1234"){
+                        id
+                        username
+                        band{
+                            bandId
+                            songId
+                        }
+                        library{
+                            songId
+                            coverBy
+                            name
+                        }
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getUserInfo.band[0].bandId, bandIds[0])
+            equal(body.data.getUserInfo.band[0].songId, songIds[0])
+            equal(body.data.getUserInfo.library, null)
         })
     })
     describe("Mutation leaveBand", () => {
         describe("Failure", () => {
             it("permission error", async () => {
                 const query = `
-            mutation{
-                leaveBand(
-                    input: {
-                    band: {
-                        bandId: "${bandIds[0]}"
-                    },
-                    session: {
-                        coverId: "${coverIds[0]}"
-                    }
-                }
-                )
-            }
-            `
+                    mutation{
+                        leaveBand(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[0]}"
+                                }
+                            }
+                        )
+                    }`
                 const { body } = await request(app)
                     .post("/api")
                     .set("Content-Type", "application/json")
@@ -771,19 +804,18 @@ describe("Band services test", () => {
             })
             it("nonexistent session", async () => {
                 const query = `
-            mutation{
-                leaveBand(
-                    input: {
-                    band: {
-                        bandId: "111111111111111111111111"
-                    },
-                    session: {
-                        coverId: "${coverIds[0]}"
-                    }
-                }
-                )
-            }
-            `
+                    mutation{
+                        leaveBand(
+                            input: {
+                                band: {
+                                    bandId: "111111111111111111111111"
+                                },
+                                session: {
+                                    coverId: "${coverIds[0]}"
+                                }
+                            }
+                        )
+                    }`
                 const { body } = await request(app)
                     .post("/api")
                     .set("Content-Type", "application/json")
@@ -794,19 +826,18 @@ describe("Band services test", () => {
             })
             it("nonexistent cover", async () => {
                 const query = `
-            mutation{
-                leaveBand(
-                    input: {
-                    band: {
-                        bandId: "${bandIds[0]}"
-                    },
-                    session: {
-                        coverId: "111111111111111111111111"
-                    }
-                }
-                )
-            }
-            `
+                    mutation{
+                        leaveBand(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "111111111111111111111111"
+                                }
+                            }
+                        )
+                    }`
                 const { body } = await request(app)
                     .post("/api")
                     .set("Content-Type", "application/json")
@@ -819,19 +850,18 @@ describe("Band services test", () => {
         describe("Success", () => {
             it("Successfully out band - 1", async () => {
                 const query = `
-            mutation{
-                leaveBand(
-                    input: {
-                    band: {
-                        bandId: "${bandIds[0]}"
-                    },
-                    session: {
-                        coverId: "${coverIds[0]}"
-                    }
-                }
-                )
-            }
-            `
+                    mutation{
+                        leaveBand(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[0]}"
+                                }
+                            }
+                        )
+                    }`
                 const { body } = await request(app)
                     .post("/api")
                     .set("Content-Type", "application/json")
@@ -842,19 +872,18 @@ describe("Band services test", () => {
             })
             it("Successfully out band - 2", async () => {
                 const query = `
-            mutation{
-                leaveBand(
-                    input: {
-                    band: {
-                        bandId: "${bandIds[0]}"
-                    },
-                    session: {
-                        coverId: "${coverIds[2]}"
-                    }
-                }
-                )
-            }
-            `
+                    mutation{
+                        leaveBand(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[2]}"
+                                }
+                            }
+                    )
+                }`
                 const { body } = await request(app)
                     .post("/api")
                     .set("Content-Type", "application/json")
