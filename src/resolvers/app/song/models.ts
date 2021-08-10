@@ -145,7 +145,7 @@ export type SongKeys = keyof UpdateSongInput["input"]["song"]
 
 export interface UploadDefaultImgInput {
     input: {
-        file: File
+        file: Promise<File>
         code: string
     }
 }

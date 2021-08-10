@@ -78,7 +78,7 @@ export const updateCover = async (parent: void, args: UpdateCoverInput, context:
     }, query, { returnDocument: "after" }).then(({ value }) => value)
 }
 
-export const deleteCover = async (parent: void, args: DeleteCoverInput, context: Context) =>
+export const deleteCover = (parent: void, args: DeleteCoverInput, context: Context) =>
     context.db.collection("library").deleteOne({
         _id: new ObjectID(args.input.cover.coverId),
         coverBy: context.user.id

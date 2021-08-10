@@ -17,7 +17,7 @@ import { ApolloError } from "apollo-server-express"
 
 export const createBand = async (parent: void, args: CreateBandInput, context: Context) => {
     const sessionArr: SessionInformation = sessionParse(args.input.sessionConfig)
-    return await context.db.collection("band").insertOne({
+    return context.db.collection("band").insertOne({
         creatorId: context.user.id,
         name: args.input.band.name,
         introduce: args.input.band.introduce,

@@ -9,7 +9,7 @@ import {
 import { snakeToCamel } from "lib"
 import { ObjectID } from "mongodb"
 
-export const queryBand = async (parent: void, args: QueryBandInput, context: Context) => {
+export const queryBand = (parent: void, args: QueryBandInput, context: Context) => {
     const { type, content, sort } = args.filter
     const _id = sort === "DATE_ASC" ? 1 : -1
     const query: BandQuery = {
@@ -21,5 +21,5 @@ export const queryBand = async (parent: void, args: QueryBandInput, context: Con
 
 }
 
-export const getBand = async (parent: void, args: GetBandInput, context: Context) =>
+export const getBand = (parent: void, args: GetBandInput, context: Context) =>
     context.db.collection("band").findOne({ _id: new ObjectID(args.bandId) })

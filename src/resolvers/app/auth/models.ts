@@ -63,7 +63,7 @@ export interface ChangePasswordInput {
 
 export interface UploadImageInput {
     input: {
-        file: File
+        file: Promise<File>
     }
 }
 
