@@ -6,7 +6,7 @@ const specialCharacters = "\"'\\!@#$%^&*()_-=+/?.><, [{]}|;:"
 
 const isValidName = (value: string) => {
     if (!(2 <= value.length && value.length <= 40)) {
-        throw new UserInputError("Name의 길이는 2이상 20이하여야 합니다")
+        throw new UserInputError("Name의 길이는 2이상 40이하여야 합니다")
     }
     for (const c of value) {
         if (!('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || '0' <= c && c <= '9' || Hangul.isComplete(c) || specialCharacters.includes(c) === true)) {
