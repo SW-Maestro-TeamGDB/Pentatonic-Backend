@@ -2,8 +2,10 @@ import { UserInputError, ApolloError } from "apollo-server-errors"
 import { GraphQLScalarType, Kind } from "graphql"
 import Hangul from "hangul-js"
 
-const isValidName = async (value: string) => {
-    if (!(2 <= value.length && value.length <= 20)) {
+const specialCharacters = "\"'\\!@#$%^&*()_-=+/?.><, [{]}|;:"
+
+const isValidName = (value: string) => {
+    if (!(2 <= value.length && value.length <= 40)) {
         throw new UserInputError("Name의 길이는 2이상 20이하여야 합니다")
     }
     for (const c of value) {
@@ -25,8 +27,6 @@ const isValidId = (value: string) => {
     }
     return value
 }
-
-const specialCharacters = "\"'\\!@#$%^&*()_-=+/?.><,[{]}|;:"
 
 const isValidPassword = (value: string) => {
     if (!(5 < value.length && value.length < 15)) {
@@ -93,7 +93,7 @@ const GraphQLUsername = new GraphQLScalarType({
 
 const GraphQLName = new GraphQLScalarType({
     name: 'Name',
-    description: '길이는 2 ~ 20, 영문, 한글, 숫자, 특수문자',
+    description: '길이는 2 ~ 40, 영문, 한글, 숫자, 특수문자',
     parseValue: isValidName,
     serialize: isValidName,
     parseLiteral(ast) {

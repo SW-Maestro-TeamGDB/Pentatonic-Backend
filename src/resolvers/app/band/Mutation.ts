@@ -121,6 +121,11 @@ export const updateBand = async (parent: void, args: UpdateBandInput, context: C
     const query: UpdateBandQuery = {
         $set: data
     }
+    if (Object.keys(data).length === 0) {
+        return context.db.collection("band").findOne({
+            _id: new ObjectID(args.input.band.bandId)
+        })
+    }
     if (args.input.sessionConfig !== undefined) {
         const nowSession = await context.db.collection("session")
             .find({ bandId: new ObjectID(args.input.band.bandId) })

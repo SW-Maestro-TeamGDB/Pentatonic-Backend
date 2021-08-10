@@ -23,7 +23,7 @@ type UserLink {
 type Band {
     bandId: ObjectID!
     song: SongLink!
-    name: String!
+    name: Name!
     introduce: String!
     creator: UserLink!
     backGroundURI: URL!
@@ -35,7 +35,7 @@ type BandLink {
     bandId: ObjectID!
     songId: ObjectID!
     creatorId: Id!
-    name: String!
+    name: Name!
     introduce: String!
     backGroundURI: URL!
     createDate: Date!
@@ -53,7 +53,7 @@ input SessionConfigInput {
 }   
 
 input CreateBandArgsInput {
-    name: String!
+    name: Name!
     introduce: String!
     backGroundURI: URL! = "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg"
     songId: ObjectID!
@@ -66,7 +66,7 @@ input CreateBandInput {
 
 input UpdateBandArgsInput {
     bandId: ObjectID!
-    name: String
+    name: Name
     introduce: String
     creatorId: Id
     backGroundURI: URL

@@ -189,7 +189,7 @@ describe("Band services test", () => {
                     uploadCover(
                         input: {
                             cover: {
-                                name: "ㅇㅇ의 Viva La Vida Violin 커버",
+                                name: "잉잉의 Viva La Vida Violin 커버",
                                 songId: "${songIds[0]}",
                                 coverURI: "${env.S3_URI}/song1-Drum.mp3",
                                 position: DRUM
@@ -513,6 +513,34 @@ describe("Band services test", () => {
                     })
                 }
             })
+            it("Successfully update band - 3", async () => {
+                const query = `
+                    mutation{
+                        updateBand(
+                            input: {
+                                band: {
+                                    bandId:"${bandIds[0]}"
+                                }, 
+                            }
+                        ){
+                            name
+                            session {
+                                position
+                                cover{
+                                    songId
+                                }
+                            }
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.updateBand.name, "테스트 밴드 업데이트!!")
+            })
         })
         describe("Failure", () => {
             it("Fail to update band - invalid bandId", async () => {
@@ -620,8 +648,7 @@ describe("Band services test", () => {
                 query{
                     queryBand(
                         filter: {
-                            type: NAME,
-                            content: "테스트"
+                            type: NAME
                         }
                     ){
                         name
