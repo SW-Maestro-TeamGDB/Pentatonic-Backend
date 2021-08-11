@@ -783,7 +783,6 @@ describe("Band services test", () => {
                 .set("Authorization", token)
                 .send(JSON.stringify({ query }))
                 .expect(200)
-            console.log(body)
             equal(body.data.likeStatus, false)
         })
     })
