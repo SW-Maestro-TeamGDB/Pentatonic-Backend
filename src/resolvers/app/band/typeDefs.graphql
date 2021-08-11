@@ -29,6 +29,7 @@ type Band {
     backGroundURI: URL!
     createDate: Date!
     session: [Session]
+    likeCount: Int!
 }
 
 type BandLink {
@@ -39,6 +40,7 @@ type BandLink {
     introduce: String!
     backGroundURI: URL!
     createDate: Date!
+    likeCount: Int!
 }
 
 type Session {

@@ -15,12 +15,14 @@ import { applyMiddleware } from "graphql-middleware"
 import {
     permissions,
     getUser,
-    instrumentsLoader,
-    songsLoader,
-    userLoader1,
-    sessionsLoader,
-    bandsLoader
+    // instrumentsLoader,
+    // songsLoader,
+    // userLoader1,
+    // sessionsLoader,
+    // bandsLoader,
+    // likeCountsLoader
 } from "lib"
+import * as loaders from "lib/dataloader"
 import express from "express"
 import expressPlayground from "graphql-playground-middleware-express"
 import bodyParser from "body-parser"
@@ -61,13 +63,7 @@ const server = new ApolloServer({
             redis,
             user,
             ip,
-            loaders: {
-                songsLoader: songsLoader(),
-                instrumentsLoader: instrumentsLoader(),
-                userLoader1: userLoader1(),
-                sessionsLoader: sessionsLoader(),
-                bandsLoader: bandsLoader()
-            }
+            loaders
         }
     },
     validationRules: [

@@ -82,11 +82,21 @@ const batchLoadBandFn = async (songIds: readonly ObjectID[]) => {
     return resultArr
 }
 
+const batchLoadLikeCountFn = async (bandIds: readonly ObjectID[]) => {
+    const db = await DB.get() as Db
+    const data = await db.collection("like").find({ bandId: { $in: bandIds } }).toArray()
+    const mp = new Map()
+    bandIds.forEach((x, idx) => mp.set(x.toString(), idx))
+    const resultArr: number[] = Array.from(Array(bandIds.length), () => 0)
+    data.forEach(({ bandId }) => resultArr[mp.get(bandId.toString())]++)
+    return resultArr
+}
+export const userLoader1 = new DataLoader(batchLoadUserFn1)
+export const songsLoader = new DataLoader(batchLoadSongFn)
+export const instrumentsLoader = new DataLoader(batchLoadInstrumentFn)
 
-export const userLoader1 = () => new DataLoader(batchLoadUserFn1)
-export const songsLoader = () => new DataLoader(batchLoadSongFn)
-export const instrumentsLoader = () => new DataLoader(batchLoadInstrumentFn)
+export const bandsLoader = new DataLoader(batchLoadBandFn)
 
-export const bandsLoader = () => new DataLoader(batchLoadBandFn)
+export const sessionsLoader = new DataLoader(batchLoadSessionFn)
 
-export const sessionsLoader = () => new DataLoader(batchLoadSessionFn)
+export const likeCountsLoader = new DataLoader(batchLoadLikeCountFn)

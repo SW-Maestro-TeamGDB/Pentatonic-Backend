@@ -58,7 +58,8 @@ export const UserInfo = {
 }
 
 export const BandLink = {
-    bandId: (parent: BandInterface) => parent._id
+    bandId: (parent: BandInterface) => parent._id,
+    likeCount: (parent: BandInterface, args: void, context: Context) => context.loaders.likeCountsLoader.load(parent._id)
 }
 
 export const SongLink = {
@@ -82,6 +83,7 @@ export const Band = {
     song: (parent: BandInterface, args: void, context: Context) =>
         context.loaders.songsLoader.load(parent.songId.toString()),
     session: (parent: BandInterface, args: void, context: Context) => context.loaders.sessionsLoader.load(parent._id),
-    creator: (parent: BandInterface, args: void, context: Context) => context.loaders.userLoader1.load(parent.creatorId)
+    creator: (parent: BandInterface, args: void, context: Context) => context.loaders.userLoader1.load(parent.creatorId),
+    likeCount: (parent: BandInterface, args: void, context: Context) => context.loaders.likeCountsLoader.load(parent._id)
 
 }

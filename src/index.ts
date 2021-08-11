@@ -17,13 +17,9 @@ import * as graphqlScalars from 'graphql-scalars'
 import { applyMiddleware } from "graphql-middleware"
 import {
     permissions,
-    getUser,
-    instrumentsLoader,
-    songsLoader,
-    userLoader1,
-    sessionsLoader,
-    bandsLoader
+    getUser
 } from "lib"
+import * as loaders from "lib/dataloader"
 import express from "express"
 import expressPlayground from "graphql-playground-middleware-express"
 import bodyParser from "body-parser"
@@ -63,13 +59,7 @@ const start = async () => {
                 redis,
                 user,
                 ip,
-                loaders: {
-                    songsLoader: songsLoader(),
-                    instrumentsLoader: instrumentsLoader(),
-                    userLoader1: userLoader1(),
-                    sessionsLoader: sessionsLoader(),
-                    bandsLoader: bandsLoader()
-                }
+                loaders
             }
         },
         validationRules: [

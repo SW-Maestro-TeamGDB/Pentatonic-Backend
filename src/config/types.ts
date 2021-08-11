@@ -15,6 +15,7 @@ interface Loaders {
         userLoader1: DataLoader<string, any, string>
         sessionsLoader: DataLoader<ObjectID, any, ObjectID>
         bandsLoader: DataLoader<ObjectID, any, ObjectID>
+        likeCountsLoader: DataLoader<ObjectID, any, ObjectID>
     }
 }
 
