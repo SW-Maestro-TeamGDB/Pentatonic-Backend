@@ -22,7 +22,8 @@ describe("Band services test", () => {
             db.collection("library").deleteMany({}),
             db.collection("band").deleteMany({}),
             db.collection("session").deleteMany({}),
-            db.collection("join").deleteMany({})
+            db.collection("join").deleteMany({}),
+            db.collection("like").deleteMany({})
         ])
     })
     describe("Before Register & upload", () => {
@@ -642,6 +643,70 @@ describe("Band services test", () => {
             })
         })
     })
+    describe("Mutation like", () => {
+        describe("Success", () => {
+            it("If you like it normally - 1", async () => {
+                const query = `
+                    mutation{
+                        like(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[0]}"
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.like, true)
+            })
+            it("If you like it normally - 2", async () => {
+                const query = `
+                    mutation{
+                        like(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[0]}"
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token1)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.like, true)
+            })
+            it("If you normally cancel the good - 1", async () => {
+                const query = `
+                    mutation{
+                        like(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[0]}"
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.like, true)
+            })
+        })
+    })
     describe("Query queryBand", () => {
         it("Searching by Band Name & sort DATE_DESC", async () => {
             const query = `
@@ -705,12 +770,30 @@ describe("Band services test", () => {
             equal(body.data.queryBand[0].name, "테스트 밴드 업데이트!!")
         })
     })
+    describe("Query likeStatus", () => {
+        it("Get the band likeStatus", async () => {
+            const query = `
+                query{
+                    likeStatus(bandId: "${bandIds[0]}")
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            console.log(body)
+            equal(body.data.likeStatus, false)
+        })
+    })
     describe("Query getBand", () => {
         it("Search for bands with band ID", async () => {
             const query = `
                 query{
                     getBand(bandId: "${bandIds[0]}"){
                         name
+                        likeCount
                     }
                 }
             `
@@ -720,6 +803,7 @@ describe("Band services test", () => {
                 .send(JSON.stringify({ query }))
                 .expect(200)
             equal(body.data.getBand.name, "테스트 밴드 업데이트!!")
+            equal(body.data.getBand.likeCount, 1)
         })
     })
     describe("Query getSong + band test", () => {
@@ -757,6 +841,7 @@ describe("Band services test", () => {
                         band{
                             bandId
                             songId
+                            likeCount
                         }
                         library{
                             songId
@@ -774,6 +859,7 @@ describe("Band services test", () => {
                 .expect(200)
             equal(body.data.getUserInfo.band[0].bandId, bandIds[0])
             equal(body.data.getUserInfo.band[0].songId, songIds[0])
+            equal(body.data.getUserInfo.band[0].likeCount, 1)
             body.data.getUserInfo.library.forEach((x: { coverBy: string }) => equal(x.coverBy, "user1234"))
         })
         it("If you normally bring in other people's information", async () => {

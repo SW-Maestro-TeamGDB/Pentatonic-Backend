@@ -128,7 +128,7 @@ extend type Mutation {
     ): Boolean
 
     like(
-        bandId: LikeInput!
+        input: LikeInput!
     ): Boolean
 }
 

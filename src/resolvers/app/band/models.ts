@@ -73,7 +73,9 @@ export interface LikeStatusInput {
 }
 
 export interface LikeInput {
-    input: LikeStatusInput
+    input: {
+        band: LikeStatusInput
+    }
 }
 
 
