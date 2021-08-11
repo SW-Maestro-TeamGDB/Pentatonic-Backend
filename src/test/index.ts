@@ -14,13 +14,7 @@ import * as graphqlScalars from 'graphql-scalars'
 import { applyMiddleware } from "graphql-middleware"
 import {
     permissions,
-    getUser,
-    // instrumentsLoader,
-    // songsLoader,
-    // userLoader1,
-    // sessionsLoader,
-    // bandsLoader,
-    // likeCountsLoader
+    getUser
 } from "lib"
 import * as loaders from "lib/dataloader"
 import express from "express"
