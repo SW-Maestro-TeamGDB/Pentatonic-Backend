@@ -3,3 +3,13 @@ extend type Query {
         bandId: ObjectID!
     ): Boolean
 }
+
+input LikeInput {
+    band: JoinBandArgsInput!
+}
+
+extend type Mutation {
+    like(
+        bandId: LikeInput!
+    ): Boolean
+}
