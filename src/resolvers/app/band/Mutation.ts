@@ -6,7 +6,8 @@ import {
     JoinBandInput,
     UpdateBandInput,
     UpdateBandQuery,
-    DeleteBandInput
+    DeleteBandInput,
+    LikeInput
 } from "resolvers/app/band/models"
 import {
     sessionParse,
@@ -14,6 +15,26 @@ import {
 } from "lib"
 import { ObjectID } from "mongodb"
 import { ApolloError } from "apollo-server-express"
+
+
+export const like = async (parent: void, args: LikeInput, context: Context) => {
+    const result = await context.db.collection("like").findOne({
+        bandId: new ObjectID(args.input.bandId),
+        userId: context.user.id
+    }).then(x => x !== null)
+    if (result) {
+        return context.db.collection("like").deleteOne({
+            bandId: new ObjectID(args.input.bandId),
+            userId: context.user.id
+        }).then(({ deletedCount }) => deletedCount === 1)
+    } else {
+        return context.db.collection("like").insertOne({
+            bandId: new ObjectID(args.input.bandId),
+            userId: context.user.id
+        }).then(({ result }) => result.n === 1)
+    }
+}
+
 
 export const createBand = async (parent: void, args: CreateBandInput, context: Context) => {
     const sessionArr: SessionInformation = sessionParse(args.input.sessionConfig)

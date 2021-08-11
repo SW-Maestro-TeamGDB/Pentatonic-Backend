@@ -67,6 +67,16 @@ export interface BatchSesssion {
     cover?: Session[]
 }
 
+
+export interface LikeStatusInput {
+    bandId: ObjectID
+}
+
+export interface LikeInput {
+    input: LikeStatusInput
+}
+
+
 export interface UpdateBandInput {
     input: {
         band: {

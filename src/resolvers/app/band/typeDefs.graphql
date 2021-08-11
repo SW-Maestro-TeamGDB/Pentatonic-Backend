@@ -124,6 +124,10 @@ extend type Mutation {
     deleteBand(
         input: DeleteBandInput!
     ): Boolean
+
+    like(
+        bandId: LikeInput!
+    ): Boolean
 }
 
 
@@ -147,4 +151,11 @@ extend type Query{
     getBand(
         bandId: ObjectID!
     ): Band
+
+    likeStatus(
+        bandId: ObjectID!
+    ): Boolean
+}
+input LikeInput {
+    band: JoinBandArgsInput!
 }
