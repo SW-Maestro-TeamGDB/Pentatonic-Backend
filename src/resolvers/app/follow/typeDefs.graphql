@@ -1,0 +1,9 @@
+extend type Mutation {
+    follow(
+        input: FollowInput!
+    ): Boolean!
+}
+
+input FollowInput {
+    following: Id!
+}
