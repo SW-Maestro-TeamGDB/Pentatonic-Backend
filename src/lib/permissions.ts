@@ -67,16 +67,8 @@ const hasApolloError = (object: any): false | ApolloError => {
 }
 
 const isValidInput = rule()((parent: void, args: any) => {
-    if (JSON.stringify(args).includes("\"extensions\":{\"code\":\"400\"}")) {
-        const errorMessage = hasApolloError(args)
-        if (errorMessage === false) {
-            return new ApolloError("invalid Input")
-        }
-        return errorMessage
-    }
-    else {
-        return true
-    }
+    const errors = hasApolloError(args)
+    return errors === false ? true : errors
 })
 export const permissions = shield({
     Mutation: {
