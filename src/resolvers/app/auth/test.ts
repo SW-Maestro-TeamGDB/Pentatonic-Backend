@@ -66,23 +66,6 @@ describe("User auth service test", () => {
                     const db = await DB.get() as Db
                     await db.collection("user").deleteOne({ phoneNumber: "+821000000000" })
                 })
-                it("If the phone number form is not correct", async () => {
-                    const query = `
-                        mutation{
-                            sendAuthCode(
-                                input: {
-                                    isRegistration: true,
-                                    phoneNumber:"01000000000"
-                                }
-                            )
-                        }
-                    `
-                    await request(app)
-                        .post("/api")
-                        .set({ "Content-Type": "application/json" })
-                        .send(JSON.stringify({ query }))
-                        .expect(400)
-                })
                 it("If it's not a Korean phone number", async () => {
                     const query = `
                         mutation{
@@ -249,7 +232,7 @@ describe("User auth service test", () => {
                         .post("/api")
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
-                        .expect(400)
+                        .expect(200)
                     includes(body.errors[0].message, "username의 길이는 6이상 14이하여야 합니다")
                 })
                 it("If the id format is invalid - 2", async () => {
@@ -273,7 +256,7 @@ describe("User auth service test", () => {
                         .post("/api")
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
-                        .expect(400)
+                        .expect(200)
                     includes(body.errors[0].message, "id의 길이는 6이상 14이하여야 합니다")
                 })
                 it("If the username format is invalid - 3", async () => {
@@ -297,7 +280,7 @@ describe("User auth service test", () => {
                         .post("/api")
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
-                        .expect(400)
+                        .expect(200)
                     includes(body.errors[0].message, "id는 영문 소문자, 대문자, 숫자여야합니다")
                 })
                 it("If the password format is invalid - 1", async () => {
@@ -321,7 +304,7 @@ describe("User auth service test", () => {
                         .post("/api")
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
-                        .expect(400)
+                        .expect(200)
                     includes(body.errors[0].message, "Password의 길이는 6이상 14이하여야 합니다")
                 })
                 it("If the password format is invalid - 2", async () => {
@@ -345,7 +328,7 @@ describe("User auth service test", () => {
                         .post("/api")
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
-                        .expect(400)
+                        .expect(200)
                     includes(body.errors[0].message, "Password는 영문 소문자, 대문자, 숫자, 특수문자여야 합니다")
                 })
                 it("The authentication number does not match", async () => {
@@ -695,7 +678,7 @@ describe("User auth service test", () => {
                         .post("/api")
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
-                        .expect(400)
+                        .expect(200)
                     includes(body.errors[0].message, "Password의 길이는 6이상 14이하여야 합니다")
                 })
                 it("If there is no record requesting the authentication number", async () => {
@@ -835,7 +818,7 @@ describe("User auth service test", () => {
                         "Authorization": token[0]
                     })
                     .send(JSON.stringify({ query }))
-                    .expect(400)
+                    .expect(200)
                 includes(body.errors[0].message, "Password는 영문 소문자, 대문자, 숫자, 특수문자여야 합니다")
             })
         })
