@@ -6,11 +6,11 @@ const specialCharacters = "\"'\\!@#$%^&*()_-=+/?.><, [{]}|;:"
 
 const isValidName = (value: string) => {
     if (!(2 <= value.length && value.length <= 40)) {
-        throw new UserInputError("Name의 길이는 2이상 40이하여야 합니다")
+        return new ApolloError("Name의 길이는 2이상 40이하여야 합니다", "400")
     }
     for (const c of value) {
         if (!('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || '0' <= c && c <= '9' || Hangul.isComplete(c) || specialCharacters.includes(c) === true)) {
-            throw new UserInputError("Name의 영문 소문자, 대문자, 숫자, 특수문자, 올바른 한글 이여야 합니다")
+            return new ApolloError("Name의 영문 소문자, 대문자, 숫자, 특수문자, 올바른 한글 이여야 합니다", "400")
         }
     }
     return value
@@ -18,11 +18,11 @@ const isValidName = (value: string) => {
 
 const isValidId = (value: string) => {
     if (!(5 < value.length && value.length < 15)) {
-        throw new UserInputError("id의 길이는 6이상 14이하여야 합니다")
+        return new ApolloError("id의 길이는 6이상 14이하여야 합니다", "400")
     }
     for (const c of value) {
         if (!('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || '0' <= c && c <= '9')) {
-            throw new UserInputError("id는 영문 소문자, 대문자, 숫자여야합니다")
+            return new ApolloError("id는 영문 소문자, 대문자, 숫자여야합니다", "400")
         }
     }
     return value
@@ -30,11 +30,11 @@ const isValidId = (value: string) => {
 
 const isValidPassword = (value: string) => {
     if (!(5 < value.length && value.length < 15)) {
-        throw new UserInputError("Password의 길이는 6이상 14이하여야 합니다")
+        return new ApolloError("Password의 길이는 6이상 14이하여야 합니다", "400")
     }
     for (const c of value) {
         if (!('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || '0' <= c && c <= '9' || specialCharacters.includes(c) === true)) {
-            throw new UserInputError("Password는 영문 소문자, 대문자, 숫자, 특수문자여야 합니다")
+            return new ApolloError("Password는 영문 소문자, 대문자, 숫자, 특수문자여야 합니다", "400")
         }
     }
     return value
@@ -42,11 +42,11 @@ const isValidPassword = (value: string) => {
 
 const isValidUsername = (value: string) => {
     if (!(2 <= value.length && value.length < 15)) {
-        throw new UserInputError("username의 길이는 6이상 14이하여야 합니다")
+        return new ApolloError("username의 길이는 6이상 14이하여야 합니다", "400")
     }
     for (const c of value) {
         if (!('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || '0' <= c && c <= '9' || Hangul.isComplete(c))) {
-            throw new UserInputError("username은 영문 소문자, 대문자, 숫자, 올바른 한글 이여야 합니다")
+            return new ApolloError("username은 영문 소문자, 대문자, 숫자, 올바른 한글 이여야 합니다", "400")
         }
     }
     return value
@@ -61,7 +61,7 @@ const GraphQLId = new GraphQLScalarType({
         if (ast.kind === Kind.STRING) {
             return isValidId(ast.value)
         }
-        throw new ApolloError("Id는 String입니다")
+        return new ApolloError("Id는 String입니다", "400")
     },
 })
 
@@ -74,7 +74,7 @@ const GraphQLPassword = new GraphQLScalarType({
         if (ast.kind === Kind.STRING) {
             return isValidPassword(ast.value)
         }
-        throw new UserInputError("Password는 String입니다")
+        return new ApolloError("Password는 String입니다", "400")
     }
 })
 
@@ -87,7 +87,7 @@ const GraphQLUsername = new GraphQLScalarType({
         if (ast.kind === Kind.STRING) {
             return isValidUsername(ast.value)
         }
-        throw new UserInputError("Username은 String입니다")
+        return new ApolloError("Username은 String입니다", "400")
     }
 })
 
@@ -100,7 +100,7 @@ const GraphQLName = new GraphQLScalarType({
         if (ast.kind === Kind.STRING) {
             return isValidName(ast.value)
         }
-        throw new UserInputError("Name은 String입니다")
+        return new ApolloError("Name은 String입니다", "400")
     }
 })
 
