@@ -103,6 +103,10 @@ export const permissions = shield({
         getCover: and(isLogin, isValidInput),
         likeStatus: and(isLogin, isValidInput),
         isValidUsername: isValidInput,
-        isValidId: isValidInput
+        isValidId: isValidInput,
+        getBand: isValidInput,
+        queryBand: isValidInput,
+        getSong: isValidInput,
+        querySong: isValidInput
     }
 }, { allowExternalErrors: true })
