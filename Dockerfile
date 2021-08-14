@@ -17,6 +17,6 @@ RUN npm install -g yarn;\
     yarn install; \
     yarn build
 
-EXPOSE 3000
+EXPOSE 4000
 
 CMD ["yarn", "on" ]
