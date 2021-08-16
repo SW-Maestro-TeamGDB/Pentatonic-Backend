@@ -7,7 +7,7 @@ export interface Song {
     name: string
     songImg: URL
     songURI: URL
-    genre: string
+    genre: SongGenres
     artist: string
     album: string
     level: number
@@ -22,7 +22,7 @@ export interface QuerySongInput {
     filter: {
         type: "ALL" | "ARTIST" | "NAME",
         level?: number
-        genre?: number
+        genre?: SongGenres
         content?: string
         weeklyChallenge?: boolean
         sort: "DATE_ASC" | "DATE_DESC"
@@ -40,7 +40,7 @@ export interface UploadSongInput {
         song: {
             name: string
             songImg: URL
-            genre: string
+            genre: SongGenres
             artist: string
             songURI: URL
             weeklyChallenge: boolean
@@ -151,13 +151,19 @@ export interface UploadDefaultImgInput {
 }
 
 const SongGenres = {
-    Pop: "Pop",
-    Rock: "Rock",
-    Rap: "Rap",
-    Ballad: "Ballad"
+    HIP_HOP: "HIP_HOP",
+    ELECTRONIC: "ELECTRONIC",
+    BLUES: "BLUES",
+    POP: "POP",
+    JAZZ: "JAZZ",
+    CALLSICAL: "CALLSICAL",
+    ROCK: "ROCK",
+    DANCE: "DANCE",
+    BALLAD: "BALLAD",
+    K_POP: "K_POP",
 } as const
 
-type SongGenres = typeof SongGenres[keyof typeof SongGenres]
+export type SongGenres = typeof SongGenres[keyof typeof SongGenres]
 export interface Instrument {
     _id: ObjectID
     songId: ObjectID

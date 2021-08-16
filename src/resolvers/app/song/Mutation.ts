@@ -7,7 +7,8 @@ import {
     UpdateInstrumentInput,
     UpdateInstrumentQuery,
     DeleteSongInput,
-    DeleteInstrumentInput
+    DeleteInstrumentInput,
+    SongGenres
 } from "resolvers/app/song/models"
 import { Context } from "config/types"
 import { uploadS3, getAudioDuration } from "lib"
