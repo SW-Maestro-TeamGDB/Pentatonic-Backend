@@ -1,6 +1,6 @@
 import { ObjectID } from "mongodb"
 import { File } from "config/types"
-import { Band } from "resolvers/app/band/models"
+import { Band, SessionType } from "resolvers/app/band/models"
 
 export interface Song {
     _id: ObjectID
@@ -67,6 +67,7 @@ export interface UploadInstrumentInput {
             songId: ObjectID
             name: string
             instURI: URL
+            position: SessionType
         }
     }
 }
@@ -91,6 +92,7 @@ export interface UpdateInstrumentInput {
             songId?: ObjectID
             name?: string
             instURI?: URL
+            position?: SessionType
         }
     }
 }
@@ -109,6 +111,7 @@ export interface UpdateSongQurey {
         releaseDate?: Date
         album?: string
         duration?: number
+        position?: SessionType
     }
 }
 

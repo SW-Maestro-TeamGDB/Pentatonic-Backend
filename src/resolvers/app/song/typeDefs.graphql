@@ -121,6 +121,7 @@ input UpdateInstrumentArgs{
     name: String
     "파일의 주소"
     instURI: URL
+    position: SESSION_TYPE
 }
 """
 updateInstrument Mutation의 input
@@ -167,6 +168,7 @@ type Instrument {
     name: String!
     "파일의 길이"
     duration: Float!
+    position: SESSION_TYPE!
 }
 
 """올라와 있는 곡에 대한 타입"""
@@ -232,6 +234,7 @@ input UploadInstrumentArgs {
     name: String!
     "Instrument의 음원 URI"
     instURI: URL!
+    position: SESSION_TYPE!
 }
 
 """

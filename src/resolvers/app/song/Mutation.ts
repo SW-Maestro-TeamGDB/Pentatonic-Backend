@@ -68,7 +68,7 @@ export const updateSong = async (parent: void, args: UpdateSongInput, context: C
 }
 
 export const uploadInstrument = async (parent: void, args: UploadInstrumentInput, context: Context) => {
-    const { name, instURI, songId } = args.input.instrument
+    const { name, instURI, songId, position } = args.input.instrument
     const { db } = context
     const duration = await getAudioDuration(instURI.href)
     if (duration === 0) {
@@ -78,7 +78,8 @@ export const uploadInstrument = async (parent: void, args: UploadInstrumentInput
         name,
         instURI: instURI.href,
         songId: new ObjectID(songId),
-        duration
+        duration,
+        position
     }).then(({ ops }) => ops[0])
 }
 
