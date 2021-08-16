@@ -104,7 +104,7 @@ input QuerySongInput {
     type: GetSongsFilter!
     content: String 
     level: Int
-    genre: String
+    genre: GENRE_TYPE
     weeklyChallenge: Boolean
     sort: SORT_OPTION! = DATE_DESC
 }
@@ -180,7 +180,7 @@ type Song {
     "song의 이미지 URI"
     songImg: URL!
     "song의 장르"
-    genre: String!
+    genre: GENRE_TYPE!
     "song의 artist"
     artist: String!
     "song이 포함되어있는 album"
@@ -209,7 +209,7 @@ input SongInput {
     "song의 이미지 URI"
     songImg: URL!
     "song의 장르"
-    genre: String!
+    genre: GENRE_TYPE!
     "song의 artist"
     artist: String!
     "해당 song이 포함되어있는 album"
@@ -257,7 +257,7 @@ input UpdateSong {
     "song의 이미지 URI"
     songImg: URL
     "song의 장르"
-    genre: String
+    genre: GENRE_TYPE
     "song의 artist"
     artist: String
     "song의 album"
@@ -278,4 +278,17 @@ input UpdateSongInput {
     code: String!
     "업데이트할 song의 정보"
     song: UpdateSong!
+}
+
+enum GENRE_TYPE{
+    HIP_HOP
+    ELECTRONIC
+    BLUES
+    POP
+    JAZZ
+    CALLSICAL
+    ROCK
+    DANCE
+    BALLAD
+    K_POP
 }

@@ -73,7 +73,7 @@ describe("Library services test", () => {
                                     name: "Viva La Vida",
                                     songURI: "${env.S3_URI}/result.mp3",
                                     songImg: "https://kr.seaicons.com/wp-content/uploads/2016/05/Letter-P-blue-icon.png",
-                                    genre: "Pop",
+                                    genre: POP,
                                     artist: "artist",
                                     weeklyChallenge: false,
                                     releaseDate: "2019-01-01",
