@@ -7,3 +7,20 @@ extend type Mutation {
 input FollowInput {
     following: Id!
 }
+
+type FollowUser {
+    username: Username!
+    id: Id!
+    profileURI: URL!
+}
+
+extend type User {
+    followerCount: Int!
+    followingCount: Int!
+    followingStatus: Boolean
+}
+
+extend type Query {
+    getFollowerList: [FollowUser!]
+    getFollowingList: [FollowUser!]
+}

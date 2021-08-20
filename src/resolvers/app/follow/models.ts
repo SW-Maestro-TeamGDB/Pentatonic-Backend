@@ -5,3 +5,11 @@ export interface FollowInput {
         following: ObjectID
     }
 }
+
+export interface GetFollowerListInput {
+    userId: string
+}
+
+export interface GetFollowingListInput {
+    userId: string
+}

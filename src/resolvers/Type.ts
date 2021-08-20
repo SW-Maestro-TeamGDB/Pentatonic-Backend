@@ -23,7 +23,7 @@ export const Song = {
 
 }
 
-export const UserInfo = {
+export const User = {
     band: (parent: UserInterface, args: void, context: Context) => {
         const st = new Set()
         return context.db.collection("join").aggregate([
@@ -54,6 +54,15 @@ export const UserInfo = {
             return context.db.collection("library").find({ coverBy: context.user.id }).toArray()
         }
         return null
+    },
+    followerCount: (parent: UserInterface, args: void, context: Context) => context.db.collection("follow").find({ following: context.user.id }).count(),
+    followingCount: (parent: UserInterface, args: void, context: Context) => context.db.collection("follow").find({ userId: context.user.id }).count(),
+    followingStatus: (parent: UserInterface, args: void, context: Context) => {
+        if (context.user.id === parent.id) return null
+        return context.db.collection("follow").find({
+            userId: context.user.id,
+            following: parent.id
+        }).count().then(x => x === 1)
     }
 }
 
