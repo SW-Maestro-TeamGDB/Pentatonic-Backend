@@ -47,7 +47,7 @@ type Mutation{
     """
     changeProfile(
         input: ChangeProfileInput!
-    ): UserInfo
+    ): User
 
     """
     계정을 삭제합니다
@@ -61,7 +61,7 @@ type Query{
     """유저의 정보를 가져옵니다"""
     getUserInfo(
         userId: Id
-    ): UserInfo
+    ): User
 
     findId(
         phoneNumber: PhoneNumber!,
@@ -85,7 +85,7 @@ type Query{
 """
 유저의 개인 정보 입니다
 """
-type UserInfo {
+type User {
     "아이디"
     id: Id!
     "유저 네임"
