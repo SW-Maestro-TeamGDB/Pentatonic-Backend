@@ -1,7 +1,7 @@
 extend type Mutation {
     follow(
         input: FollowInput!
-    ): Boolean!
+    ): Boolean
 }
 
 input FollowInput {
@@ -15,6 +15,6 @@ extend type User {
 }
 
 extend type Query {
-    getFollowerList: [UserLink!]
-    getFollowingList: [UserLink!]
+    getFollowerList(userId: Id!): [UserLink!]
+    getFollowingList(userId: Id!): [UserLink!]
 }
