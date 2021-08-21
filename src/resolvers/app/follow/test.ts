@@ -185,4 +185,50 @@ describe("Follow Service Test", () => {
             equal(body.data.getFollowingList[0].username, "erolf0123")
         })
     })
+    describe("Query getUserInfo with follow services", () => {
+        it("Getting user's follow-related information - 1", async () => {
+            const query = `
+                query{
+                    getUserInfo(
+                        userId: "user1234"
+                    ){
+                        followingCount
+                        followerCount
+                        followingStatus
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getUserInfo.followingCount, 1)
+            equal(body.data.getUserInfo.followerCount, 0)
+            equal(body.data.getUserInfo.followingStatus, null)
+        })
+        it("Getting user's follow-related information - 2", async () => {
+            const query = `
+                query{
+                    getUserInfo(
+                        userId: "test1234"
+                    ){
+                        followingCount
+                        followerCount
+                        followingStatus
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getUserInfo.followingCount, 0)
+            equal(body.data.getUserInfo.followerCount, 1)
+            equal(body.data.getUserInfo.followingStatus, true)
+        })
+    })
 })

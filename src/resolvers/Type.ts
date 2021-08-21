@@ -55,9 +55,9 @@ export const User = {
         }
         return null
     },
-    followerCount: (parent: UserInterface, args: void, context: Context) => context.db.collection("follow").find({ following: context.user.id }).count(),
-    followingCount: (parent: UserInterface, args: void, context: Context) => context.db.collection("follow").find({ userId: context.user.id }).count(),
-    followingStatus: (parent: UserInterface, args: void, context: Context) => {
+    followerCount: (parent: UserInterface, args: void, context: Context) => context.db.collection("follow").find({ following: parent.id }).count(),
+    followingCount: (parent: UserInterface, args: void, context: Context) => context.db.collection("follow").find({ userId: parent.id }).count(),
+    followingStatus: async (parent: UserInterface, args: void, context: Context) => {
         if (context.user.id === parent.id) return null
         return context.db.collection("follow").find({
             userId: context.user.id,
