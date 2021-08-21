@@ -9,7 +9,7 @@ export const querySong = (parent: void, args: QuerySongInput, context: Context) 
     const { type, content, sort, ...data } = args.filter
     const _id = sort === "DATE_ASC" ? 1 : -1
     if (type === "ALL") {
-        return context.db.collection("song").find(data).sort({ _id }).toArray()
+        return context.db.collection("song").find({ ...data, isFreeSong: false }).sort({ _id }).toArray()
     }
     const query = {
         [type.toLowerCase()]: { $regex: new RegExp(content || "", "ig") },

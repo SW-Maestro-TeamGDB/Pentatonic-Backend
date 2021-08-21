@@ -172,7 +172,7 @@ type Instrument {
 }
 
 """올라와 있는 곡에 대한 타입"""
-type Song {
+type Song implements SongInterface {
     "song의 Id"
     songId: ObjectID!
     "song의 제목"

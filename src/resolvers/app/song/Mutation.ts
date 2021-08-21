@@ -7,8 +7,7 @@ import {
     UpdateInstrumentInput,
     UpdateInstrumentQuery,
     DeleteSongInput,
-    DeleteInstrumentInput,
-    SongGenres
+    DeleteInstrumentInput
 } from "resolvers/app/song/models"
 import { Context } from "config/types"
 import { uploadS3, getAudioDuration } from "lib"
@@ -36,6 +35,7 @@ export const uploadSong = async (parent: void, args: UploadSongInput, context: C
         album,
         songURI: songURI.href,
         songImg: songImg.href,
+        isFreeSong: false,
         weeklyChallenge,
         level,
         duration

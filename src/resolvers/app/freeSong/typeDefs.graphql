@@ -1,0 +1,26 @@
+interface SongInterface {
+    songId: ObjectID!
+    duration: Float!
+    name: String!
+    artist: String!
+    songURI: URL!
+}
+
+type FreeSong implements SongInterface {
+    songId: ObjectID!
+    duration: Float!
+    name: String!
+    artist: String!
+    uploader: Id!
+    songURI: URL!
+}
+
+extend type Mutation {
+    uploadFreeSong(input: UploadFreeSongInput!): FreeSong
+}
+
+input UploadFreeSongInput {
+    name: String!
+    artist: String!
+    songURI: URL!
+}
