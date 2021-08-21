@@ -75,9 +75,9 @@ export const SongLink = {
     songId: (parent: SongInterface) => parent._id
 }
 
-export const UserLink = {
-    userId: (parent: UserInterface) => parent.id
-}
+// export const UserLink = {
+//     userId: (parent: UserInterface) => parent.id
+// }
 
 export const Instrument = {
     instId: (parent: InstrumentInterface) => parent._id

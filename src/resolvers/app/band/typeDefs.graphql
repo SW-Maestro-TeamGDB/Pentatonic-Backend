@@ -13,7 +13,7 @@ type SongLink {
 }
 
 type UserLink {
-    userId: Id!
+    id: Id!
     username: Username!
     profileURI: URL!
     prime: Boolean!

@@ -8,12 +8,6 @@ input FollowInput {
     following: Id!
 }
 
-type FollowUser {
-    username: Username!
-    id: Id!
-    profileURI: URL!
-}
-
 extend type User {
     followerCount: Int!
     followingCount: Int!
@@ -21,6 +15,6 @@ extend type User {
 }
 
 extend type Query {
-    getFollowerList: [FollowUser!]
-    getFollowingList: [FollowUser!]
+    getFollowerList: [UserLink!]
+    getFollowingList: [UserLink!]
 }

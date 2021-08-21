@@ -246,7 +246,7 @@ describe("Band services test", () => {
                             }
                             creator{
                                 username
-                                userId
+                                id
                             }
                         }
                     }
@@ -262,7 +262,7 @@ describe("Band services test", () => {
                 equal(body.data.createBand.song.songId, songIds[0])
                 equal(body.data.createBand.session[0].position, "DRUM")
                 equal(body.data.createBand.creator.username, "pukuba")
-                equal(body.data.createBand.creator.userId, "user1234")
+                equal(body.data.createBand.creator.id, "user1234")
                 bandIds.push(body.data.createBand.bandId)
             })
         })
