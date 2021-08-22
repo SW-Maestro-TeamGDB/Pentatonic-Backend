@@ -61,6 +61,6 @@ export const getAudioDuration = async (uri: string): Promise<number> => {
         if (duration < 10) throw ""
         return duration
     } catch {
-        return 0
+        throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
     }
 }

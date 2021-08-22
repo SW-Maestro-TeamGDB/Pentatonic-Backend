@@ -42,9 +42,6 @@ export const uploadCover = async (parent: void, args: UploadCoverInput, context:
         position
     } = args.input.cover
     const duration = await getAudioDuration(coverURI.href)
-    if (duration === 0) {
-        throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
-    }
     if (position !== "DRUM") {
         coverURI.href = await denoiseFilter(coverURI.href) as string
     }

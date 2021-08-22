@@ -24,9 +24,6 @@ export const uploadSong = async (parent: void, args: UploadSongInput, context: C
     const { name, songImg, genre, artist, songURI, weeklyChallenge, level, releaseDate, album } = args.input.song
     const { db } = context
     const duration = await getAudioDuration(songURI.href)
-    if (duration === 0) {
-        throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
-    }
     return db.collection("song").insertOne({
         name,
         genre,
@@ -55,9 +52,6 @@ export const updateSong = async (parent: void, args: UpdateSongInput, context: C
     }
     if (songURI !== undefined) {
         const duration = await getAudioDuration(songURI.href)
-        if (duration === 0) {
-            throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
-        }
         query.$set.duration = duration
         query.$set.songURI = songURI.href
     }
@@ -71,9 +65,6 @@ export const uploadInstrument = async (parent: void, args: UploadInstrumentInput
     const { name, instURI, songId, position } = args.input.instrument
     const { db } = context
     const duration = await getAudioDuration(instURI.href)
-    if (duration === 0) {
-        throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
-    }
     return db.collection("instrument").insertOne({
         name,
         instURI: instURI.href,
@@ -97,9 +88,6 @@ export const updateInstrument = async (parent: void, args: UpdateInstrumentInput
     if (instURI !== undefined) {
         query.$set.duration = await getAudioDuration(instURI.href as string)
         query.$set.instURI = instURI.href
-        if (query.$set.duration === 0) {
-            throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
-        }
     }
     if (songId !== undefined) {
         query.$set.songId = new ObjectID(songId)

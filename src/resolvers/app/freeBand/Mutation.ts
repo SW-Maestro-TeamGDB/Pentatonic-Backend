@@ -13,9 +13,6 @@ import { ApolloError } from "apollo-server-express"
 export const createFreeBand = async (parent: void, args: CreateFreeBandInput, context: Context) => {
     const { name, artist, songURI } = args.input.song
     const duration = await getAudioDuration(songURI.href)
-    if (duration === 0) {
-        throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
-    }
     const sessionArr: SessionInformation = sessionParse(args.input.sessionConfig)
     const song = await context.db.collection("song").insertOne({
         name,

@@ -80,7 +80,6 @@ describe("FreeSong Service Test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                console.log(body.data.createFreeBand)
                 equal(body.data.createFreeBand.name, "example Name")
                 equal(body.data.createFreeBand.song.name, "example Name")
             })
