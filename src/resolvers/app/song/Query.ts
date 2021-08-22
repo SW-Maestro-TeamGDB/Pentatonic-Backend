@@ -13,7 +13,8 @@ export const querySong = (parent: void, args: QuerySongInput, context: Context) 
     }
     const query = {
         [type.toLowerCase()]: { $regex: new RegExp(content || "", "ig") },
-        ...data
+        ...data,
+        isFreeSong: false
     }
     return context.db.collection("song").find(query).sort({ _id }).toArray()
 }

@@ -95,7 +95,8 @@ export const permissions = shield({
         uploadCover: and(isLogin, isValidInput),
         updateCover: and(isLogin, isValidInput),
         updateBand: and(isLogin, isValidInput),
-        follow: and(isLogin, isValidInput)
+        uploadFreeSong: and(isLogin, isValidInput),
+        follow: and(isLogin, isValidInput),
     },
     Query: {
         findId: and(not(isLogin), canSend, isValidInput),

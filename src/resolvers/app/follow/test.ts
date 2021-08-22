@@ -5,11 +5,7 @@ import { Db } from "mongodb"
 import { deepStrictEqual as equal } from "assert"
 import DB from "config/connectDB"
 import * as Redis from "config/connectRedis"
-import { Cover } from "resolvers/app/library/models"
 
-const songIds: string[] = []
-const coverIds: string[] = []
-const bandIds: string[] = []
 const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
 let token: string = ""
 let token1: string = ""
