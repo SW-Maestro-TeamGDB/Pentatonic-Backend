@@ -16,7 +16,9 @@ describe("FreeSong Service Test", () => {
         await Promise.all([
             db.collection("follow").deleteMany({}),
             db.collection("user").deleteMany({}),
-            db.collection("song").deleteMany({})
+            db.collection("song").deleteMany({}),
+            db.collection("band").deleteMany({}),
+            db.collection("freeBand").deleteMany({})
         ])
     })
     before(async () => {
@@ -45,7 +47,7 @@ describe("FreeSong Service Test", () => {
     })
     describe("Mutation createFreeBand", () => {
         describe("Success", () => {
-            it("If you normally upload free songs", async () => {
+            it("If you normally create free band", async () => {
                 const query = `
                     mutation {
                         createFreeBand(
@@ -54,11 +56,21 @@ describe("FreeSong Service Test", () => {
                                     songURI: "${env.S3_URI}/result.mp3",
                                     name: "example Name",
                                     artist: "example Artist"
-                                }
+                                }, 
+                                band: {
+                                    name: "example Name",
+                                    introduce: "example Introduce"
+                                },
+                                sessionConfig: [{
+                                    session: DRUM,
+                                    maxMember: 2
+                                }]
                             }
                         ){
                             name
-                            artist
+                            song{
+                                name
+                            }
                         }
                     }
                 `
@@ -68,8 +80,9 @@ describe("FreeSong Service Test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.data.uploadFreeSong.name, "example Name")
-                equal(body.data.uploadFreeSong.artist, "example Artist")
+                console.log(body.data.createFreeBand)
+                equal(body.data.createFreeBand.name, "example Name")
+                equal(body.data.createFreeBand.song.name, "example Name")
             })
         })
     })
