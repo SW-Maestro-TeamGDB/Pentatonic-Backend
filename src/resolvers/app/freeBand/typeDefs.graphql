@@ -14,18 +14,30 @@ type FreeSong implements SongInterface {
     songURI: URL!
 }
 
+type FreeBand implements BandInterface {
+    bandId: ObjectID!
+    song: FreeSong!
+    name: Name!
+    introduce: String!
+    creator: UserLink!
+    backGroundURI: URL!
+    createDate: Date!
+    session: [Session]
+    likeCount: Int!
+}
+
 extend type Mutation {
-    createFreeBand(input: CreateFreeBandInput!): FreeSong
+    createFreeBand(input: CreateFreeBandInput!): FreeBand
 }
 
 input CreateFreeBandInput {
     sessionConfig: [SessionConfigInput!]!
     song: FreeSongInput!
-    band: CreateBandInput!
+    band: FreeBandInput!
 }
 
 input FreeSongInput {
-    name: String!
+    name: Name!
     artist: String!
     songURI: URL!
 }

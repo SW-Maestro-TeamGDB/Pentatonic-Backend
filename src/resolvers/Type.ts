@@ -75,6 +75,19 @@ export const SongLink = {
     songId: (parent: SongInterface) => parent._id
 }
 
+export const FreeSong = {
+    songId: (parent: SongInterface) => parent._id
+}
+
+export const FreeBand = {
+    bandId: (parent: BandInterface) => parent._id,
+    song: (parent: BandInterface, args: void, context: Context) =>
+        context.loaders.songsLoader.load(parent.songId.toString()),
+    session: (parent: BandInterface, args: void, context: Context) => context.loaders.sessionsLoader.load(parent._id),
+    creator: (parent: BandInterface, args: void, context: Context) => context.loaders.userLoader1.load(parent.creatorId),
+    likeCount: (parent: BandInterface, args: void, context: Context) => context.loaders.likeCountsLoader.load(parent._id)
+}
+
 // export const UserLink = {
 //     userId: (parent: UserInterface) => parent.id
 // }

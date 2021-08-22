@@ -34,9 +34,11 @@ const batchLoadUserFn1 = async (userIds: readonly string[]) => {
 
 const batchLoadSessionFn = async (bandIds: readonly ObjectID[]) => {
     const db = await DB.get() as Db
+    const document = await db.collection("bandFree").findOne({ _id: bandIds[0] })
+    const collectionName = document === null ? "band" : "freeBand"
     const data = await Promise.all([
         db.collection("session").find({ bandId: { $in: bandIds } }).toArray(),
-        db.collection("band").find({ _id: { $in: bandIds } }).toArray()
+        db.collection(collectionName).find({ _id: { $in: bandIds } }).toArray()
     ])
     const coverId = data[0].map((e) => e.coverId)
     const library = await db.collection("library").find({ _id: { $in: coverId } }).toArray()

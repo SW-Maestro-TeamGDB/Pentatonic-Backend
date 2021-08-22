@@ -12,6 +12,15 @@ type SongLink {
     releaseDate: Date!
 }
 
+interface BandInterface {
+    bandId: ObjectID!
+    name: Name!
+    introduce: String!
+    backGroundURI: URL!
+    session: [Session]
+    creator: UserLink!
+}
+
 type UserLink {
     id: Id!
     username: Username!
@@ -20,7 +29,7 @@ type UserLink {
     type: Int!
 }
 
-type Band {
+type Band implements BandInterface {
     bandId: ObjectID!
     song: SongLink!
     name: Name!
