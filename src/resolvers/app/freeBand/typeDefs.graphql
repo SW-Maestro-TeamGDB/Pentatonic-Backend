@@ -15,11 +15,23 @@ type FreeSong implements SongInterface {
 }
 
 extend type Mutation {
-    uploadFreeSong(input: UploadFreeSongInput!): FreeSong
+    createFreeBand(input: CreateFreeBandInput!): FreeSong
 }
 
-input UploadFreeSongInput {
+input CreateFreeBandInput {
+    sessionConfig: [SessionConfigInput!]!
+    song: FreeSongInput!
+    band: CreateBandInput!
+}
+
+input FreeSongInput {
     name: String!
     artist: String!
     songURI: URL!
+}
+
+input FreeBandInput {
+    name: Name!
+    introduce: String!
+    backGroundURI: URL! = "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg"
 }

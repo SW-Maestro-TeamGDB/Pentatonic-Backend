@@ -43,16 +43,18 @@ describe("FreeSong Service Test", () => {
             .expect(200)
         token = body.data.register
     })
-    describe("Mutation uploadFreeSong", () => {
+    describe("Mutation createFreeBand", () => {
         describe("Success", () => {
             it("If you normally upload free songs", async () => {
                 const query = `
                     mutation {
-                        uploadFreeSong(
+                        createFreeBand(
                             input: {
-                                songURI: "${env.S3_URI}/result.mp3",
-                                name: "example Name",
-                                artist: "example Artist"
+                                song: {
+                                    songURI: "${env.S3_URI}/result.mp3",
+                                    name: "example Name",
+                                    artist: "example Artist"
+                                }
                             }
                         ){
                             name

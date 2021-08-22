@@ -1,1 +1,0 @@
-export * as Mutation from "resolvers/app/freeSong/Mutation"

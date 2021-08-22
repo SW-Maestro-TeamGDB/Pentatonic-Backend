@@ -1,9 +1,9 @@
-import { UploadFreeSongInput } from "resolvers/app/freeSong/models"
+import { CreateFreeBandInput } from "resolvers/app/freeBand/models"
 import { Context } from "config/types"
 import { getAudioDuration } from "lib"
 import { ApolloError } from "apollo-server-express"
-export const uploadFreeSong = async (parent: void, args: UploadFreeSongInput, context: Context) => {
-    const { name, artist, songURI } = args.input
+export const createFreeBand = async (parent: void, args: CreateFreeBandInput, context: Context) => {
+    const { name, artist, songURI } = args.input.song
     const duration = await getAudioDuration(songURI.href)
     if (duration === 0) {
         throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")
@@ -16,4 +16,3 @@ export const uploadFreeSong = async (parent: void, args: UploadFreeSongInput, co
         duration
     }).then(({ ops }) => ops[0])
 }
-
