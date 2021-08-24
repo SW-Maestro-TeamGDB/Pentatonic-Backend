@@ -28,6 +28,8 @@ type FreeBand implements BandInterface {
 
 extend type Mutation {
     createFreeBand(input: CreateFreeBandInput!): FreeBand
+
+    updateFreeBand(input: UpdateBandInput!): Band
 }
 
 input CreateFreeBandInput {
