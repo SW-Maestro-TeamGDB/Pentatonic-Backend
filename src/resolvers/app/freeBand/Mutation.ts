@@ -4,12 +4,14 @@ import {
 import {
     SessionInformation,
     UpdateBandInput as UpdateFreeBandInput,
-    UpdateBandQuery
+    UpdateBandQuery,
+    JoinBandInput as JoinFreeBandInput
 } from "resolvers/app/band/models"
 import { Context } from "config/types"
 import {
     getAudioDuration,
-    sessionParse
+    sessionParse,
+    snakeToCamel
 } from "lib"
 import {
     ObjectID
@@ -85,4 +87,48 @@ export const updateFreeBand = async (parent: void, args: UpdateFreeBandInput, co
     return context.db.collection("freeBand").findOneAndUpdate({
         _id: new ObjectID(args.input.band.bandId)
     }, query, { returnDocument: "after" }).then(({ value }) => value)
+}
+
+export const joinFreeBand = async (parent: void, args: JoinFreeBandInput, context: Context) => {
+    const data = await Promise.all([
+        context.db.collection("freeBand").findOne({ _id: new ObjectID(args.input.band.bandId) }),
+        context.db.collection("session").find({
+            bandId: new ObjectID(args.input.band.bandId),
+            position: args.input.session.position
+        }).toArray(),
+        context.db.collection("library").findOne({
+            _id: new ObjectID(args.input.session.coverId),
+            position: args.input.session.position
+        })
+    ])
+    if (data[0] === null) {
+        throw new ApolloError("밴드가 존재하지 않습니다")
+    }
+    if (data[2] === null) {
+        throw new ApolloError("커버내역이 존재하지 않습니다")
+    }
+    if (data[1].find(x => x.coverId.toString() === args.input.session.coverId)) {
+        throw new ApolloError("이미 참여한 유저입니다")
+    }
+    const myPosition = snakeToCamel(args.input.session.position)
+    try {
+        if (!data[0]["sessions"][myPosition] || data[1].length >= data[0]["sessions"][myPosition]) {
+            throw new Error()
+        }
+        const result = await Promise.all([
+            context.db.collection("join").insertOne({
+                bandId: new ObjectID(args.input.band.bandId),
+                position: args.input.session.position,
+                userId: context.user.id
+            }),
+            context.db.collection("session").insertOne({
+                bandId: new ObjectID(args.input.band.bandId),
+                position: args.input.session.position,
+                coverId: new ObjectID(args.input.session.coverId)
+            }).then(({ result }) => result.n === 1)
+        ])
+        return result[1]
+    } catch {
+        throw new ApolloError("세션이 가득찾거나 존재하지 않습니다")
+    }
 }
