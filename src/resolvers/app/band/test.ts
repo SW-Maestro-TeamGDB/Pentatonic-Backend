@@ -131,7 +131,7 @@ describe("Band services test", () => {
                 .expect(200)
             coverIds.push(body.data.uploadCover.coverId)
             equal(typeof body.data.uploadCover.coverId, "string")
-        })
+        }).timeout(500000)
         it("Successfully uploaded a cover - 2", async () => {
             const query = `
                 mutation {
@@ -209,7 +209,7 @@ describe("Band services test", () => {
                 .expect(200)
             coverIds.push(body.data.uploadCover.coverId)
             equal(typeof body.data.uploadCover.coverId, "string")
-        })
+        }).timeout(50000)
     })
     describe("Mutation createBand", () => {
         describe("Success", () => {
