@@ -10,7 +10,8 @@ import { ApolloError } from "apollo-server-express"
 import {
     uploadS3,
     getAudioDuration,
-    denoiseFilter
+    denoiseFilter,
+    convertMp3ToM4a
 } from "lib"
 import { ObjectID } from "mongodb"
 
@@ -44,6 +45,8 @@ export const uploadCover = async (parent: void, args: UploadCoverInput, context:
     const duration = await getAudioDuration(coverURI.href)
     if (position !== "DRUM") {
         coverURI.href = await denoiseFilter(coverURI.href) as string
+    } else if (position === "DRUM" && coverURI.href.endsWith("mp3")) {
+        coverURI.href = await convertMp3ToM4a(coverURI.href) as string
     }
     const coverBy = context.user.id
     return context.db.collection("library").insertOne({

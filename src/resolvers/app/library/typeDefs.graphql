@@ -60,7 +60,7 @@ input UpdateCover {
     "커버의 id"
     coverId: ObjectID!
     "커버의 이름"
-    name: Name
+    name: String
     position: SESSION_TYPE
 }
 
@@ -79,7 +79,7 @@ input UploadCoverFileInput {
 """커버 정보"""
 input CoverInput {
     "커버의 제목 ex) 승원이의 viva la vida 바이올린 커버"
-    name: Name!
+    name: String!
     "커버 파일의 주소"
     coverURI: URL!
     "어떤 노래에 커버를 하였는지 노래Id"
@@ -106,6 +106,6 @@ type Cover {
     "커버의 길이"
     duration: Float!
     "커버의 제목"
-    name: Name!
+    name: String!
     position: SESSION_TYPE!
 }

@@ -129,7 +129,7 @@ describe("Library services test", () => {
     })
     describe("Mutation uploadCover", () => {
         describe("Success", () => {
-            it("Successfully uploaded a cover - 1", async () => {
+            it("Successfully uploaded a cover .m4a - 1", async () => {
                 const query = `
                     mutation {
                         uploadCover(
@@ -159,13 +159,12 @@ describe("Library services test", () => {
                     .expect(200)
                 equal(body.data.uploadCover.name, "승원이의 Viva La Vida Drum 커버")
                 equal(body.data.uploadCover.songId, songIds[0])
-                equal(body.data.uploadCover.coverURI, coverURI[0])
                 equal(body.data.uploadCover.coverBy, "user1234")
                 equal(body.data.uploadCover.position, "DRUM")
                 coverIds.push(body.data.uploadCover.coverId)
                 equal(typeof body.data.uploadCover.coverId, "string")
             })
-            it("Successfully uploaded a cover - 2", async () => {
+            it("Successfully uploaded a cover .m4a - 2", async () => {
                 const query = `
                     mutation {
                         uploadCover(
@@ -191,7 +190,7 @@ describe("Library services test", () => {
                 coverIds.push(body.data.uploadCover.coverId)
                 equal(typeof body.data.uploadCover.coverId, "string")
             }).timeout(50000)
-            it("Successfully uploaded a cover - 3", async () => {
+            it("Successfully uploaded a cover .m4a - 3", async () => {
                 const query = `
                     mutation {
                         uploadCover(
@@ -215,6 +214,30 @@ describe("Library services test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 coverIds.push(body.data.uploadCover.coverId)
+                equal(typeof body.data.uploadCover.coverId, "string")
+            }).timeout(50000)
+            it("Successfully uploaded a cover .mp3 - 1", async () => {
+                const query = `
+                    mutation {
+                        uploadCover(
+                            input: {
+                                cover: {
+                                    name: "ㅇㅅㅇㅅㅇㅅㅇㅅㅇㅅㅇㅅㅇ",
+                                    songId: "${songIds[0]}",
+                                    coverURI: "${env.S3_URI}/result.mp3",
+                                    position: DRUM
+                                }
+                            }
+                        ){
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
                 equal(typeof body.data.uploadCover.coverId, "string")
             }).timeout(50000)
         })
@@ -273,8 +296,9 @@ describe("Library services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(typeof body.errors[0].message, "string")
-            })
+                console.log(body)
+                equal(body.errors[0].message, "Error: m4a / mp3 파일만 업로드 가능합니다")
+            }).timeout(50000)
         })
     })
     describe("Mutation updateCover", () => {
@@ -371,7 +395,6 @@ describe("Library services test", () => {
                             }
                         ){
                             name
-                            coverId
                         }
                     }
                 `
@@ -383,7 +406,6 @@ describe("Library services test", () => {
                     .expect(200)
 
                 equal(body.data.queryCover[0].name, "Viva La Vida Drum 커버")
-                equal(body.data.queryCover[0].coverId, coverIds[0])
             })
             it("Successfully queried a cover filter type = NAME", async () => {
                 const query = `
@@ -395,7 +417,6 @@ describe("Library services test", () => {
                             }
                         ){
                             name
-                            coverId
                         }
                     }
                 `
@@ -406,7 +427,6 @@ describe("Library services test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.data.queryCover[0].name, "승원이의 Viva La Vida Violin 커버 - 1")
-                equal(body.data.queryCover[0].coverId, coverIds[2])
             })
             it("Successfully queried a cover filter type = NAME & empty content", async () => {
                 const query = `
@@ -417,7 +437,6 @@ describe("Library services test", () => {
                             }
                         ){
                             name
-                            coverId
                         }
                     }
                 `
@@ -427,8 +446,7 @@ describe("Library services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.data.queryCover[0].name, "승원이의 Viva La Vida Violin 커버 - 1")
-                equal(body.data.queryCover[0].coverId, coverIds[2])
+                equal(body.data.queryCover[0].name, "ㅇㅅㅇㅅㅇㅅㅇㅅㅇㅅㅇㅅㅇ")
             })
             it("Successfully queried a cover filter type = POSITION", async () => {
                 const query = `
@@ -452,8 +470,7 @@ describe("Library services test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.data.queryCover[0].position, "DRUM")
-                equal(body.data.queryCover[0].name, "Viva La Vida Drum 커버")
-                equal(body.data.queryCover[0].coverId, coverIds[0])
+                equal(body.data.queryCover[0].name, "ㅇㅅㅇㅅㅇㅅㅇㅅㅇㅅㅇㅅㅇ")
             })
             it("Successfully queried a cover type = SONG_ID - 1", async () => {
                 const query = `
@@ -497,8 +514,7 @@ describe("Library services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.data.queryCover[0].name, "승원이의 Viva La Vida Violin 커버 - 1")
-                equal(body.data.queryCover[0].coverId, coverIds[2])
+                equal(body.data.queryCover[0].name, "ㅇㅅㅇㅅㅇㅅㅇㅅㅇㅅㅇㅅㅇ")
             })
         })
     })

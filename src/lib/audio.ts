@@ -8,22 +8,41 @@ const deleteFile = util.promisify(unlink)
 
 export const denoiseFilter = async (audioURI: string) => {
     const filename = audioURI.substring(audioURI.lastIndexOf("/") + 1)
+    const filenameSplit = filename.split(".")
     try {
+        if (!audioURI.endsWith("m4a") && !audioURI.endsWith("mp3")) {
+            throw new Error("m4a / mp3 파일만 업로드 가능합니다")
+        }
+        const codec = audioURI.endsWith("m4a") ? "alac" : "aac"
         await exec(`
-            ffmpeg -i ${audioURI} -af "arnndn=m=src/lib/mp.rnnn" \
-            -c:a alac -strict -2 -b:a 360k \
-            ${filename} -y
+            ffmpeg -i '${audioURI}' -af "arnndn=m=src/lib/mp.rnnn" \
+            -c:a ${codec} -strict -2 -b:a 360k \
+            ${filenameSplit[filenameSplit.length - 2]}.m4a -y
         `)
-        const [a, b] = filename.split(".")
-        const result = await uploadS3(filename, `${a}-1.${b}`, "audio/wav")
-        deleteFile(filename)
+        const result = await uploadS3(filename, `${filenameSplit[filenameSplit.length - 2]}-1.m4a`, "audio/wav")
+        deleteFile(`${filenameSplit[filenameSplit.length - 2]}.m4a`)
         return result
     } catch (e) {
-        deleteFile(filename)
+        deleteFile(`${filenameSplit[filenameSplit.length - 2]}.m4a`)
         throw new ApolloError(e)
     }
 }
 
+export const convertMp3ToM4a = async (audioURI: string) => {
+    const filename = audioURI.substring(audioURI.lastIndexOf("/") + 1)
+    const filenameSplit = filename.split(".")
+    try {
+        await exec(`
+            ffmpeg -i '${audioURI}' -c:a aac -strict -2 -b:a 360k ${filenameSplit[filenameSplit.length - 2]}.m4a  -y
+        `)
+        const result = await uploadS3(`${filenameSplit[filenameSplit.length - 2]}.m4a`, `${filenameSplit[filenameSplit.length - 2]}-1.m4a`, "audio/wav")
+        deleteFile(`${filenameSplit[filenameSplit.length - 2]}.m4a`)
+        return result
+    } catch (e) {
+        deleteFile(`${filenameSplit[filenameSplit.length - 2]}.m4a`)
+        throw new ApolloError(e)
+    }
+}
 export const mergeAudios = async (audios: string[], audioName: string) => {
     const ffmpegInputs = audios.map((uri: string) => `-i ${uri}`)
         .toString()
