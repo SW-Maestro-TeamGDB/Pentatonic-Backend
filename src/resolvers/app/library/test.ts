@@ -163,7 +163,7 @@ describe("Library services test", () => {
                 equal(body.data.uploadCover.position, "DRUM")
                 coverIds.push(body.data.uploadCover.coverId)
                 equal(typeof body.data.uploadCover.coverId, "string")
-            })
+            }).timeout(500000)
             it("Successfully uploaded a cover .m4a - 2", async () => {
                 const query = `
                     mutation {
