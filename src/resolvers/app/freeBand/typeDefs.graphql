@@ -17,7 +17,7 @@ type FreeSong implements SongInterface {
 type FreeBand implements BandInterface {
     bandId: ObjectID!
     song: FreeSong!
-    name: Name!
+    name: String!
     introduce: String!
     creator: UserLink!
     backGroundURI: URL!
@@ -47,7 +47,7 @@ input FreeSongInput {
 }
 
 input FreeBandInput {
-    name: Name!
+    name: String!
     introduce: String!
     backGroundURI: URL! = "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg"
 }
