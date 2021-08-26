@@ -8,6 +8,7 @@ import * as Redis from "config/connectRedis"
 
 const bandIds: string[] = []
 const songIds: string[] = []
+const coverIds: string[] = []
 const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
 let token: string = "", token1: string = ""
 
@@ -96,6 +97,7 @@ describe("FreeSong Service Test", () => {
                             }
                         ){
                             name
+                            bandId
                             song{
                                 name
                                 songId
@@ -112,13 +114,64 @@ describe("FreeSong Service Test", () => {
                 equal(body.data.createFreeBand.name, "example Name")
                 equal(body.data.createFreeBand.song.name, "example Name")
                 songIds.push(body.data.createFreeBand.song.songId)
-                console.log(songIds)
+                bandIds.push(body.data.createFreeBand.bandId)
             })
         })
     })
     describe("Mutation joinFreeBand", () => {
-        before(async () => {
 
+        before(async () => {
+            await (async () => {
+                const query = `
+                    mutation {
+                        uploadCover(
+                            input: {
+                                cover: {
+                                    songId: "${songIds[0]}",
+                                    name: "테스트 커버 업로드 - 1",
+                                    coverURI: "${env.S3_URI}/drum.m4a",
+                                    position: DRUM
+                                }
+                            }
+                        ){
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                coverIds.push(body.data.uploadCover.coverId)
+            })()
+            // await (async () => {
+            // })
+        })
+        describe("Success", () => {
+            it("If the user normally joins the band - 1", async () => {
+                const query = `
+                    mutation {
+                        joinFreeBand(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[0]}",
+                                    position: DRUM
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                equal(body.data.joinFreeBand, true)
+            })
         })
     })
 })

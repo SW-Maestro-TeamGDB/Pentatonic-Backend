@@ -31,7 +31,7 @@ extend type Mutation {
 
     updateFreeBand(input: UpdateBandInput!): FreeBand
 
-    joinFreeBand(input: JoinBandInput!): FreeBand
+    joinFreeBand(input: JoinBandInput!): Boolean
 }
 
 input CreateFreeBandInput {
