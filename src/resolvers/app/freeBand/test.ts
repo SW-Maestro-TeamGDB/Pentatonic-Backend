@@ -20,7 +20,8 @@ describe("FreeSong Service Test", () => {
             db.collection("user").deleteMany({}),
             db.collection("song").deleteMany({}),
             db.collection("band").deleteMany({}),
-            db.collection("freeBand").deleteMany({})
+            db.collection("freeBand").deleteMany({}),
+            db.collection("join").deleteMany({})
         ])
     })
     before(async () => {
@@ -93,6 +94,9 @@ describe("FreeSong Service Test", () => {
                                 sessionConfig: [{
                                     session: DRUM,
                                     maxMember: 2
+                                },{
+                                    session: VIOLIN,
+                                    maxMember: 1
                                 }]
                             }
                         ){
@@ -145,8 +149,78 @@ describe("FreeSong Service Test", () => {
                     .send(JSON.stringify({ query }))
                 coverIds.push(body.data.uploadCover.coverId)
             })()
-            // await (async () => {
-            // })
+            await (async () => {
+                const query = `
+                    mutation {
+                        uploadCover(
+                            input: {
+                                cover: {
+                                    songId: "${songIds[0]}",
+                                    name: "테스트 커버 업로드 - 2",
+                                    coverURI: "${env.S3_URI}/drum.m4a",
+                                    position: DRUM
+                                }
+                            }
+                        ){
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token1)
+                    .send(JSON.stringify({ query }))
+                coverIds.push(body.data.uploadCover.coverId)
+            })()
+            await (async () => {
+                const query = `
+                    mutation {
+                        uploadCover(
+                            input: {
+                                cover: {
+                                    songId: "${songIds[0]}",
+                                    name: "테스트 커버 업로드 - 3",
+                                    coverURI: "${env.S3_URI}/violin.m4a",
+                                    position: VIOLIN
+                                }
+                            }
+                        ){
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                coverIds.push(body.data.uploadCover.coverId)
+            })()
+            await (async () => {
+                const query = `
+                    mutation {
+                        uploadCover(
+                            input: {
+                                cover: {
+                                    songId: "${songIds[0]}",
+                                    name: "테스트 커버 업로드 - 4",
+                                    coverURI: "${env.S3_URI}/violin.m4a",
+                                    position: VIOLIN
+                                }
+                            }
+                        ){
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token1)
+                    .send(JSON.stringify({ query }))
+                coverIds.push(body.data.uploadCover.coverId)
+            })()
         })
         describe("Success", () => {
             it("If the user normally joins the band - 1", async () => {
@@ -171,6 +245,149 @@ describe("FreeSong Service Test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                 equal(body.data.joinFreeBand, true)
+            })
+            it("If the user normally joins the band - 2", async () => {
+                const query = `
+                    mutation {
+                        joinFreeBand(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[1]}",
+                                    position: DRUM
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token1)
+                    .send(JSON.stringify({ query }))
+                equal(body.data.joinFreeBand, true)
+            })
+            it("If the user normally joins the band - 3", async () => {
+                const query = `
+                    mutation {
+                        joinFreeBand(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[2]}",
+                                    position: VIOLIN
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                equal(body.data.joinFreeBand, true)
+            })
+        })
+        describe("Failure", () => {
+            it("Fail to join freeBand - full", async () => {
+                const query = `
+                    mutation{
+                        joinFreeBand(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[3]}",
+                                    position: VIOLIN
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token1)
+                    .send(JSON.stringify({ query }))
+                equal(body.errors[0].message, "세션이 가득찾거나 존재하지 않습니다")
+            })
+            it("Fail to join freeBand - invalid cover", async () => {
+                const query = `
+                    mutation{
+                        joinFreeBand(
+                            input: {
+                                band:{
+                                    bandId:"${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "111111111111111111111111",
+                                    position: DRUM
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "커버내역이 존재하지 않습니다")
+            })
+            it("Fail to join freeBand - user already", async () => {
+                const query = `
+                    mutation{
+                        joinFreeBand(
+                            input: {
+                                band:{
+                                    bandId:"${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[0]}",
+                                    position: DRUM
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "이미 참여한 유저입니다")
+            })
+            it("Fail to join freeBand - undefined bandId", async () => {
+                const query = `
+                    mutation{
+                        joinFreeBand(
+                            input: {
+                                band:{
+                                    bandId:"111111111111111111111111"
+                                },
+                                session: {
+                                    coverId: "${coverIds[0]}",
+                                    position: DRUM
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "밴드가 존재하지 않습니다")
             })
         })
     })

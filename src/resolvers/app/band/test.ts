@@ -391,7 +391,7 @@ describe("Band services test", () => {
                     .expect(200)
                 equal(body.errors[0].message, "이미 참여한 유저입니다")
             })
-            it("Fail to join band - undfined bandId", async () => {
+            it("Fail to join band - undefined bandId", async () => {
                 const query = `
                     mutation{
                         joinBand(

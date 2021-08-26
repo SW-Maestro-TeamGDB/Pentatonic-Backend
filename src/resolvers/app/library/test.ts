@@ -5,7 +5,6 @@ import { Db } from "mongodb"
 import DB from "config/connectDB"
 import { deepStrictEqual as equal } from "assert"
 import * as Redis from "config/connectRedis"
-import { includes } from "test/utils"
 
 const songIds: string[] = []
 const coverURI: string[] = []
