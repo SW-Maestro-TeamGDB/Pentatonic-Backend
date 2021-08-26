@@ -24,8 +24,10 @@ describe("FreeSong Service Test", () => {
             db.collection("join").deleteMany({})
         ])
     })
-    before(async () => {
+    before(async function () {
+        this.timeout(500000)
         await (async () => {
+
             await Redis.setex(phoneNumber as string, 600, "123456")
             const query = `
             mutation{
@@ -124,7 +126,8 @@ describe("FreeSong Service Test", () => {
     })
     describe("Mutation joinFreeBand", () => {
 
-        before(async () => {
+        before(async function () {
+            this.timeout(500000)
             await (async () => {
                 const query = `
                     mutation {
