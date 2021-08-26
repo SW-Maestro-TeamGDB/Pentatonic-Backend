@@ -19,7 +19,7 @@ export const denoiseFilter = async (audioURI: string) => {
             -c:a ${codec} -strict -2 -b:a 360k \
             ${filenameSplit[filenameSplit.length - 2]}.m4a -y
         `)
-        const result = await uploadS3(filename, `${filenameSplit[filenameSplit.length - 2]}-1.m4a`, "audio/wav")
+        const result = await uploadS3(`${filenameSplit[filenameSplit.length - 2]}.m4a`, `${filenameSplit[filenameSplit.length - 2]}-1.m4a`, "audio/wav")
         deleteFile(`${filenameSplit[filenameSplit.length - 2]}.m4a`)
         return result
     } catch (e) {
