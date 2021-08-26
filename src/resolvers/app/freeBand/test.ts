@@ -6,9 +6,10 @@ import { deepStrictEqual as equal } from "assert"
 import DB from "config/connectDB"
 import * as Redis from "config/connectRedis"
 
+const bandIds: string[] = []
 const songIds: string[] = []
 const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
-let token: string = ""
+let token: string = "", token1: string = ""
 
 describe("FreeSong Service Test", () => {
     after(async () => {
@@ -22,8 +23,9 @@ describe("FreeSong Service Test", () => {
         ])
     })
     before(async () => {
-        await Redis.setex(phoneNumber as string, 600, "123456")
-        const query = `
+        await (async () => {
+            await Redis.setex(phoneNumber as string, 600, "123456")
+            const query = `
             mutation{
                 register(
                     input: {
@@ -38,12 +40,38 @@ describe("FreeSong Service Test", () => {
                     }
                 )
             }`
-        const { body } = await request(app)
-            .post("/api")
-            .set("Content-Type", "application/json")
-            .send(JSON.stringify({ query }))
-            .expect(200)
-        token = body.data.register
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            token = body.data.register
+        })()
+        await (async () => {
+            await Redis.setex("+821000000000", 600, "123456")
+            const query = `
+                mutation{
+                    register(
+                        input: {
+                            user: {
+                                id: "test12345",
+                                password: "test12345",
+                                username: "test12345",
+                                type: 1
+                            },
+                            phoneNumber: "+821000000000",
+                            authCode: 123456
+                        }
+                    )
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            token1 = body.data.register
+        })()
     })
     describe("Mutation createFreeBand", () => {
         describe("Success", () => {
@@ -70,6 +98,7 @@ describe("FreeSong Service Test", () => {
                             name
                             song{
                                 name
+                                songId
                             }
                         }
                     }
@@ -82,7 +111,14 @@ describe("FreeSong Service Test", () => {
                     .expect(200)
                 equal(body.data.createFreeBand.name, "example Name")
                 equal(body.data.createFreeBand.song.name, "example Name")
+                songIds.push(body.data.createFreeBand.song.songId)
+                console.log(songIds)
             })
+        })
+    })
+    describe("Mutation joinFreeBand", () => {
+        before(async () => {
+
         })
     })
 })
