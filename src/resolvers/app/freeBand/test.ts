@@ -23,7 +23,8 @@ describe("FreeSong Service Test", () => {
             db.collection("band").deleteMany({}),
             db.collection("freeBand").deleteMany({}),
             db.collection("join").deleteMany({}),
-            db.collection("session").deleteMany({})
+            db.collection("session").deleteMany({}),
+            db.collection("like").deleteMany({})
         ])
     })
     before(async function () {
@@ -606,6 +607,124 @@ describe("FreeSong Service Test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.errors[0].message, "현재 세션에 있는 유저를 없앤뒤 다시 수정해주세요")
+            })
+        })
+    })
+    describe("Mutation leaveFreeBand", () => {
+        describe("Failure", () => {
+            it("permission error", async () => {
+                const query = `
+                    mutation{
+                        leaveFreeBand(
+                            input: {
+                                band: {
+                                    bandId:"${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[0]}"
+                                }
+                            }
+                        )
+                    } 
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token1)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "권한이 없습니다")
+            })
+            it("nonexistent session", async () => {
+                const query = `
+                    mutation{
+                        leaveFreeBand(
+                            input: {
+                                band: {
+                                    bandId: "111111111111111111111111"
+                                },
+                                session: {
+                                    coverId: "${coverIds[0]}"
+                                }
+                            }
+                        )
+                    }`
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "세션이 존재하지 않습니다")
+            })
+            it("nonexistent cover", async () => {
+                const query = `
+                    mutation{
+                        leaveFreeBand(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "111111111111111111111111"
+                                }
+                            }
+                        )
+                    }`
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "해당 커버가 존재하지 않습니다")
+            })
+        })
+        describe("Success", () => {
+            it("Successfully leave free band - 1", async () => {
+                const query = `
+                    mutation{
+                        leaveFreeBand(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[0]}"
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.leaveFreeBand, true)
+            })
+            it("Successfully leave free band - 2", async () => {
+                const query = `
+                    mutation{
+                        leaveFreeBand(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[0]}"
+                                },
+                                session: {
+                                    coverId: "${coverIds[2]}"
+                                }
+                            }
+                        )
+                    }`
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.leaveFreeBand, true)
             })
         })
     })

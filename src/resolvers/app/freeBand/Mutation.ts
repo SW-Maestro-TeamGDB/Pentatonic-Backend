@@ -5,7 +5,8 @@ import {
     SessionInformation,
     UpdateBandInput as UpdateFreeBandInput,
     UpdateBandQuery,
-    JoinBandInput as JoinFreeBandInput
+    JoinBandInput as JoinFreeBandInput,
+    OutBandInput as LeaveFreeBandInput
 } from "resolvers/app/band/models"
 import { Context } from "config/types"
 import {
@@ -131,4 +132,43 @@ export const joinFreeBand = async (parent: void, args: JoinFreeBandInput, contex
     } catch {
         throw new ApolloError("세션이 가득찾거나 존재하지 않습니다")
     }
+}
+
+export const leaveFreeBand = async (parent: void, args: LeaveFreeBandInput, context: Context) => {
+    const uid = context.user.id
+    const cover = await context.db.collection("library").findOne({
+        _id: new ObjectID(args.input.session.coverId)
+    })
+    if (cover !== null) {
+        const [session, band] = await Promise.all([
+            context.db.collection("session").findOne({
+                bandId: new ObjectID(args.input.band.bandId),
+                coverId: new ObjectID(args.input.session.coverId)
+            }),
+            context.db.collection("freeBand").findOne({
+                _id: new ObjectID(args.input.band.bandId),
+                creatorId: uid
+            })
+        ])
+        if (session !== null) {
+            if (cover.coverBy.toString() === context.user.id || band !== null) {
+                const result = await Promise.all([
+                    context.db.collection("join").deleteOne({
+                        bandId: new ObjectID(args.input.band.bandId),
+                        position: cover.position,
+                        userId: cover.coverBy
+                    }),
+                    context.db.collection("session").deleteOne({
+                        bandId: new ObjectID(args.input.band.bandId),
+                        coverId: new ObjectID(args.input.session.coverId)
+                    }).then(({ result }) => result.n === 1)
+                ])
+                return result[1]
+            }
+            throw new ApolloError("권한이 없습니다")
+        } else {
+            throw new ApolloError("세션이 존재하지 않습니다")
+        }
+    }
+    throw new ApolloError("해당 커버가 존재하지 않습니다")
 }

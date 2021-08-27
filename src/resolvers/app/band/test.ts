@@ -960,7 +960,7 @@ describe("Band services test", () => {
             })
         })
         describe("Success", () => {
-            it("Successfully out band - 1", async () => {
+            it("Successfully leave band - 1", async () => {
                 const query = `
                     mutation{
                         leaveBand(
@@ -982,7 +982,7 @@ describe("Band services test", () => {
                     .expect(200)
                 equal(body.data.leaveBand, true)
             })
-            it("Successfully out band - 2", async () => {
+            it("Successfully leave band - 2", async () => {
                 const query = `
                     mutation{
                         leaveBand(
@@ -1010,16 +1010,16 @@ describe("Band services test", () => {
         describe("Success", () => {
             it("Successfully delete band - 1", async () => {
                 const query = `
-            mutation{
-                deleteBand(
-                    input: {
-                    band: {
-                        bandId: "${bandIds[0]}"
+                    mutation{
+                        deleteBand(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[0]}"
+                                }
+                            }
+                        )
                     }
-                }
-                )
-            }
-            `
+                `
                 const { body } = await request(app)
                     .post("/api")
                     .set("Content-Type", "application/json")
@@ -1032,16 +1032,16 @@ describe("Band services test", () => {
         describe("Failure", () => {
             it("nonexistent band", async () => {
                 const query = `
-            mutation{
-                deleteBand(
-                    input: {
-                    band: {
-                        bandId: "111111111111111111111111"
+                    mutation{
+                        deleteBand(
+                            input: {
+                                band: {
+                                    bandId: "111111111111111111111111"
+                                }
+                            }
+                        )
                     }
-                }
-                )
-            }
-            `
+                `
                 const { body } = await request(app)
                     .post("/api")
                     .set("Content-Type", "application/json")
