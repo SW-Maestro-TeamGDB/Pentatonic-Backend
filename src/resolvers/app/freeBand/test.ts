@@ -728,4 +728,50 @@ describe("FreeSong Service Test", () => {
             })
         })
     })
+    describe("Mutation deleteFreeBand", () => {
+        describe("Success", () => {
+            it("Successfully delete free band - 1", async () => {
+                const query = `
+                    mutation{
+                        deleteFreeBand(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[0]}"
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.deleteFreeBand, true)
+            })
+        })
+        describe("Failure", () => {
+            it("nonexistent free band", async () => {
+                const query = `
+                    mutation{
+                        deleteFreeBand(
+                            input: {
+                                band: {
+                                    bandId: "111111111111111111111111"
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.deleteFreeBand, false)
+            })
+        })
+    })
 })

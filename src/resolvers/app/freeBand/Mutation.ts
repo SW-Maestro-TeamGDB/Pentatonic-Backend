@@ -6,7 +6,8 @@ import {
     UpdateBandInput as UpdateFreeBandInput,
     UpdateBandQuery,
     JoinBandInput as JoinFreeBandInput,
-    OutBandInput as LeaveFreeBandInput
+    OutBandInput as LeaveFreeBandInput,
+    DeleteBandInput as DeleteFreeBandInput
 } from "resolvers/app/band/models"
 import { Context } from "config/types"
 import {
@@ -171,4 +172,25 @@ export const leaveFreeBand = async (parent: void, args: LeaveFreeBandInput, cont
         }
     }
     throw new ApolloError("해당 커버가 존재하지 않습니다")
+}
+
+export const deleteFreeBand = async (parent: void, args: DeleteFreeBandInput, context: Context) => {
+    const bandDeleteResult = await context.db.collection("freeBand").deleteOne({
+        _id: new ObjectID(args.input.band.bandId),
+        creatorId: context.user.id
+    }).then(({ result }) => result.n === 1)
+    if (bandDeleteResult === true) {
+        await Promise.all([
+            context.db.collection("session").deleteMany({
+                bandId: new ObjectID(args.input.band.bandId)
+            }),
+            context.db.collection("join").deleteMany({
+                bandId: new ObjectID(args.input.band.bandId)
+            }),
+            context.db.collection("like").deleteMany({
+                bandId: new ObjectID(args.input.band.bandId)
+            })
+        ])
+    }
+    return bandDeleteResult
 }
