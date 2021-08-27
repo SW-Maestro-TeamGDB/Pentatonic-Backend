@@ -486,6 +486,10 @@ describe("FreeSong Service Test", () => {
                                     songId
                                 }
                             }
+                            likeCount
+                            creator{
+                                id
+                            }
                         }
                     }
                 `
@@ -501,6 +505,8 @@ describe("FreeSong Service Test", () => {
                         equal(x.songId, songIds[0].toString())
                     })
                 }
+                equal(body.data.updateFreeBand.likeCount, 0)
+                equal(body.data.updateFreeBand.creator.id, "test1234")
             })
         })
         describe("Failure", () => {
