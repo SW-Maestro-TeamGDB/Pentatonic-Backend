@@ -5,6 +5,7 @@ import { Db } from "mongodb"
 import { deepStrictEqual as equal } from "assert"
 import DB from "config/connectDB"
 import * as Redis from "config/connectRedis"
+import { Cover } from "resolvers/app/library/models"
 
 const bandIds: string[] = []
 const songIds: string[] = []
@@ -21,7 +22,8 @@ describe("FreeSong Service Test", () => {
             db.collection("song").deleteMany({}),
             db.collection("band").deleteMany({}),
             db.collection("freeBand").deleteMany({}),
-            db.collection("join").deleteMany({})
+            db.collection("join").deleteMany({}),
+            db.collection("session").deleteMany({})
         ])
     })
     before(async function () {
@@ -391,6 +393,213 @@ describe("FreeSong Service Test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.errors[0].message, "밴드가 존재하지 않습니다")
+            })
+        })
+    })
+    describe("Mutation updateFreeBand", () => {
+        describe("Success", () => {
+            it("Successfully Update all free band information", async () => {
+                const query = `
+                    mutation{
+                        updateFreeBand(
+                            input: {
+                                band: {
+                                    bandId:"${bandIds[0]}",
+                                    name: "자유 밴드 업데이트 테스트"
+                                }, 
+                                sessionConfig:[
+                                    {
+                                        session: DRUM,
+                                        maxMember:2
+                                    },
+                                    {
+                                        session: VIOLIN,
+                                        maxMember:1
+                                    },
+                                    {
+                                        session: KEYBOARD,
+                                        maxMember:1
+                                    }
+                                ]
+                            }
+                        ){
+                            name
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.updateFreeBand.name, "자유 밴드 업데이트 테스트")
+            })
+            it("Successfully update only free band name", async () => {
+                const query = `
+                    mutation{
+                        updateFreeBand(
+                            input: {
+                                band: {
+                                    bandId:"${bandIds[0]}",
+                                    name: "자유 밴드 업데이트 테스트 - 2"
+                                }
+                            }
+                        ){
+                            name
+                            session {
+                                position
+                                cover{
+                                    songId
+                                }
+                            }
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.updateFreeBand.name, "자유 밴드 업데이트 테스트 - 2")
+                for (const item of body.data.updateFreeBand.session) {
+                    item.cover.forEach((x: Cover) => {
+                        equal(x.songId, songIds[0].toString())
+                    })
+                }
+            })
+            it("Successfully Free Bands Not Updated", async () => {
+                const query = `
+                    mutation{
+                        updateFreeBand(
+                            input: {
+                                band: {
+                                    bandId:"${bandIds[0]}"
+                                }
+                            }
+                        ){
+                            name
+                            session {
+                                position
+                                cover{
+                                    songId
+                                }
+                            }
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.updateFreeBand.name, "자유 밴드 업데이트 테스트 - 2")
+                for (const item of body.data.updateFreeBand.session) {
+                    item.cover.forEach((x: Cover) => {
+                        equal(x.songId, songIds[0].toString())
+                    })
+                }
+            })
+        })
+        describe("Failure", () => {
+            it("Fail to update free band - invalid bandId", async () => {
+                const query = `
+                    mutation{
+                        updateFreeBand(
+                            input: {
+                                band: {
+                                    bandId:"111111111111111111111111",
+                                    name: "테스트 밴드 업데이트"
+                                }
+                            }
+                        ){
+                            name
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "권한이 없거나 밴드가 올바르지 않습니다")
+            })
+            it("Fail to update free band - permission error", async () => {
+                const query = `
+                    mutation{
+                        updateFreeBand(
+                            input: {
+                                band: {
+                                    bandId:"${bandIds[0]}",
+                                    name: "테스트 밴드 업데이트"
+                                }
+                            }
+                        ){
+                            name
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token1)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "권한이 없거나 밴드가 올바르지 않습니다")
+            })
+            it("Fail to update free band - Incorrect Session Update error - 1", async () => {
+                const query = `
+                    mutation{
+                        updateFreeBand(
+                            input: {
+                                band: {
+                                    bandId:"${bandIds[0]}",
+                                    name: "테스트 밴드 업데이트!!"
+                                }, 
+                                sessionConfig:[]
+                            }
+                        ){
+                            name
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "현재 세션에 있는 유저를 없앤뒤 다시 수정해주세요")
+            })
+            it("Fail to update free band - Incorrect Session Update error - 2", async () => {
+                const query = `
+                    mutation{
+                        updateFreeBand(
+                            input: {
+                                band: {
+                                    bandId:"${bandIds[0]}",
+                                    name: "테스트 밴드 업데이트!!"
+                                }, 
+                                sessionConfig:[{
+                                    session: DRUM,
+                                    maxMember:0
+                                }]
+                            }
+                        ){
+                            name
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "현재 세션에 있는 유저를 없앤뒤 다시 수정해주세요")
             })
         })
     })
