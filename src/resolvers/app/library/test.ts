@@ -393,6 +393,7 @@ describe("Library services test", () => {
                             }
                         ){
                             name
+                            date
                         }
                     }
                 `
@@ -402,7 +403,8 @@ describe("Library services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-
+                const nowDate = new Date().getTime()
+                equal(nowDate - new Date(body.data.queryCover[0].date).getTime() < 100000, true)
                 equal(body.data.queryCover[0].name, "Viva La Vida Drum 커버")
             })
             it("Successfully queried a cover filter type = NAME", async () => {

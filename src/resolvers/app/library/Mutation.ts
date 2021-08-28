@@ -54,6 +54,7 @@ export const uploadCover = async (parent: void, args: UploadCoverInput, context:
         songId: new ObjectID(songId),
         coverURI: coverURI.href,
         duration,
+        date: new Date(),
         position,
         coverBy
     }).then(({ ops }) => ops[0])
