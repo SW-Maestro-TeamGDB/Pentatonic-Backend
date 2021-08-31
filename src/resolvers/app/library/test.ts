@@ -417,6 +417,9 @@ describe("Library services test", () => {
                             }
                         ){
                             name
+                            song {
+                                name
+                            }
                         }
                     }
                 `
@@ -427,6 +430,7 @@ describe("Library services test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.data.queryCover[0].name, "승원이의 Viva La Vida Violin 커버 - 1")
+                equal(body.data.queryCover[0].song.name, "Viva La Vida")
             })
             it("Successfully queried a cover filter type = NAME & empty content", async () => {
                 const query = `
