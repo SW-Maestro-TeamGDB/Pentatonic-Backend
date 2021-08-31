@@ -276,7 +276,7 @@ describe("Library services test", () => {
                             input: {
                                 cover: {
                                     name: "hawawa cover",
-                                    songId: "111111111111111111111111",
+                                    songId: "${songIds[0]}",
                                     coverURI: "${env.S3_URI}/mr-1.wav",
                                     position: VOCAL
                                 }
@@ -296,6 +296,34 @@ describe("Library services test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.errors[0].message, "Error: m4a / mp3 파일만 업로드 가능합니다")
+            }).timeout(50000)
+            it("invalid songId", async () => {
+                const query = `
+                    mutation {
+                        uploadCover(
+                            input: {
+                                cover: {
+                                    name: "hawawa cover",
+                                    songId: "111111111111111111111111",
+                                    coverURI: "${env.S3_URI}/result.mp3",
+                                    position: VOCAL
+                                }
+                            }
+                        ){
+                            name
+                            songId
+                            coverURI
+                            coverId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "올바르지 않은 songId 입니다")
             }).timeout(50000)
         })
     })

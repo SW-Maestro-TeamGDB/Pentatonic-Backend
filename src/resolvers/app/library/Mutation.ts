@@ -46,6 +46,9 @@ export const uploadCover = async (parent: void, args: UploadCoverInput, context:
         getAudioDuration(coverURI.href),
         context.db.collection("song").findOne({ _id: new ObjectID(songId) })
     ])
+    if (type === null) {
+        throw new ApolloError("올바르지 않은 songId 입니다")
+    }
     if (position !== "DRUM") {
         coverURI.href = await denoiseFilter(coverURI.href) as string
     } else if (position === "DRUM" && coverURI.href.endsWith("mp3")) {
