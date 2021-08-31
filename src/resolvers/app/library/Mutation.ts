@@ -42,7 +42,10 @@ export const uploadCover = async (parent: void, args: UploadCoverInput, context:
         coverURI,
         position
     } = args.input.cover
-    const duration = await getAudioDuration(coverURI.href)
+    const [duration, type] = await Promise.all([
+        getAudioDuration(coverURI.href),
+        context.db.collection("song").findOne({ _id: new ObjectID(songId) })
+    ])
     if (position !== "DRUM") {
         coverURI.href = await denoiseFilter(coverURI.href) as string
     } else if (position === "DRUM" && coverURI.href.endsWith("mp3")) {
@@ -56,7 +59,8 @@ export const uploadCover = async (parent: void, args: UploadCoverInput, context:
         duration,
         date: new Date(),
         position,
-        coverBy
+        coverBy,
+        isFreeSong: type.isFreeSong === true
     }).then(({ ops }) => ops[0])
 }
 
