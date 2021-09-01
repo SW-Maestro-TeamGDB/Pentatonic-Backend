@@ -166,6 +166,8 @@ extend type Query{
     likeStatus(
         bandId: ObjectID!
     ): Boolean
+
+    getRankedBands: [Band!]
 }
 input LikeInput {
     band: JoinBandArgsInput!
