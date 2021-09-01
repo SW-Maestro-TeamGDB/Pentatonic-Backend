@@ -115,7 +115,7 @@ describe("Follow Service Test", () => {
             })
         })
         describe("Failure", () => {
-            it("Fail to follow", async () => {
+            it("If you follow yourself", async () => {
                 const query = `
                     mutation {
                         follow(
@@ -132,6 +132,24 @@ describe("Follow Service Test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.errors[0].message, "자기 자신을 팔로잉할 수 없습니다")
+            })
+            it("If you follow someone who doesn't have one", async () => {
+                const query = `
+                    mutation {
+                        follow(
+                            input: {
+                                following: "hawawa"
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token1)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "존재하지 않는 유저입니다")
             })
         })
     })
