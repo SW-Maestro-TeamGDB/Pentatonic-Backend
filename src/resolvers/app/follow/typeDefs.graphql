@@ -17,4 +17,5 @@ extend type User {
 extend type Query {
     getFollowerList(userId: Id!): [UserLink!]
     getFollowingList(userId: Id!): [UserLink!]
+    getRankedUser: [User!]
 }
