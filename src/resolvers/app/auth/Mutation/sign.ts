@@ -17,6 +17,7 @@ import {
 } from "resolvers/app/auth/models"
 import { isValidId, isValidUsername } from "resolvers/app/auth/Query"
 import { Context } from "config/types"
+import { DynamoDBCustomizations } from "aws-sdk/lib/services/dynamodb"
 
 export const sendAuthCode = async (parent: void, args: SendAuthCodeInput, context: Context) => {
     const { phoneNumber } = args.input
@@ -122,5 +123,10 @@ export const deleteAccount = async (parent: void, args: DeleteAccountInput, cont
     if (checkPassword(password, result.hash) === false) {
         throw new ApolloError("비밀번호가 올바르지 않습니다")
     }
-    return db.collection("user").deleteOne({ id: user.id }).then(({ result }) => result.n === 1)
+    const deleteUser = await Promise.all([
+        db.collection("user").deleteOne({ id: user.id }),
+        db.collection("follow").deleteMany({ userId: user.id }),
+        db.collection("follow").deleteMany({ following: user.id })
+    ])
+    return deleteUser[0].result.n === 1
 }
