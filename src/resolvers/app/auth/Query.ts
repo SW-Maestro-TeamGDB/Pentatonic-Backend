@@ -67,10 +67,10 @@ export const getRankedUser = async (parent: void, args: void, context: Context) 
             $sort: { count: -1 }
         }
     ]).limit(100).toArray()
-    const userIds = followCounts.map((x) => x.following)
+    const userIds = followCounts.map(({ _id }) => _id)
     const users = await context.db.collection("user").find({ id: { $in: userIds } }).toArray()
     const mp = followCounts.reduce((acc, cur, index) => {
-        acc[cur.following] = index
+        acc[cur._id] = index
         return acc
     }, {})
     return users.sort((a, b) => mp[a.id] - mp[b.id])
