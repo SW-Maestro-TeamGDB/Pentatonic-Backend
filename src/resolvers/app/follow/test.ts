@@ -244,5 +244,26 @@ describe("Follow Service Test", () => {
             equal(body.data.getUserInfo.followerCount, 1)
             equal(body.data.getUserInfo.followingStatus, true)
         })
+        it("Getting user's follow-related information - 3 (empty authorization headers)", async () => {
+            const query = `
+                query{
+                    getUserInfo(
+                        userId: "test1234"
+                    ){
+                        followingCount
+                        followerCount
+                        followingStatus
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getUserInfo.followingCount, 0)
+            equal(body.data.getUserInfo.followerCount, 1)
+            equal(body.data.getUserInfo.followingStatus, null)
+        })
     })
 })
