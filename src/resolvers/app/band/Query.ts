@@ -29,7 +29,7 @@ export const likeStatus = (parent: void, args: LikeStatusInput, context: Context
         userId: context.user.id
     }).count().then(x => x === 1)
 
-export const getRankedBands = async (parent: void, args: any, context: Context) => {
+export const getRankedBands = async (parent: void, args: void, context: Context) => {
     const likeCounts = await context.db.collection("like").aggregate([
         {
             $group: {
@@ -40,11 +40,11 @@ export const getRankedBands = async (parent: void, args: any, context: Context) 
         {
             $sort: { count: -1 }
         }
-    ]).toArray()
+    ]).limit(100).toArray()
     const bandIds = likeCounts.map(x => x._id)
     const [bands, freeBands] = await Promise.all([
-        context.db.collection("band").find({ _id: { $in: bandIds } }).limit(100).toArray(),
-        context.db.collection("freeBand").find({ _id: { $in: bandIds } }).limit(100).toArray()
+        context.db.collection("band").find({ _id: { $in: bandIds } }).toArray(),
+        context.db.collection("freeBand").find({ _id: { $in: bandIds } }).toArray()
     ])
     const mp = likeCounts.reduce((acc, cur, index) => {
         acc[cur._id.toString()] = index

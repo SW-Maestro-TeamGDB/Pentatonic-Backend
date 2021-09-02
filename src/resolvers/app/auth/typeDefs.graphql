@@ -80,6 +80,8 @@ type Query{
         phoneNumber: PhoneNumber!,
         authCode: Int!
     ): Boolean!
+
+    getRankedUser: [User!]
 }
 
 """
