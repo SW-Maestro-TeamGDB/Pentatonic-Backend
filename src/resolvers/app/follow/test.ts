@@ -266,4 +266,47 @@ describe("Follow Service Test", () => {
             equal(body.data.getUserInfo.followingStatus, null)
         })
     })
+    describe("Query getRankedUser", () => {
+        before(async () => {
+            await (async () => {
+                const query = `
+                    mutation {
+                        follow(
+                            input: {
+                                following: "user1234"
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token1)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.follow, true)
+            })()
+        })
+        it("Gets the ranking of users", async () => {
+            const query = `
+                query{
+                    getRankedUser{
+                        followingCount
+                        followerCount
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getRankedUser.length, 2)
+            for (const user of body.data.getRankedUser) {
+                equal(user.followingCount, 1)
+                equal(user.followerCount, 1)
+            }
+        })
+    })
 })
