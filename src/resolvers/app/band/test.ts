@@ -213,7 +213,7 @@ describe("Band services test", () => {
     })
     describe("Mutation createBand", () => {
         describe("Success", () => {
-            it("Successfully create band", async () => {
+            it("Successfully create band - 1", async () => {
                 const query = `
                     mutation{
                         createBand(
@@ -258,6 +258,58 @@ describe("Band services test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.data.createBand.name, "테스트 밴드입니다 >.<")
+                equal(body.data.createBand.song.name, "Viva La Vida")
+                equal(body.data.createBand.song.songId, songIds[0])
+                equal(body.data.createBand.session[0].position, "DRUM")
+                equal(body.data.createBand.creator.username, "pukuba")
+                equal(body.data.createBand.creator.id, "user1234")
+                bandIds.push(body.data.createBand.bandId)
+            })
+            it("Successfully create band - 1", async () => {
+                const query = `
+                    mutation{
+                        createBand(
+                            input: {
+                                band: {
+                                    songId:"${songIds[0]}",
+                                    introduce:"test band - 2",
+                                    name:"test band - 2"
+                                },
+                                sessionConfig:[
+                                    {
+                                        session: DRUM,
+                                        maxMember:1
+                                    },
+                                    {
+                                        session: VIOLIN,
+                                        maxMember:2
+                                    }
+                                ]
+                            }
+                        ){
+                            bandId
+                            name
+                            song{
+                                name
+                                songId
+                            }
+                            session{
+                                position
+                            }
+                            creator{
+                                username
+                                id
+                            }
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.createBand.name, "test band - 2")
                 equal(body.data.createBand.song.name, "Viva La Vida")
                 equal(body.data.createBand.song.songId, songIds[0])
                 equal(body.data.createBand.session[0].position, "DRUM")
@@ -685,6 +737,26 @@ describe("Band services test", () => {
                     .expect(200)
                 equal(body.data.like, true)
             })
+            it("If you like it normally - 3", async () => {
+                const query = `
+                    mutation{
+                        like(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[1]}"
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token1)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.like, true)
+            })
             it("If you normally cancel the good - 1", async () => {
                 const query = `
                     mutation{
@@ -725,7 +797,7 @@ describe("Band services test", () => {
                 .set("Content-Type", "application/json")
                 .send(JSON.stringify({ query }))
                 .expect(200)
-            equal(body.data.queryBand[0].name.includes("테스트 밴드"), true)
+            equal(body.data.queryBand[0].name.includes("test"), true)
         })
         it("Searching by Band creator & sort DATE_ASC", async () => {
             const query = `
@@ -1004,6 +1076,29 @@ describe("Band services test", () => {
                     .expect(200)
                 equal(body.data.leaveBand, true)
             })
+        })
+    })
+    describe("Query getRankedBands", () => {
+        it("Successfully get ranked bands", async () => {
+            const query = `
+                query{
+                    getRankedBands{
+                        name
+                        likeCount
+                        bandId
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getRankedBands.length, 2)
+            equal(body.data.getRankedBands[0].bandId, bandIds[0])
+            equal(body.data.getRankedBands[0].name, "테스트 밴드 업데이트!!")
+            equal(body.data.getRankedBands[0].likeCount, 1)
         })
     })
     describe("Mutation deleteBand", () => {
