@@ -1083,9 +1083,7 @@ describe("Band services test", () => {
             const query = `
                 query{
                     getRankedBands{
-                        name
                         likeCount
-                        bandId
                     }
                 }
             `
@@ -1096,9 +1094,8 @@ describe("Band services test", () => {
                 .send(JSON.stringify({ query }))
                 .expect(200)
             equal(body.data.getRankedBands.length, 2)
-            equal(body.data.getRankedBands[0].bandId, bandIds[0])
-            equal(body.data.getRankedBands[0].name, "테스트 밴드 업데이트!!")
             equal(body.data.getRankedBands[0].likeCount, 1)
+            equal(body.data.getRankedBands[1].likeCount, 1)
         })
     })
     describe("Mutation deleteBand", () => {
