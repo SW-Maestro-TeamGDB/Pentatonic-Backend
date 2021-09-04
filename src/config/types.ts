@@ -16,6 +16,9 @@ interface Loaders {
         sessionsLoader: DataLoader<ObjectID, any, ObjectID>
         bandsLoader: DataLoader<ObjectID, any, ObjectID>
         likeCountsLoader: DataLoader<ObjectID, any, ObjectID>
+        followerLoader: DataLoader<string, any, string>
+        followingLoader: DataLoader<string, any, string>
+        followingStatusLoader: DataLoader<string, any, string>
     }
 }
 

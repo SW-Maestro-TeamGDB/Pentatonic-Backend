@@ -906,7 +906,7 @@ describe("Band services test", () => {
         it("If you normally bring my information", async () => {
             const query = `
                 query{
-                    getUserInfo{
+                    getUserInfo(userId:"user1234"){
                         id
                         username
                         band{

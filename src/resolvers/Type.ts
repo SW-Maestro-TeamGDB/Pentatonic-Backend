@@ -66,6 +66,10 @@ export const User = {
     }
 }
 
+export const UserLink = {
+    followerCount: (parent: UserInterface, args: void, context: Context) => context.loaders.followerLoader.load(parent.id),
+    followingCount: (parent: UserInterface, args: void, context: Context) => context.loaders.followingLoader.load(parent.id)
+}
 export const BandLink = {
     bandId: (parent: BandInterface) => parent._id,
     likeCount: (parent: BandInterface, args: void, context: Context) => context.loaders.likeCountsLoader.load(parent._id)
@@ -88,9 +92,6 @@ export const FreeBand = {
     likeCount: (parent: BandInterface, args: void, context: Context) => context.loaders.likeCountsLoader.load(parent._id)
 }
 
-// export const UserLink = {
-//     userId: (parent: UserInterface) => parent.id
-// }
 
 export const Instrument = {
     instId: (parent: InstrumentInterface) => parent._id
@@ -108,5 +109,4 @@ export const Band = {
     session: (parent: BandInterface, args: void, context: Context) => context.loaders.sessionsLoader.load(parent._id),
     creator: (parent: BandInterface, args: void, context: Context) => context.loaders.userLoader1.load(parent.creatorId),
     likeCount: (parent: BandInterface, args: void, context: Context) => context.loaders.likeCountsLoader.load(parent._id)
-
 }

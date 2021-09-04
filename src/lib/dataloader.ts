@@ -93,6 +93,45 @@ const batchLoadLikeCountFn = async (bandIds: readonly ObjectID[]) => {
     data.forEach(({ bandId }) => resultArr[mp.get(bandId.toString())]++)
     return resultArr
 }
+
+const batchLoadFollowerCount = async (userIds: readonly string[]) => {
+    const mp = new Map(), resultArr = Array.from(Array(userIds.length), () => 0)
+    userIds.forEach((x, idx) => mp.set(x, idx))
+    const db = await DB.get() as Db
+    await db.collection("follow").aggregate([
+        { $match: { following: { $in: userIds } } },
+        { $group: { _id: "$following", count: { $sum: 1 } } }
+    ]).toArray().then(x => x.forEach(({ _id, count }) => resultArr[mp.get(_id)] = count))
+    return resultArr
+}
+
+const batchLoadFollowingCount = async (userIds: readonly string[]) => {
+    const mp = new Map(), resultArr = Array.from(Array(userIds.length), () => 0)
+    userIds.forEach((x, idx) => mp.set(x, idx))
+    const db = await DB.get() as Db
+    await db.collection("follow").aggregate([
+        { $match: { userId: { $in: userIds } } },
+        { $group: { _id: "$userId", count: { $sum: 1 } } }
+    ]).toArray().then(x => x.forEach(u => resultArr[mp.get(u._id)] = u.count))
+    return resultArr
+}
+
+// const batchLoadFollowingStatus = async (userIds: readonly string[]) => {
+//     const mp = new Map(), resultArr = Array.from(Array(userIds.length), () => false)
+//     userIds.forEach((x, idx) => mp.set(x, idx))
+//     const db = await DB.get() as Db
+//     await db.collection("follow").aggregate([
+//         { $match: { userId: { $in: userIds } } },
+//         { $group: { _id: "$userId", count: { $sum: 1 } } }
+//     ]).toArray().then(x => x.forEach(({ _id, count }) => resultArr[mp.get(_id)] = count !== 0))
+//     return resultArr
+// }
+
+// export const followingStatusLoader = new DataLoader(batchLoadFollowingStatus)
+
+export const followingLoader = new DataLoader(batchLoadFollowingCount)
+
+export const followerLoader = new DataLoader(batchLoadFollowerCount)
 export const userLoader1 = new DataLoader(batchLoadUserFn1)
 export const songsLoader = new DataLoader(batchLoadSongFn)
 export const instrumentsLoader = new DataLoader(batchLoadInstrumentFn)

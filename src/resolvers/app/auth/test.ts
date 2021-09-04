@@ -1066,7 +1066,7 @@ describe("User auth service test", () => {
             it("If you bring my personal information normally", async () => {
                 const query = `
                     query{
-                        getUserInfo{
+                        getUserInfo(userId:"test1234"){
                             id
                             username
                             type
@@ -1080,24 +1080,6 @@ describe("User auth service test", () => {
                 equal(body.data.getUserInfo.id, "test1234")
                 equal(body.data.getUserInfo.username, "SeungWon")
                 equal(body.data.getUserInfo.type, 3)
-            })
-        })
-        describe("Failure", () => {
-            it("If the token is not delivered normally", async () => {
-                const query = `
-                    query{
-                        getUserInfo{
-                            id
-                            username
-                            type
-                        }
-                    }
-                `
-                const { body } = await request(app)
-                    .get(`/api?query=${query}`)
-                    .set({ "Authorization": "12321232123212321" })
-                    .expect(200)
-                console.log(body.errors[0].message, "Authorization Error")
             })
         })
     })

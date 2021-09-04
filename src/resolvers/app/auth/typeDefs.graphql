@@ -60,7 +60,7 @@ type Mutation{
 type Query{
     """유저의 정보를 가져옵니다"""
     getUserInfo(
-        userId: Id
+        userId: Id!
     ): User
 
     findId(

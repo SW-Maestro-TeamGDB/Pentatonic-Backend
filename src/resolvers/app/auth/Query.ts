@@ -45,7 +45,7 @@ export const findId = async (parent: void, args: FindIdInput, context: Context) 
 }
 
 export const getUserInfo = (parent: void, args: GetUserInfoInput, context: Context) =>
-    context.db.collection("user").findOne({ id: args.userId || context.user.id })
+    context.db.collection("user").findOne({ id: args.userId })
 
 
 
