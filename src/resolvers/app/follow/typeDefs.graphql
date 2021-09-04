@@ -14,8 +14,14 @@ extend type User {
     followingStatus: Boolean
 }
 
+extend type UserLink {
+    followerCount: Int!
+    followingCount: Int!
+    followingStatus: Boolean
+}
+
 extend type Query {
     getFollowerList(userId: Id!): [UserLink!]
     getFollowingList(userId: Id!): [UserLink!]
-    getRankedUser: [User!]
+    getRankedUser: [UserLink!]
 }

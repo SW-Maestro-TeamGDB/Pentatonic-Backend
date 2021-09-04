@@ -82,10 +82,20 @@ type Query{
     ): Boolean!
 }
 
+interface IUser {
+    id: Id!
+    username: Username!
+    profileURI: URL!
+    phoneNumber: PhoneNumber!
+    prime: Boolean!
+    introduce: String!
+    type: Int!
+}
+
 """
 유저의 개인 정보 입니다
 """
-type User {
+type User implements IUser {
     "아이디"
     id: Id!
     "유저 네임"
@@ -102,6 +112,12 @@ type User {
     type: Int!
     band: [BandLink!]!
     library: [Cover!]
+    # position: [PositionRank]
+}
+
+type PositionRank {
+    position: String!
+    likeCount: Int!
 }
 
 """
