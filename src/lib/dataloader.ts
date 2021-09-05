@@ -6,6 +6,7 @@ import { Band, Session, BatchSesssion, SessionInformation } from "resolvers/app/
 import { ObjectID, Db } from "mongodb"
 import { sessionMap } from "config/init"
 import { snakeToCamel, camelToSnake } from "lib"
+import { PositionRank } from "lib/models"
 
 
 const batchLoadInstrumentFn = async (songIds: readonly ObjectID[]) => {
@@ -117,6 +118,52 @@ const batchLoadFollowingCount = async (userIds: readonly string[]) => {
     return resultArr
 }
 
+const batchLoadPosition = async (userIds: readonly string[]) => {
+    const resultArr = Array.from(Array(userIds.length), () => []) as PositionRank[][], db = await DB.get() as Db
+    const uIdMapping = userIds.reduce((acc, cur, idx) => {
+        acc[cur] = idx
+        return acc
+    }, {} as { [key: string]: number })
+    const joinData = await db.collection("join").find({ userId: { $in: userIds } }).toArray()
+    const bandIdObjectId = [...joinData.reduce((acc, cur) => {
+        acc.add(cur.bandId.toString())
+        return acc
+    }, new Set())].map(id => new ObjectID(id))
+    const likeCount = await db.collection("like").aggregate([
+        { $match: { bandId: { $in: bandIdObjectId } } },
+        { $group: { _id: "$bandId", count: { $sum: 1 } } }
+    ]).toArray().then(x => {
+        return x.reduce((acc, cur) => {
+            acc[cur._id.toString()] = cur.count
+            return acc
+        }, {})
+    })
+    const positionMap = new Map<string, Map<string, number>>()
+    for (const item of joinData) {
+        if (likeCount[item.bandId.toString()] === undefined) continue
+        const idx = uIdMapping[item.userId], arrLen = resultArr[idx].length, pMap = positionMap.get(item.userId)
+        if (pMap === undefined) {
+            positionMap.set(item.userId, new Map([[item.position, 0]]))
+            resultArr[idx][arrLen] = {
+                position: item.position,
+                likeCount: likeCount[item.bandId.toString()]
+            }
+        }
+        else if (pMap.get(item.position) === undefined) {
+            pMap.set(item.position, arrLen)
+            positionMap.set(item.userId, pMap)
+            resultArr[idx][arrLen] = {
+                position: item.position,
+                likeCount: likeCount[item.bandId.toString()]
+            }
+        }
+        else {
+            resultArr[idx][pMap.get(item.position) as number]["likeCount"] += likeCount[item.bandId.toString()]
+        }
+    }
+    return resultArr.map((userInfo) => userInfo.sort((a, b) => b.likeCount - a.likeCount))
+}
+
 // const batchLoadFollowingStatus = async (userIds: readonly string[]) => {
 //     const mp = new Map(), resultArr = Array.from(Array(userIds.length), () => false)
 //     userIds.forEach((x, idx) => mp.set(x, idx))
@@ -130,8 +177,9 @@ const batchLoadFollowingCount = async (userIds: readonly string[]) => {
 
 // export const followingStatusLoader = new DataLoader(batchLoadFollowingStatus)
 
-export const followingLoader = new DataLoader(batchLoadFollowingCount, { cache: false })
+export const positionLoader = new DataLoader(batchLoadPosition)
 
+export const followingLoader = new DataLoader(batchLoadFollowingCount, { cache: false })
 export const followerLoader = new DataLoader(batchLoadFollowerCount, { cache: false })
 export const userLoader1 = new DataLoader(batchLoadUserFn1)
 export const songsLoader = new DataLoader(batchLoadSongFn)

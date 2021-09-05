@@ -20,6 +20,7 @@ interface Loaders {
         followerLoader: DataLoader<string, any, string>
         followingLoader: DataLoader<string, any, string>
         followingStatusLoader: DataLoader<string, any, string>
+        positionLoader: DataLoader<string, any, string>
     }
 }
 export interface Redis {

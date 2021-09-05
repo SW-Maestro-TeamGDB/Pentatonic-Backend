@@ -63,7 +63,8 @@ export const User = {
             userId: context.user.id,
             following: parent.id
         }).count().then(x => x === 1)
-    }
+    },
+    position: (parent: UserInterface, args: void, context: Context) => context.loaders.positionLoader.load(parent.id),
 }
 
 export const UserLink = {

@@ -112,7 +112,7 @@ type User implements IUser {
     type: Int!
     band: [BandLink!]!
     library: [Cover!]
-    # position: [PositionRank]
+    position: [PositionRank]
 }
 
 type PositionRank {
