@@ -81,6 +81,7 @@ const batchLoadBandFn = async (songIds: readonly ObjectID[]) => {
         const idx = mp.get(x.songId.toString())
         resultArr[idx].push(x)
     })
+    bandsLoader.clearAll()
     return resultArr
 }
 
@@ -129,9 +130,9 @@ const batchLoadFollowingCount = async (userIds: readonly string[]) => {
 
 // export const followingStatusLoader = new DataLoader(batchLoadFollowingStatus)
 
-export const followingLoader = new DataLoader(batchLoadFollowingCount)
+export const followingLoader = new DataLoader(batchLoadFollowingCount, { cache: false })
 
-export const followerLoader = new DataLoader(batchLoadFollowerCount)
+export const followerLoader = new DataLoader(batchLoadFollowerCount, { cache: false })
 export const userLoader1 = new DataLoader(batchLoadUserFn1)
 export const songsLoader = new DataLoader(batchLoadSongFn)
 export const instrumentsLoader = new DataLoader(batchLoadInstrumentFn)
@@ -140,4 +141,4 @@ export const bandsLoader = new DataLoader(batchLoadBandFn)
 
 export const sessionsLoader = new DataLoader(batchLoadSessionFn)
 
-export const likeCountsLoader = new DataLoader(batchLoadLikeCountFn)
+export const likeCountsLoader = new DataLoader(batchLoadLikeCountFn, { cache: false })

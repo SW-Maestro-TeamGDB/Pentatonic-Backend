@@ -1,13 +1,14 @@
 import { ReadStream } from "fs"
 import { Db, ObjectID } from "mongodb"
 import DataLoader from "dataloader"
+import * as loaders from "lib/dataloader"
+
 export interface File {
     filename: string
     mimetype: string
     encoding: string
     createReadStream: () => ReadStream
 }
-
 interface Loaders {
     loaders: {
         instrumentsLoader: DataLoader<ObjectID, any, ObjectID>
@@ -21,7 +22,6 @@ interface Loaders {
         followingStatusLoader: DataLoader<string, any, string>
     }
 }
-
 export interface Redis {
     get(arg1: string): Promise<string | null>
     setex(args1: string, args2: number, args3: string | number): Promise<string>
@@ -31,6 +31,7 @@ export interface Redis {
 export interface JWTUser {
     id: string
 }
+
 
 export interface Context extends Loaders {
     user: JWTUser
