@@ -962,6 +962,31 @@ describe("Band services test", () => {
             equal(body.data.getUserInfo.library, null)
         })
     })
+    describe("Query getUserInfo & get position information", () => {
+        it("Successfully getUserInfo band position - 1", async () => {
+            const query = `
+                query{
+                    getUserInfo(userId:"user1234"){
+                        position{
+                            position
+                            likeCount
+                        }
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getUserInfo.position.length, 2)
+            equal(body.data.getUserInfo.position[0].position, "DRUM")
+            equal(body.data.getUserInfo.position[0].likeCount, 1)
+            equal(body.data.getUserInfo.position[1].position, "VIOLIN")
+            equal(body.data.getUserInfo.position[1].likeCount, 1)
+        })
+    })
     describe("Mutation leaveBand", () => {
         describe("Failure", () => {
             it("permission error", async () => {
