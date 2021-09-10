@@ -135,10 +135,6 @@ extend type Mutation {
     deleteBand(
         input: DeleteBandInput!
     ): Boolean
-
-    like(
-        input: LikeInput!
-    ): Boolean
 }
 
 
@@ -163,12 +159,5 @@ extend type Query{
         bandId: ObjectID!
     ): Band
 
-    likeStatus(
-        bandId: ObjectID!
-    ): Boolean
-
     getRankedBands: [Band!]
-}
-input LikeInput {
-    band: JoinBandArgsInput!
 }

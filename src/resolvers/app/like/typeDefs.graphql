@@ -1,0 +1,15 @@
+extend type Query {
+    likeStatus(
+        bandId: ObjectID!
+    ): Boolean
+}
+
+input LikeInput {
+    band: JoinBandArgsInput!
+}
+
+extend type Mutation {
+    like(
+        input: LikeInput!
+    ): Boolean
+}
