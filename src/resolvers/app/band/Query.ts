@@ -1,6 +1,5 @@
 import { Context } from "config/types"
 import {
-    LikeStatusInput,
     QueryBandInput,
     BandQuery,
     GetBandInput
@@ -22,12 +21,6 @@ export const queryBand = (parent: void, args: QueryBandInput, context: Context) 
 
 export const getBand = (parent: void, args: GetBandInput, context: Context) =>
     context.db.collection("band").findOne({ _id: new ObjectID(args.bandId) })
-
-export const likeStatus = (parent: void, args: LikeStatusInput, context: Context) =>
-    context.db.collection("like").find({
-        bandId: new ObjectID(args.bandId),
-        userId: context.user.id
-    }).count().then(x => x === 1)
 
 export const getRankedBands = async (parent: void, args: void, context: Context) => {
     const likeCounts = await context.db.collection("like").aggregate([
