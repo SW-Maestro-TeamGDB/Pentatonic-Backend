@@ -77,7 +77,8 @@ describe("Like services test", () => {
             introduce: "demo",
             songId: insertedId,
             sessions: {
-                durm: 1
+                durm: 1,
+                violin: 1
             },
             backGroundURI: "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg",
             creatorId: "user1234",
@@ -104,6 +105,14 @@ describe("Like services test", () => {
             position: "DRUM",
             coverBy: "user1234"
         })
+        const lib1 = await db.collection("library").insertOne({
+            name: "자유곡업로드테스트",
+            songId: insertedId,
+            coverURI: `${env.S3_URI}/result.mp3`,
+            duration: 222.302041,
+            position: "VIOLIN",
+            coverBy: "user1234"
+        })
         await db.collection("join").insertOne({
             bandId: band1.insertedId,
             position: "DRUM",
@@ -114,15 +123,25 @@ describe("Like services test", () => {
             position: "DRUM",
             userId: "user1234"
         })
+        await db.collection("join").insertOne({
+            bandId: band1.insertedId,
+            position: "VIOLIN",
+            userId: "user1234"
+        })
         await db.collection("session").insertOne({
             bandId: band1.insertedId,
             position: "DRUM",
-            coverID: lib.insertedId,
+            coverId: lib.insertedId,
         })
         await db.collection("session").insertOne({
             bandId: band2.insertedId,
             position: "DRUM",
-            coverID: lib.insertedId,
+            coverId: lib.insertedId,
+        })
+        await db.collection("session").insertOne({
+            bandId: band1.insertedId,
+            position: "VIOLIN",
+            coverId: lib1.insertedId,
         })
     })
     describe("Mutation like", () => {
@@ -266,6 +285,28 @@ describe("Like services test", () => {
             equal(body.data.getRankedBands.length, 2)
             equal(body.data.getRankedBands[0].likeCount, 2)
             equal(body.data.getRankedBands[1].likeCount, 1)
+        })
+    })
+    describe("Query getUserInfo", () => {
+        it("get userinfo with position", async () => {
+            const query = `
+                query{ 
+                    getUserInfo(userId:"user1234"){
+                        position{ 
+                            position
+                            likeCount
+                        }
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getUserInfo.position[0].position, "DRUM")
+            equal(body.data.getUserInfo.position[1].position, "VIOLIN")
         })
     })
 })
