@@ -4,7 +4,6 @@ import fetch from "node-fetch"
 import env from "config/env"
 import { Db } from "mongodb"
 import { deepStrictEqual as equal } from "assert"
-import { Band } from "resolvers/app/band/models"
 import DB from "config/connectDB"
 const fileUpload = (query: string, variables: { [x: string]: string }) => {
     const map = Object.assign({}, Object.keys(variables).map(key => [`variables.${key}`]))
