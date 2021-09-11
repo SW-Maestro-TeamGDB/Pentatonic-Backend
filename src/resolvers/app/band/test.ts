@@ -1013,26 +1013,6 @@ describe("Band services test", () => {
             })
         })
     })
-    describe("Query getRankedBands", () => {
-        it("Successfully get ranked bands", async () => {
-            const query = `
-                query{
-                    getRankedBands{
-                        likeCount
-                    }
-                }
-            `
-            const { body } = await request(app)
-                .post("/api")
-                .set("Content-Type", "application/json")
-                .set("Authorization", token)
-                .send(JSON.stringify({ query }))
-                .expect(200)
-            equal(body.data.getRankedBands.length, 2)
-            equal(body.data.getRankedBands[0].likeCount, 1)
-            equal(body.data.getRankedBands[1].likeCount, 1)
-        })
-    })
     describe("Mutation deleteBand", () => {
         describe("Success", () => {
             it("Successfully delete band - 1", async () => {
