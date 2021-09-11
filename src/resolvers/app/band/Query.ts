@@ -43,5 +43,5 @@ export const getRankedBands = async (parent: void, args: void, context: Context)
         acc[cur._id.toString()] = index
         return acc
     }, {})
-    return bands.concat(freeBands).sort((a, b) => mp[b._id.toString()] - mp[a._id.toString()]).slice(0, 99)
+    return bands.concat(freeBands).sort((a, b) => mp[a._id.toString()] - mp[b._id.toString()]).slice(0, 99)
 }
