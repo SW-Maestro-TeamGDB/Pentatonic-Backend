@@ -6,23 +6,24 @@ import { Redis } from "config/types"
 import env from "config/env"
 
 const canSend = rule()(async (parent: void, args: void, { redis, ip }: { redis: Redis, ip: string }) => {
-    const result = await redis.get(`canSend-${ip}`)
-    if (result === null) {
-        await redis.setex(`canSend-${ip}`, 60, `[${Date.now()},1]`)
+    const latestData = await redis.get(`canSend-${ip}`), now = Date.now()
+    if (latestData === null) {
+        await redis.setex(`canSend-${ip}`, 60, `[${now},1]`)
         return true
     }
-    const data = JSON.parse(result)
-    if (Date.now() - parseInt(data[0], 10) <= 1000 * 60) {
-        const t = parseInt(data[1], 10)
-        if (t < 5) {
-            await redis.setex(`canSend-${ip}`, 60, `[${data[0]},${t + 1}]`)
+    const [date, count] = JSON.parse(latestData).map((e: string) => parseInt(e, 10))
+    if (now - date <= 1000 * 60) {
+        if (count < 5) {
+            await redis.setex(`canSend-${ip}`, 60, `[${date},${count + 1}]`)
             return true
         } else {
             return new ApolloError("잠시 뒤에 시도해주세요")
         }
     }
-    await redis.setex(`canSend-${ip}`, 60, `[${Date.now()},1]`)
-    return true
+    else {
+        await redis.setex(`canSend-${ip}`, 60, `[${now},1]`)
+        return true
+    }
 })
 const isLogin = rule()(async (parent: void, args: void, { user, db }: { user: JWTUser, db: Db }) => {
     if (user === null) {
