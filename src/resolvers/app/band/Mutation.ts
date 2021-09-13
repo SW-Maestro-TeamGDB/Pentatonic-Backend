@@ -179,6 +179,9 @@ export const deleteBand = async (parent: void, args: DeleteBandInput, context: C
             }),
             context.db.collection("like").deleteMany({
                 bandId: new ObjectID(args.input.band.bandId)
+            }),
+            context.db.collection("comment").deleteMany({
+                bandId: new ObjectID(args.input.band.bandId)
             })
         ])
     }
