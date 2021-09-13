@@ -142,6 +142,7 @@ enum BandFilter{
     NAME
     INTRODUCE
     CREATOR_ID
+    ALL
 }
 
 input QueryBandInput {

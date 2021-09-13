@@ -2,7 +2,8 @@ import { Context } from "config/types"
 import {
     QueryBandInput,
     BandQuery,
-    GetBandInput
+    GetBandInput,
+    DefaultBandQuery
 } from "resolvers/app/band/models"
 import { snakeToCamel } from "lib"
 import { ObjectID } from "mongodb"
@@ -10,11 +11,16 @@ import { ObjectID } from "mongodb"
 export const queryBand = (parent: void, args: QueryBandInput, context: Context) => {
     const { type, content, sort } = args.filter
     const _id = sort === "DATE_ASC" ? 1 : -1
-    const query: BandQuery = {
-        [snakeToCamel(type)]: {
-            $regex: new RegExp(content || "", "ig"),
+    const text = new RegExp(content || "", "ig")
+    const query: BandQuery | DefaultBandQuery = type !== "ALL"
+        ? { [snakeToCamel(type)]: { $regex: text } }
+        : {
+            $or: [
+                { "creatorId": { $regex: text } },
+                { "introduce": { $regex: text } },
+                { "name": { $regex: text } }
+            ]
         }
-    }
     return context.db.collection("band").find(query).sort({ _id }).toArray()
 
 }

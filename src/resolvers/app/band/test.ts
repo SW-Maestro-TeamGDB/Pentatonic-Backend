@@ -757,6 +757,28 @@ describe("Band services test", () => {
                 .expect(200)
             equal(body.data.queryBand[0].name, "테스트 밴드 업데이트!!")
         })
+        it("Searching by Band ALL information", async () => {
+            const query = `
+                query{
+                    queryBand(
+                        filter: {
+                            type: ALL,
+                            content: "test"
+                        }
+                    ){
+                        name
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            console.log(body.data.queryBand)
+            equal(body.data.queryBand[0].name, "test band - 2")
+            equal(body.data.queryBand[0].name, "테스트 밴드 업데이트!!")
+        })
     })
     describe("Query likeStatus", () => {
         it("Get the band likeStatus", async () => {

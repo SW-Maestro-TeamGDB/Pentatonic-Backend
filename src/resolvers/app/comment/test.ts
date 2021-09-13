@@ -128,7 +128,7 @@ describe("Comment services test", () => {
                     .set("Content-Type", "application/json")
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
-                    .equal(200)
+                    .expect(200)
                 equal(body.data.createComment.content, "test")
                 equal(body.data.createComment.bandId, bandIds[0])
                 equal(body.data.createComment.user.id, "user1234")

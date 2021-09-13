@@ -129,7 +129,7 @@ export interface DeleteBandInput {
 
 export interface QueryBandInput {
     filter: {
-        type: "NAME" | "INTRODUCE" | "CREATOR_ID"
+        type: "NAME" | "INTRODUCE" | "CREATOR_ID" | "ALL"
         content?: string
         sort: "DATE_DESC" | "DATE_ASC"
     }
@@ -145,6 +145,10 @@ export interface BandQuery {
     creatorId?: {
         $regex?: RegExp
     }
+}
+
+export interface DefaultBandQuery {
+    $or?: BandQuery[]
 }
 
 export interface GetBandInput {
