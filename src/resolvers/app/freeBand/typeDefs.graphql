@@ -55,3 +55,9 @@ input FreeBandInput {
     introduce: String!
     backGroundURI: URL! = "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg"
 }
+
+extend type Query {
+    getFreeBand(bandId: ObjectID!): FreeBand
+
+    queryFreeBand(filter: QueryBandInput!): [FreeBand!]
+}

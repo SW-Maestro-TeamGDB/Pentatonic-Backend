@@ -144,6 +144,9 @@ export interface BandQuery {
     }
     creatorId?: {
         $regex?: RegExp
+    },
+    songId?: {
+        $in: ObjectID[]
     }
 }
 
