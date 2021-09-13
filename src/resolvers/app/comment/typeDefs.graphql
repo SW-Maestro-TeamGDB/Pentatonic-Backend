@@ -4,6 +4,7 @@ type Comment {
     username: Username!
     content: String!
     createdAt: DateTime!
+    commentId: ObjectID!
 }
 
 extend type Mutation {

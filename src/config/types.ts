@@ -21,6 +21,7 @@ interface Loaders {
         followingLoader: DataLoader<string, any, string>
         followingStatusLoader: DataLoader<string, any, string>
         positionLoader: DataLoader<string, any, string>
+        commentsLoader: DataLoader<ObjectID, any, ObjectID>
     }
 }
 export interface Redis {

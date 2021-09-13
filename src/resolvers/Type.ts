@@ -13,6 +13,9 @@ import {
 } from "resolvers/app/auth/models"
 
 import { Context } from "config/types"
+import {
+    Comment as CommentInterface
+} from "resolvers/app/comment/models"
 
 export const Song = {
     songId: (parent: SongInterface) => parent._id,
@@ -90,9 +93,13 @@ export const FreeBand = {
         context.loaders.songsLoader.load(parent.songId.toString()),
     session: (parent: BandInterface, args: void, context: Context) => context.loaders.sessionsLoader.load(parent._id),
     creator: (parent: BandInterface, args: void, context: Context) => context.loaders.userLoader1.load(parent.creatorId),
-    likeCount: (parent: BandInterface, args: void, context: Context) => context.loaders.likeCountsLoader.load(parent._id)
+    likeCount: (parent: BandInterface, args: void, context: Context) => context.loaders.likeCountsLoader.load(parent._id),
+    comment: (parent: BandInterface, args: void, context: Context) => context.loaders.commentsLoader.load(parent._id)
 }
 
+export const Comment = {
+    commentId: (parent: CommentInterface) => parent._id
+}
 
 export const Instrument = {
     instId: (parent: InstrumentInterface) => parent._id
@@ -109,5 +116,6 @@ export const Band = {
         context.loaders.songsLoader.load(parent.songId.toString()),
     session: (parent: BandInterface, args: void, context: Context) => context.loaders.sessionsLoader.load(parent._id),
     creator: (parent: BandInterface, args: void, context: Context) => context.loaders.userLoader1.load(parent.creatorId),
-    likeCount: (parent: BandInterface, args: void, context: Context) => context.loaders.likeCountsLoader.load(parent._id)
+    likeCount: (parent: BandInterface, args: void, context: Context) => context.loaders.likeCountsLoader.load(parent._id),
+    comment: (parent: BandInterface, args: void, context: Context) => context.loaders.commentsLoader.load(parent._id)
 }

@@ -7,7 +7,7 @@ import { ObjectID, Db } from "mongodb"
 import { sessionMap } from "config/init"
 import { snakeToCamel, camelToSnake } from "lib"
 import { PositionRank } from "lib/models"
-
+import { Comment } from "resolvers/app/comment/models"
 
 const batchLoadInstrumentFn = async (songIds: readonly ObjectID[]) => {
     const db = await DB.get() as Db
@@ -164,6 +164,20 @@ const batchLoadPosition = async (userIds: readonly string[]) => {
     return resultArr.map((userInfo) => userInfo.sort((a, b) => b.likeCount - a.likeCount))
 }
 
+export const batchLoadComment = async (bandIds: readonly ObjectID[]) => {
+    const db = await DB.get() as Db
+    const data = await db.collection("comment").find({ bandId: { $in: bandIds } }).sort({ createdAt: -1 }).toArray()
+    const mp = bandIds.reduce((acc, cur, idx) => {
+        acc[cur.toString()] = idx
+        return acc
+    }, {} as { [key: string]: number })
+    const resultArr: Comment[][] = Array.from(Array(bandIds.length), () => [])
+    data.forEach((item) => {
+        resultArr[mp[item.bandId.toString()]].push(item)
+    })
+    return resultArr
+}
+
 // const batchLoadFollowingStatus = async (userIds: readonly string[]) => {
 //     const mp = new Map(), resultArr = Array.from(Array(userIds.length), () => false)
 //     userIds.forEach((x, idx) => mp.set(x, idx))
@@ -176,6 +190,8 @@ const batchLoadPosition = async (userIds: readonly string[]) => {
 // }
 
 // export const followingStatusLoader = new DataLoader(batchLoadFollowingStatus)
+
+export const commentsLoader = new DataLoader(batchLoadComment)
 
 export const positionLoader = new DataLoader(batchLoadPosition)
 
