@@ -6,6 +6,7 @@ import { Mutation as audio } from "resolvers/app/audio"
 import { Mutation as follow } from "resolvers/app/follow"
 import { Mutation as freeSong } from "resolvers/app/freeBand"
 import { Mutation as like } from "resolvers/app/like"
+import { Mutation as comment } from "resolvers/app/comment"
 
 export default {
     ...auth,
@@ -15,5 +16,6 @@ export default {
     ...audio,
     ...follow,
     ...freeSong,
-    ...like
+    ...like,
+    ...comment
 }

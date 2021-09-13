@@ -1,0 +1,1 @@
+export * as Mutation from "resolvers/app/comment/Mutation"

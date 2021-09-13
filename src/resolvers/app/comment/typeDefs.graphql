@@ -1,0 +1,26 @@
+type Comment {
+    bandId: ObjectID!
+    userId: Id!
+    username: Username!
+    content: String!
+    createdAt: DateTime!
+}
+
+extend type Mutation {
+    createComment(
+        input: CreateCommentInput!
+    ): [Comment!]
+}
+
+input CreateCommentInBandInput {
+    bandId: ObjectID!
+}
+
+input CreateCommentInCommentInput {
+    content: String!
+}
+
+input CreateCommentInput {
+    band: CreateCommentInBandInput!
+    comment: CreateCommentInCommentInput!
+}
