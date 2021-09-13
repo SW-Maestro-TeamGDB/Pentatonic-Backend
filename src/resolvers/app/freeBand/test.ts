@@ -610,10 +610,92 @@ describe("FreeSong Service Test", () => {
             })
         })
     })
-    describe("Mutation leaveFreeBand", () => {
-        describe("Failure", () => {
-            it("permission error", async () => {
-                const query = `
+    describe("Query QueryFreeBand", () => {
+        it("Searching by FreeBand Name & sort DATE_DESC", async () => {
+            const query = `
+                query{
+                    queryFreeBand(
+                        filter: {
+                            type: NAME
+                        }
+                    ){
+                        name
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.queryFreeBand[0].name, "자유 밴드 업데이트 테스트 - 2")
+        })
+        it("Searching by FreeBand creator & sort DATE_ASC", async () => {
+            const query = `
+                query{
+                    queryFreeBand(
+                        filter: {
+                            type: CREATOR_ID,
+                            content: "hawawa~",
+                            sort: DATE_ASC
+                        }
+                    ){
+                        name
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.queryFreeBand.length, 0)
+        })
+        it("Searching by FreeBand introduce & sort DATE_ASC", async () => {
+            const query = `
+                query{
+                    queryFreeBand(
+                        filter: {
+                            type: INTRODUCE,
+                            content: "example",
+                            sort: DATE_ASC
+                        }
+                    ){
+                        introduce
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            console.log(body.data.queryFreeBand)
+            equal(body.data.queryFreeBand[0].introduce.includes("example"), true)
+        })
+        it("Searching by FreeBand ALL information", async () => {
+            const query = `
+                query{
+                    queryFreeBand(
+                        filter: {
+                            type: ALL
+                        }
+                    ){
+                        name
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.queryFreeBand[0].name, "자유 밴드 업데이트 테스트 - 2")
+        })
+        describe("Mutation leaveFreeBand", () => {
+            describe("Failure", () => {
+                it("permission error", async () => {
+                    const query = `
                     mutation{
                         leaveFreeBand(
                             input: {
@@ -627,16 +709,16 @@ describe("FreeSong Service Test", () => {
                         )
                     } 
                 `
-                const { body } = await request(app)
-                    .post("/api")
-                    .set("Content-Type", "application/json")
-                    .set("Authorization", token1)
-                    .send(JSON.stringify({ query }))
-                    .expect(200)
-                equal(body.errors[0].message, "권한이 없습니다")
-            })
-            it("nonexistent session", async () => {
-                const query = `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .set("Authorization", token1)
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "권한이 없습니다")
+                })
+                it("nonexistent session", async () => {
+                    const query = `
                     mutation{
                         leaveFreeBand(
                             input: {
@@ -649,16 +731,16 @@ describe("FreeSong Service Test", () => {
                             }
                         )
                     }`
-                const { body } = await request(app)
-                    .post("/api")
-                    .set("Content-Type", "application/json")
-                    .set("Authorization", token)
-                    .send(JSON.stringify({ query }))
-                    .expect(200)
-                equal(body.errors[0].message, "세션이 존재하지 않습니다")
-            })
-            it("nonexistent cover", async () => {
-                const query = `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .set("Authorization", token)
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "세션이 존재하지 않습니다")
+                })
+                it("nonexistent cover", async () => {
+                    const query = `
                     mutation{
                         leaveFreeBand(
                             input: {
@@ -671,18 +753,18 @@ describe("FreeSong Service Test", () => {
                             }
                         )
                     }`
-                const { body } = await request(app)
-                    .post("/api")
-                    .set("Content-Type", "application/json")
-                    .set("Authorization", token)
-                    .send(JSON.stringify({ query }))
-                    .expect(200)
-                equal(body.errors[0].message, "해당 커버가 존재하지 않습니다")
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .set("Authorization", token)
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.errors[0].message, "해당 커버가 존재하지 않습니다")
+                })
             })
-        })
-        describe("Success", () => {
-            it("Successfully leave free band - 1", async () => {
-                const query = `
+            describe("Success", () => {
+                it("Successfully leave free band - 1", async () => {
+                    const query = `
                     mutation{
                         leaveFreeBand(
                             input: {
@@ -696,16 +778,16 @@ describe("FreeSong Service Test", () => {
                         )
                     }
                 `
-                const { body } = await request(app)
-                    .post("/api")
-                    .set("Content-Type", "application/json")
-                    .set("Authorization", token)
-                    .send(JSON.stringify({ query }))
-                    .expect(200)
-                equal(body.data.leaveFreeBand, true)
-            })
-            it("Successfully leave free band - 2", async () => {
-                const query = `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .set("Authorization", token)
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.leaveFreeBand, true)
+                })
+                it("Successfully leave free band - 2", async () => {
+                    const query = `
                     mutation{
                         leaveFreeBand(
                             input: {
@@ -718,20 +800,20 @@ describe("FreeSong Service Test", () => {
                             }
                         )
                     }`
-                const { body } = await request(app)
-                    .post("/api")
-                    .set("Content-Type", "application/json")
-                    .set("Authorization", token)
-                    .send(JSON.stringify({ query }))
-                    .expect(200)
-                equal(body.data.leaveFreeBand, true)
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .set("Authorization", token)
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.leaveFreeBand, true)
+                })
             })
         })
-    })
-    describe("Mutation deleteFreeBand", () => {
-        describe("Success", () => {
-            it("Successfully delete free band - 1", async () => {
-                const query = `
+        describe("Mutation deleteFreeBand", () => {
+            describe("Success", () => {
+                it("Successfully delete free band - 1", async () => {
+                    const query = `
                     mutation{
                         deleteFreeBand(
                             input: {
@@ -742,18 +824,18 @@ describe("FreeSong Service Test", () => {
                         )
                     }
                 `
-                const { body } = await request(app)
-                    .post("/api")
-                    .set("Content-Type", "application/json")
-                    .set("Authorization", token)
-                    .send(JSON.stringify({ query }))
-                    .expect(200)
-                equal(body.data.deleteFreeBand, true)
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .set("Authorization", token)
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.deleteFreeBand, true)
+                })
             })
-        })
-        describe("Failure", () => {
-            it("nonexistent free band", async () => {
-                const query = `
+            describe("Failure", () => {
+                it("nonexistent free band", async () => {
+                    const query = `
                     mutation{
                         deleteFreeBand(
                             input: {
@@ -764,13 +846,14 @@ describe("FreeSong Service Test", () => {
                         )
                     }
                 `
-                const { body } = await request(app)
-                    .post("/api")
-                    .set("Content-Type", "application/json")
-                    .set("Authorization", token)
-                    .send(JSON.stringify({ query }))
-                    .expect(200)
-                equal(body.data.deleteFreeBand, false)
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set("Content-Type", "application/json")
+                        .set("Authorization", token)
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    equal(body.data.deleteFreeBand, false)
+                })
             })
         })
     })

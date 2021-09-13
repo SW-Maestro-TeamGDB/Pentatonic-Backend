@@ -5,6 +5,7 @@ import { Query as lib } from "resolvers/app/library"
 import { Query as band } from "resolvers/app/band"
 import { Query as follow } from "resolvers/app/follow"
 import { Query as like } from "resolvers/app/like"
+import { Query as freeBand } from "resolvers/app/freeBand"
 
 export default {
     ...health,
@@ -13,5 +14,6 @@ export default {
     ...lib,
     ...band,
     ...follow,
-    ...like
+    ...like,
+    ...freeBand
 }
