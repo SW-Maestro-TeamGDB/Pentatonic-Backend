@@ -1,7 +1,6 @@
 type Comment {
     bandId: ObjectID!
-    userId: Id!
-    username: Username!
+    user: UserLink!
     content: String!
     createdAt: DateTime!
     commentId: ObjectID!
@@ -10,18 +9,23 @@ type Comment {
 extend type Mutation {
     createComment(
         input: CreateCommentInput!
-    ): [Comment!]
+    ): Comment
 }
 
-input CreateCommentInBandInput {
-    bandId: ObjectID!
-}
 
 input CreateCommentInCommentInput {
     content: String!
+    bandId: ObjectID!
 }
 
 input CreateCommentInput {
-    band: CreateCommentInBandInput!
     comment: CreateCommentInCommentInput!
+}
+
+extend type FreeBand {
+    comment: [Comment!]
+}
+
+extend type Band {
+    comment: [Comment!]
 }

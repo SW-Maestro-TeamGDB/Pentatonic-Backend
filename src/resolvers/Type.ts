@@ -98,7 +98,8 @@ export const FreeBand = {
 }
 
 export const Comment = {
-    commentId: (parent: CommentInterface) => parent._id
+    commentId: (parent: CommentInterface) => parent._id,
+    user: (parent: CommentInterface, args: void, context: Context) => context.loaders.userLoader1.load(parent.userId)
 }
 
 export const Instrument = {
