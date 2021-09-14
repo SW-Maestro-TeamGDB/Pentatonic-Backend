@@ -293,4 +293,30 @@ describe("Comment services test", () => {
             equal(body.data.getComments[0].user.id, "user1234")
         })
     })
+
+    describe("Query QueryFreeBand", () => {
+        it("test comments loaders", async () => {
+            const query = ` 
+                query{ 
+                    queryFreeBand(
+                        filter: {
+                            type: ALL
+                        }
+                    ){
+                        name
+                        comment {
+                            content
+                        }
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.queryFreeBand[0].name, "demo")
+            equal(body.data.queryFreeBand[0].comment[0].content, "update test comment")
+        })
+    })
 })

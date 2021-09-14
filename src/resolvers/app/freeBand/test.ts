@@ -670,7 +670,6 @@ describe("FreeSong Service Test", () => {
                 .set("Content-Type", "application/json")
                 .send(JSON.stringify({ query }))
                 .expect(200)
-            console.log(body.data.queryFreeBand)
             equal(body.data.queryFreeBand[0].introduce.includes("example"), true)
         })
         it("Searching by FreeBand ALL information", async () => {
