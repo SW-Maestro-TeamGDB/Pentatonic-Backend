@@ -26,3 +26,12 @@ export interface DeleteCommentInput {
         }
     }
 }
+
+export interface UpdateCommentInput {
+    input: {
+        comment: {
+            commentId: ObjectID
+            content: string
+        }
+    }
+}

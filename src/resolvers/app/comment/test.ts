@@ -213,4 +213,57 @@ describe("Comment services test", () => {
             })
         })
     })
+    describe("Mutation updateComment", () => {
+        describe("Success", () => {
+            it("Update comment", async () => {
+                const query = `
+                    mutation{
+                        updateComment(
+                            input: {
+                                comment: {
+                                    commentId: "${commentIds[0]}",
+                                    content: "update test comment"
+                                }
+                            }
+                        ){
+                            content
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.updateComment.content, "update test comment")
+            })
+        })
+        describe("Failure", () => {
+            it("comment is undefined", async () => {
+                const query = `
+                    mutation {
+                        updateComment(
+                            input: {
+                                comment: {
+                                    commentId: "111111111111111111111111",
+                                    content: "hawawa"
+                                }
+                            }
+                        ){
+                            content
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+
+                equal(body.errors[0].message, "댓글이 존재하지 않거나 내가 작성한 댓글이 아닙니다")
+            })
+        })
+    })
 })

@@ -1,7 +1,8 @@
 import { ObjectID } from "mongodb"
 import {
     CreateCommentInput,
-    DeleteCommentInput
+    DeleteCommentInput,
+    UpdateCommentInput
 } from "resolvers/app/comment/models"
 import { Context } from "config/types"
 import { ApolloError } from "apollo-server-express"
@@ -22,6 +23,24 @@ export const deleteComment = async (parent: void, args: DeleteCommentInput, cont
     }).then(({ result }) => result.n === 1)
     if (res) {
         return true
+    }
+    else {
+        throw new ApolloError("댓글이 존재하지 않거나 내가 작성한 댓글이 아닙니다")
+    }
+}
+
+export const updateComment = async (parent: void, args: UpdateCommentInput, context: Context) => {
+    const { commentId, content } = args.input.comment
+    const res = await context.db.collection("comment").findOneAndUpdate({
+        userId: context.user.id,
+        _id: new ObjectID(commentId)
+    }, {
+        $set: {
+            content
+        }
+    }, { returnDocument: "after" }).then(({ value }) => value)
+    if (res) {
+        return res
     }
     else {
         throw new ApolloError("댓글이 존재하지 않거나 내가 작성한 댓글이 아닙니다")
