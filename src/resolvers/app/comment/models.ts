@@ -35,3 +35,8 @@ export interface UpdateCommentInput {
         }
     }
 }
+
+
+export interface GetCommentsInput {
+    bandId: ObjectID
+}

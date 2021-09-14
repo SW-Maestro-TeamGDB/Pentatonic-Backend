@@ -20,6 +20,12 @@ extend type Mutation {
     ): Comment
 }
 
+extend type Query {
+    getComments(
+        bandId: ObjectID!
+    ): [Comment!]!
+}
+
 input UpdateCommentInComment {
     commentId: ObjectID!
     content: String!

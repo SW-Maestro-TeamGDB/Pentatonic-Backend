@@ -266,4 +266,31 @@ describe("Comment services test", () => {
             })
         })
     })
+
+    describe("Query getComments", async () => {
+        it("get Successfully band comments", async () => {
+            const query = `
+                query {
+                    getComments(
+                        bandId: "${bandIds[0]}"
+                    ){
+                        bandId  
+                        content
+                        user {
+                            id
+                        }
+                    }
+                }
+            `
+
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getComments.length, 1)
+            equal(body.data.getComments[0].content, "update test comment")
+            equal(body.data.getComments[0].user.id, "user1234")
+        })
+    })
 })
