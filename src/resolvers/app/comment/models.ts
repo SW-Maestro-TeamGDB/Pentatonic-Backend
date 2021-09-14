@@ -18,3 +18,11 @@ export interface Comment {
     createdAt: Date
     _id: ObjectID
 }
+
+export interface DeleteCommentInput {
+    input: {
+        comment: {
+            commentId: ObjectID
+        }
+    }
+}

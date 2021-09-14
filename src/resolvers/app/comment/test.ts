@@ -103,7 +103,7 @@ describe("Comment services test", () => {
 
     describe("Mutation createComment", () => {
         describe("Success", () => {
-            it("Create comment", async () => {
+            it("Create comment - 1", async () => {
                 const query = `
                     mutation{
                         createComment(
@@ -133,6 +133,83 @@ describe("Comment services test", () => {
                 equal(body.data.createComment.bandId, bandIds[0])
                 equal(body.data.createComment.user.id, "user1234")
                 commentIds.push(body.data.createComment.commentId)
+            })
+            it("Create comment - 2", async () => {
+                const query = `
+                    mutation{
+                        createComment(
+                            input: {
+                                comment: {
+                                    content: "yeah",
+                                    bandId: "${bandIds[0]}"
+                                }
+                            }
+                        ){
+                            content
+                            bandId
+                            commentId
+                            user {
+                                id
+                            }
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.createComment.content, "yeah")
+                equal(body.data.createComment.bandId, bandIds[0])
+                equal(body.data.createComment.user.id, "user1234")
+                commentIds.push(body.data.createComment.commentId)
+            })
+        })
+    })
+    describe("Mutation deleteComment", () => {
+        describe("Success", () => {
+            it("Delete comment", async () => {
+                const query = `
+                    mutation{
+                        deleteComment(
+                            input: {
+                                comment: {
+                                    commentId: "${commentIds[1]}"
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.deleteComment, true)
+            })
+        })
+        describe("Failure", () => {
+            it("comment is undefined", async () => {
+                const query = `
+                    mutation{
+                        deleteComment(
+                            input: {
+                                comment: {
+                                    commentId: "111111111111111111111111"
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "댓글이 존재하지 않거나 내가 작성한 댓글이 아닙니다")
             })
         })
     })
