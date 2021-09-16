@@ -109,6 +109,7 @@ export const Instrument = {
 export const Cover = {
     coverId: (parent: CoverInterface) => parent._id,
     song: (parent: CoverInterface, args: void, context: Context) => context.loaders.songsLoader.load(parent.songId.toString()),
+    coverBy: (parent: CoverInterface, args: void, context: Context) => context.loaders.userLoader1.load(parent.coverBy)
 }
 
 export const Band = {

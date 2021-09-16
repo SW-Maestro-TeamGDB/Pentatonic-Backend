@@ -852,7 +852,9 @@ describe("Band services test", () => {
                         }
                         library{
                             songId
-                            coverBy
+                            coverBy{
+                                id
+                            }
                             name
                         }
                     }
@@ -866,7 +868,7 @@ describe("Band services test", () => {
                 .expect(200)
             equal(body.data.getUserInfo.band[0].bandId, bandIds[0])
             equal(body.data.getUserInfo.band[0].songId, songIds[0])
-            body.data.getUserInfo.library.forEach((x: { coverBy: string }) => equal(x.coverBy, "user1234"))
+            body.data.getUserInfo.library.forEach((x: { coverBy: { id: string } }) => equal(x.coverBy.id, "user1234"))
         })
         it("If you normally bring in other people's information", async () => {
             const query = `
@@ -880,7 +882,6 @@ describe("Band services test", () => {
                         }
                         library{
                             songId
-                            coverBy
                             name
                         }
                     }
