@@ -17,6 +17,7 @@ const connectDB = () => {
                     useUnifiedTopology: true
                 })
             const _db = client.db()
+            await _db.collection("trend").createIndex({ "createdAt": 1 }, { "expireAfterSeconds": 2592000 })
             return _db
         } catch (e) {
             console.log(e)

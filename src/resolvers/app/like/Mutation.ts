@@ -8,14 +8,29 @@ export const like = async (parent: void, args: LikeInput, context: Context) => {
         userId: context.user.id
     }).then(x => x !== null)
     if (result) {
-        return context.db.collection("like").deleteOne({
-            bandId: new ObjectID(args.input.band.bandId),
-            userId: context.user.id
-        }).then(({ deletedCount }) => deletedCount === 1)
+        const [res] = await Promise.all([
+            context.db.collection("like").deleteOne({
+                bandId: new ObjectID(args.input.band.bandId),
+                userId: context.user.id
+            }).then(({ deletedCount }) => deletedCount === 1),
+            context.db.collection("trend").deleteOne({
+                bandId: new ObjectID(args.input.band.bandId),
+                userId: context.user.id
+            })
+        ])
+        return res
     } else {
-        return context.db.collection("like").insertOne({
-            bandId: new ObjectID(args.input.band.bandId),
-            userId: context.user.id
-        }).then(({ result }) => result.n === 1)
+        const [res] = await Promise.all([
+            context.db.collection("like").insertOne({
+                bandId: new ObjectID(args.input.band.bandId),
+                userId: context.user.id
+            }).then(({ result }) => result.n === 1),
+            context.db.collection("trend").insertOne({
+                createdAt: new Date(),
+                bandId: new ObjectID(args.input.band.bandId),
+                userId: context.user.id
+            })
+        ])
+        return res
     }
 }
