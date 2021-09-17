@@ -22,7 +22,8 @@ describe("Like services test", () => {
             db.collection("session").deleteMany({}),
             db.collection("join").deleteMany({}),
             db.collection("like").deleteMany({}),
-            db.collection("freeBand").deleteMany({})
+            db.collection("freeBand").deleteMany({}),
+            db.collection("trend").deleteMany({})
         ])
     })
     before(async () => {
@@ -285,6 +286,27 @@ describe("Like services test", () => {
             equal(body.data.getRankedBands.length, 2)
             equal(body.data.getRankedBands[0].likeCount, 2)
             equal(body.data.getRankedBands[1].likeCount, 1)
+        })
+    })
+    describe("Query getTrendBands", () => {
+        it("get band by sorted latest likeCount", async () => {
+            const query = `
+                query{
+                    getTrendBands{
+                        name
+                        likeCount
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getTrendBands.length, 2)
+            equal(body.data.getTrendBands[0].likeCount, 2)
+            equal(body.data.getTrendBands[1].likeCount, 1)
         })
     })
     describe("Query getUserInfo", () => {

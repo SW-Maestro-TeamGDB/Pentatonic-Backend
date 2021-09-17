@@ -161,4 +161,6 @@ extend type Query{
     ): Band
 
     getRankedBands: [Band!]
+
+    getTrendBands: [Band!]
 }
