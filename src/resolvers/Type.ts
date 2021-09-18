@@ -76,7 +76,14 @@ export const UserLink = {
 }
 export const BandLink = {
     bandId: (parent: BandInterface) => parent._id,
-    likeCount: (parent: BandInterface, args: void, context: Context) => context.loaders.likeCountsLoader.load(parent._id)
+    likeCount: (parent: BandInterface, args: void, context: Context) => context.loaders.likeCountsLoader.load(parent._id),
+    likeStatus: (parent: BandInterface, args: void, context: Context) => {
+        if (context.user === null) return null
+        return context.db.collection("like").find({
+            userId: context.user.id,
+            bandId: parent._id
+        }).count().then(x => x === 1)
+    }
 }
 
 export const SongLink = {
@@ -94,7 +101,7 @@ export const FreeBand = {
     session: (parent: BandInterface, args: void, context: Context) => context.loaders.sessionsLoader.load(parent._id),
     creator: (parent: BandInterface, args: void, context: Context) => context.loaders.userLoader1.load(parent.creatorId),
     likeCount: (parent: BandInterface, args: void, context: Context) => context.loaders.likeCountsLoader.load(parent._id),
-    comment: (parent: BandInterface, args: void, context: Context) => context.loaders.commentsLoader.load(parent._id)
+    comment: (parent: BandInterface, args: void, context: Context) => context.loaders.commentsLoader.load(parent._id),
 }
 
 export const Comment = {

@@ -9,3 +9,8 @@ export interface LikeInput {
         band: LikeStatusInput
     }
 }
+
+export interface LikeStatusBatch {
+    bandId: ObjectID
+    userId: string
+}

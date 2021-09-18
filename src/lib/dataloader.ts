@@ -8,6 +8,7 @@ import { sessionMap } from "config/init"
 import { snakeToCamel, camelToSnake } from "lib"
 import { PositionRank } from "lib/models"
 import { Comment } from "resolvers/app/comment/models"
+import { LikeStatusBatch } from "resolvers/app/like/models"
 
 const batchLoadInstrumentFn = async (songIds: readonly ObjectID[]) => {
     const db = await DB.get() as Db
@@ -164,7 +165,7 @@ const batchLoadPosition = async (userIds: readonly string[]) => {
     return resultArr.map((userInfo) => userInfo.sort((a, b) => b.likeCount - a.likeCount))
 }
 
-export const batchLoadComment = async (bandIds: readonly ObjectID[]) => {
+const batchLoadComment = async (bandIds: readonly ObjectID[]) => {
     const db = await DB.get() as Db
     const data = await db.collection("comment").find({ bandId: { $in: bandIds } }).sort({ createdAt: -1 }).toArray()
     const mp = bandIds.reduce((acc, cur, idx) => {
@@ -176,6 +177,20 @@ export const batchLoadComment = async (bandIds: readonly ObjectID[]) => {
         resultArr[mp[item.bandId.toString()]].push(item)
     })
     return resultArr
+}
+
+const batchLoadLikeStatus = async (bandData: readonly LikeStatusBatch[]) => {
+    const db = await DB.get() as Db
+    const mp = bandData.reduce((acc, cur, idx) => {
+        acc[cur.bandId.toString()] = idx
+        return acc
+    }, {} as { [key: string]: number })
+    const retArr: boolean[] = Array.from(Array(bandData.length), () => false)
+    const likeStatus = await db.collection("like").find({ $or: bandData as LikeStatusBatch[] }).toArray()
+    likeStatus.forEach((like) => {
+        retArr[mp[like.bandId.toString()]] = true
+    })
+    return retArr
 }
 
 // const batchLoadFollowingStatus = async (userIds: readonly string[]) => {
@@ -190,6 +205,8 @@ export const batchLoadComment = async (bandIds: readonly ObjectID[]) => {
 // }
 
 // export const followingStatusLoader = new DataLoader(batchLoadFollowingStatus)
+
+export const likeStatusLoader = new DataLoader(batchLoadLikeStatus)
 
 export const commentsLoader = new DataLoader(batchLoadComment)
 

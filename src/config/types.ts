@@ -2,6 +2,7 @@ import { ReadStream } from "fs"
 import { Db, ObjectID } from "mongodb"
 import DataLoader from "dataloader"
 import * as loaders from "lib/dataloader"
+import { LikeStatusBatch } from "resolvers/app/like/models"
 
 export interface File {
     filename: string
@@ -22,6 +23,7 @@ interface Loaders {
         followingStatusLoader: DataLoader<string, any, string>
         positionLoader: DataLoader<string, any, string>
         commentsLoader: DataLoader<ObjectID, any, ObjectID>
+        likeStatusLoader: DataLoader<LikeStatusBatch, any, LikeStatusBatch>
     }
 }
 export interface Redis {
