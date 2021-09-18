@@ -8,6 +8,21 @@ input LikeInput {
     band: JoinBandArgsInput!
 }
 
+extend type BandLink {
+    likeCount: Int!
+    likeStatus: Boolean
+}
+
+extend type Band {
+    likeCount: Int!
+    likeStatus: Boolean
+}
+
+extend type FreeBand {
+    likeCount: Int!
+    likeStatus: Boolean
+}
+
 extend type Mutation {
     like(
         input: LikeInput!

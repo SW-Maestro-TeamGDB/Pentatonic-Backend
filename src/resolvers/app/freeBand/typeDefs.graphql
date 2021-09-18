@@ -23,7 +23,6 @@ type FreeBand implements BandInterface {
     backGroundURI: URL!
     createDate: Date!
     session: [Session]
-    likeCount: Int!
 }
 
 extend type Mutation {
