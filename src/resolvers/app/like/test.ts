@@ -268,12 +268,13 @@ describe("Like services test", () => {
         })
     })
     describe("Query getRankedBands", () => {
-        it("get band by sorted likeCount", async () => {
+        it("get band by sorted likeCount - 1", async () => {
             const query = `
                 query{
                     getRankedBands{
                         name
                         likeCount
+                        likeStatus
                     }
                 }
             `
@@ -284,8 +285,32 @@ describe("Like services test", () => {
                 .send(JSON.stringify({ query }))
                 .expect(200)
             equal(body.data.getRankedBands.length, 2)
+            equal(body.data.getRankedBands[0].likeStatus, true)
             equal(body.data.getRankedBands[0].likeCount, 2)
             equal(body.data.getRankedBands[1].likeCount, 1)
+            equal(body.data.getRankedBands[1].likeStatus, false)
+        })
+        it("get band by sorted likeCount - 1", async () => {
+            const query = `
+                query{
+                    getRankedBands{
+                        name
+                        likeCount
+                        likeStatus
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token1)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getRankedBands.length, 2)
+            equal(body.data.getRankedBands[0].likeStatus, true)
+            equal(body.data.getRankedBands[0].likeCount, 2)
+            equal(body.data.getRankedBands[1].likeCount, 1)
+            equal(body.data.getRankedBands[1].likeStatus, true)
         })
     })
     describe("Query getTrendBands", () => {
