@@ -18,7 +18,7 @@ services:
       retries: 3
       start_period: 10s
     container_name: express
-    image: was:1.0
+    image: was:latest
     restart: "unless-stopped"
   redis_db:
     image: redis:latest
