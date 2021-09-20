@@ -126,7 +126,9 @@ export const deleteAccount = async (parent: void, args: DeleteAccountInput, cont
     const deleteUser = await Promise.all([
         db.collection("user").deleteOne({ id: user.id }),
         db.collection("follow").deleteMany({ userId: user.id }),
-        db.collection("follow").deleteMany({ following: user.id })
+        db.collection("follow").deleteMany({ following: user.id }),
+        db.collection("like").deleteMany({ userId: user.id }),
+        db.collection("trend").deleteMany({ userId: user.id })
     ])
     return deleteUser[0].result.n === 1
 }
