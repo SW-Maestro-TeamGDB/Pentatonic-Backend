@@ -1,21 +1,10 @@
-version: "3.3"
+version: "3.7"
 
 services:
-  proxy:
-    image: nginx:latest
-    container_name: proxy
-    ports:
-      - "80:80"
-    volumes:
-      - ./proxy/nginx.conf:/etc/nginx/nginx.conf
-    restart: "unless-stopped"
-  redis_db:
-    image: redis:latest
-    container_name: redis_db
-    restart: "unless-stopped"
   express:
-    depends_on:
-      - redis_db
+    deploy:
+      mode: replicated
+      replicas: 5
     healthcheck:
       test:
         [
@@ -29,6 +18,20 @@ services:
       retries: 3
       start_period: 10s
     container_name: express
-    build:
-      context: ./
+    image: was:1.0
+    restart: "unless-stopped"
+  redis_db:
+    image: redis:latest
+    container_name: redis_db
+    restart: "unless-stopped"
+  proxy:
+    image: nginx:latest
+    container_name: proxy
+    deploy:
+      mode: replicated
+      replicas: 3
+    ports:
+      - "80:80"
+    volumes:
+      - ./proxy/nginx.conf:/etc/nginx/nginx.conf
     restart: "unless-stopped"
