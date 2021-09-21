@@ -53,7 +53,7 @@ export const User = {
             })
     },
     library: (parent: UserInterface, args: void, context: Context) => {
-        if (context.user.id === parent.id) {
+        if (context.user != null && context.user.id === parent.id) {
             return context.db.collection("library").find({ coverBy: context.user.id }).toArray()
         }
         return null
