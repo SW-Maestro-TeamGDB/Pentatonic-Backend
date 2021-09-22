@@ -20,6 +20,8 @@ services:
     container_name: express
     image: was:latest
     restart: "unless-stopped"
+    depends_on:
+      - proxy
   redis_db:
     image: redis:latest
     container_name: redis_db
@@ -27,9 +29,6 @@ services:
   proxy:
     image: nginx:latest
     container_name: proxy
-    deploy:
-      mode: replicated
-      replicas: 3
     ports:
       - "80:80"
     volumes:
