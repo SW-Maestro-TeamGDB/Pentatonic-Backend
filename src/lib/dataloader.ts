@@ -10,13 +10,26 @@ import { PositionRank } from "lib/models"
 import { Comment } from "resolvers/app/comment/models"
 import { LikeStatusBatch } from "resolvers/app/like/models"
 
+const generateIdxTable = (keys: readonly (string | ObjectID)[]) => keys.reduce((acc, cur, idx) => {
+    if (acc[cur.toString()]) {
+        acc[cur.toString()].push(idx)
+    }
+    else {
+        acc[cur.toString()] = [idx]
+    }
+    return acc
+}, {} as { [key: string]: number[] })
+
+
 const batchLoadInstrumentFn = async (songIds: readonly ObjectID[]) => {
     const db = await DB.get() as Db
     const instruments: Instrument[] = await db.collection("instrument").find({ songId: { $in: songIds } }).toArray()
-    const table = new Map()
+    const idxTable = generateIdxTable(songIds)
     const resultArray: Instrument[][] = Array.from(Array(songIds.length), () => [])
-    songIds.forEach((id, index) => { table.set(id.toString(), index) })
-    instruments.forEach((instrument: Instrument) => resultArray[table.get(instrument.songId.toString())].push(instrument))
+    instruments.forEach((instrument: Instrument) => {
+        const key = instrument.songId.toString()
+        idxTable[key].forEach(idx => resultArray[idx].push(instrument))
+    })
     return resultArray
 }
 
@@ -24,44 +37,23 @@ const batchLoadInstrumentFn = async (songIds: readonly ObjectID[]) => {
 const batchLoadSongFn = async (songIds: readonly ObjectID[]) => {
     const db = await DB.get() as Db
     const resultArray: Song[] = Array.from(Array(songIds.length))
-    const mp = songIds.reduce((acc, cur, idx) => {
-        if (acc[cur.toString()]) {
-            acc[cur.toString()].push(idx)
-        }
-        else {
-            acc[cur.toString()] = [idx]
-        }
-        return acc
-    }, {} as { [key: string]: number[] })
+    const idxTable = generateIdxTable(songIds)
     const songs: Song[] = await db.collection("song").find({ _id: { $in: songIds } }).toArray()
     songs.forEach(song => {
         const key = song._id.toString()
-        while (mp[key].length) {
-            const idx = mp[key].pop()
-            resultArray[idx as number] = song
-        }
+        idxTable[key].forEach(idx => resultArray[idx] = song)
     })
     return resultArray
 }
 
 const batchLoadUserFn1 = async (userIds: readonly string[]) => {
-    const mp = userIds.reduce((acc, cur, idx) => {
-        if (acc[cur]) {
-            acc[cur].push(idx)
-        } else {
-            acc[cur] = [idx]
-        }
-        return acc
-    }, {} as { [key: string]: number[] })
+    const idxTable = generateIdxTable(userIds)
     const db = await DB.get() as Db
     const data = await db.collection("user").find({ id: { $in: userIds } }).toArray()
     const resultArray = Array.from(Array(userIds.length))
     data.forEach(item => {
         const key = item.id
-        while (mp[key].length) {
-            const idx = mp[key].pop()
-            resultArray[idx as number] = item
-        }
+        idxTable[key].forEach(idx => resultArray[idx] = item)
     })
     return resultArray
 }
@@ -108,16 +100,14 @@ const batchLoadSessionFn = async (bandIds: readonly ObjectID[]) => {
 
 const batchLoadBandFn = async (songIds: readonly ObjectID[]) => {
     const db = await DB.get() as Db
-    const mp = new Map()
-    songIds.forEach((x, idx) => mp.set(x.toString(), idx))
-    const resultArr: Band[][] = Array.from(Array(songIds.length), () => [])
+    const resultArray: Band[][] = Array.from(Array(songIds.length), () => [])
     const data = await db.collection("band").find({ songId: { $in: songIds } }).toArray()
-    data.forEach(x => {
-        const idx = mp.get(x.songId.toString())
-        resultArr[idx].push(x)
+    const idxTable = generateIdxTable(songIds)
+    data.forEach((band: Band) => {
+        const key = band.songId.toString()
+        idxTable[key].forEach(idx => resultArray[idx].push(band))
     })
-    bandsLoader.clearAll()
-    return resultArr
+    return resultArray
 }
 
 const batchLoadLikeCountFn = async (bandIds: readonly ObjectID[]) => {
@@ -125,35 +115,37 @@ const batchLoadLikeCountFn = async (bandIds: readonly ObjectID[]) => {
     const data = await db.collection("like").find({ bandId: { $in: bandIds } }).toArray()
     const mp = new Map()
     bandIds.forEach((x, idx) => mp.set(x.toString(), idx))
-    const resultArr: number[] = Array.from(Array(bandIds.length), () => 0)
-    data.forEach(({ bandId }) => resultArr[mp.get(bandId.toString())]++)
-    return resultArr
+    const resultArray: number[] = Array.from(Array(bandIds.length), () => 0)
+    data.forEach(({ bandId }) => resultArray[mp.get(bandId.toString())]++)
+    return resultArray
 }
 
 const batchLoadFollowerCount = async (userIds: readonly string[]) => {
-    const mp = new Map(), resultArr = Array.from(Array(userIds.length), () => 0)
-    userIds.forEach((x, idx) => mp.set(x, idx))
+    const idxTable = generateIdxTable(userIds), resultArray = Array.from(Array(userIds.length), () => 0)
     const db = await DB.get() as Db
     await db.collection("follow").aggregate([
         { $match: { following: { $in: userIds } } },
         { $group: { _id: "$following", count: { $sum: 1 } } }
-    ]).toArray().then(x => x.forEach(({ _id, count }) => resultArr[mp.get(_id)] = count))
-    return resultArr
+    ]).toArray().then(x => x.forEach(({ _id, count }) => {
+        idxTable[_id].forEach(idx => resultArray[idx] += count)
+    }))
+    return resultArray
 }
 
 const batchLoadFollowingCount = async (userIds: readonly string[]) => {
-    const mp = new Map(), resultArr = Array.from(Array(userIds.length), () => 0)
-    userIds.forEach((x, idx) => mp.set(x, idx))
+    const idxTable = generateIdxTable(userIds), resultArray = Array.from(Array(userIds.length), () => 0)
     const db = await DB.get() as Db
     await db.collection("follow").aggregate([
         { $match: { userId: { $in: userIds } } },
         { $group: { _id: "$userId", count: { $sum: 1 } } }
-    ]).toArray().then(x => x.forEach(u => resultArr[mp.get(u._id)] = u.count))
-    return resultArr
+    ]).toArray().then(x => x.forEach(u => {
+        idxTable[u._id].forEach(idx => resultArray[idx] += u.count)
+    }))
+    return resultArray
 }
 
 const batchLoadPosition = async (userIds: readonly string[]) => {
-    const resultArr = Array.from(Array(userIds.length), () => []) as PositionRank[][], db = await DB.get() as Db
+    const resultArray = Array.from(Array(userIds.length), () => []) as PositionRank[][], db = await DB.get() as Db
     const uIdMapping = userIds.reduce((acc, cur, idx) => {
         acc[cur] = idx
         return acc
@@ -175,10 +167,10 @@ const batchLoadPosition = async (userIds: readonly string[]) => {
     const positionMap = new Map<string, Map<string, number>>()
     for (const item of joinData) {
         if (likeCount[item.bandId.toString()] === undefined) continue
-        const idx = uIdMapping[item.userId], arrLen = resultArr[idx].length, pMap = positionMap.get(item.userId)
+        const idx = uIdMapping[item.userId], arrLen = resultArray[idx].length, pMap = positionMap.get(item.userId)
         if (pMap === undefined) {
             positionMap.set(item.userId, new Map([[item.position, 0]]))
-            resultArr[idx][arrLen] = {
+            resultArray[idx][arrLen] = {
                 position: item.position,
                 likeCount: likeCount[item.bandId.toString()]
             }
@@ -186,44 +178,36 @@ const batchLoadPosition = async (userIds: readonly string[]) => {
         else if (pMap.get(item.position) === undefined) {
             pMap.set(item.position, arrLen)
             positionMap.set(item.userId, pMap)
-            resultArr[idx][arrLen] = {
+            resultArray[idx][arrLen] = {
                 position: item.position,
                 likeCount: likeCount[item.bandId.toString()]
             }
         }
         else {
-            resultArr[idx][pMap.get(item.position) as number]["likeCount"] += likeCount[item.bandId.toString()]
+            resultArray[idx][pMap.get(item.position) as number]["likeCount"] += likeCount[item.bandId.toString()]
         }
     }
-    return resultArr.map((userInfo) => userInfo.sort((a, b) => b.likeCount - a.likeCount))
+    return resultArray.map((userInfo) => userInfo.sort((a, b) => b.likeCount - a.likeCount))
 }
 
 const batchLoadComment = async (bandIds: readonly ObjectID[]) => {
-    const db = await DB.get() as Db
+    const db = await DB.get() as Db, idxTable = generateIdxTable(bandIds)
     const data = await db.collection("comment").find({ bandId: { $in: bandIds } }).sort({ createdAt: -1 }).toArray()
-    const mp = bandIds.reduce((acc, cur, idx) => {
-        acc[cur.toString()] = idx
-        return acc
-    }, {} as { [key: string]: number })
-    const resultArr: Comment[][] = Array.from(Array(bandIds.length), () => [])
+    const resultArray: Comment[][] = Array.from(Array(bandIds.length), () => [])
     data.forEach((item) => {
-        resultArr[mp[item.bandId.toString()]].push(item)
+        idxTable[item.bandId.toString()].forEach(idx => resultArray[idx].push(item))
     })
-    return resultArr
+    return resultArray
 }
 
 const batchLoadLikeStatus = async (bandData: readonly LikeStatusBatch[]) => {
-    const db = await DB.get() as Db
-    const mp = bandData.reduce((acc, cur, idx) => {
-        acc[cur.bandId.toString()] = idx
-        return acc
-    }, {} as { [key: string]: number })
-    const retArr: boolean[] = Array.from(Array(bandData.length), () => false)
+    const db = await DB.get() as Db, idxTable = generateIdxTable(bandData.map(x => x.bandId))
+    const resultArray: boolean[] = Array.from(Array(bandData.length), () => false)
     const likeStatus = await db.collection("like").find({ $or: bandData as LikeStatusBatch[] }).toArray()
     likeStatus.forEach((like) => {
-        retArr[mp[like.bandId.toString()]] = true
+        idxTable[like.bandId.toString()].forEach(idx => resultArray[idx] = true)
     })
-    return retArr
+    return resultArray
 }
 
 // const batchLoadFollowingStatus = async (userIds: readonly string[]) => {

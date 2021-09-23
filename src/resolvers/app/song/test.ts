@@ -22,7 +22,7 @@ const fileUpload = (query: string, variables: { [x: string]: string }) => {
 const uri: string[] = []
 const songIds: string[] = []
 const instrumentIds: string[] = []
-describe("Penta-Tonic music Services", () => {
+describe("Penta-Tonic Song Services", () => {
     after(async () => {
         const db = await DB.get() as Db
         await Promise.all([
