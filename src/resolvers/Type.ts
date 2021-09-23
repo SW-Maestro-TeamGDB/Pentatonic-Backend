@@ -94,7 +94,7 @@ export const FreeSong = {
 export const FreeBand = {
     bandId: (parent: BandInterface) => parent._id,
     song: (parent: BandInterface, args: void, context: Context) =>
-        context.loaders.songsLoader.load(parent.songId.toString()),
+        context.loaders.songsLoader.load(parent.songId),
     session: (parent: BandInterface, args: void, context: Context) => context.loaders.sessionsLoader.load(parent._id),
     creator: (parent: BandInterface, args: void, context: Context) => context.loaders.userLoader1.load(parent.creatorId),
     likeCount: (parent: BandInterface, args: void, context: Context) => context.loaders.likeCountsLoader.load(parent._id),
@@ -116,14 +116,14 @@ export const Instrument = {
 
 export const Cover = {
     coverId: (parent: CoverInterface) => parent._id,
-    song: (parent: CoverInterface, args: void, context: Context) => context.loaders.songsLoader.load(parent.songId.toString()),
+    song: (parent: CoverInterface, args: void, context: Context) => context.loaders.songsLoader.load(parent.songId),
     coverBy: (parent: CoverInterface, args: void, context: Context) => context.loaders.userLoader1.load(parent.coverBy)
 }
 
 export const Band = {
     bandId: (parent: BandInterface) => parent._id,
     song: (parent: BandInterface, args: void, context: Context) =>
-        context.loaders.songsLoader.load(parent.songId.toString()),
+        context.loaders.songsLoader.load(parent.songId),
     session: (parent: BandInterface, args: void, context: Context) => context.loaders.sessionsLoader.load(parent._id),
     creator: (parent: BandInterface, args: void, context: Context) => context.loaders.userLoader1.load(parent.creatorId),
     likeCount: (parent: BandInterface, args: void, context: Context) => context.loaders.likeCountsLoader.load(parent._id),

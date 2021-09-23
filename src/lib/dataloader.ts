@@ -22,15 +22,48 @@ const batchLoadInstrumentFn = async (songIds: readonly ObjectID[]) => {
 
 
 const batchLoadSongFn = async (songIds: readonly ObjectID[]) => {
-    const objIds = songIds.map(s => new ObjectID(s))
     const db = await DB.get() as Db
-    const songs: Song[] = await db.collection("song").find({ _id: { $in: objIds } }).toArray()
-    return songs
+    const resultArray: Song[] = Array.from(Array(songIds.length))
+    const mp = songIds.reduce((acc, cur, idx) => {
+        if (acc[cur.toString()]) {
+            acc[cur.toString()].push(idx)
+        }
+        else {
+            acc[cur.toString()] = [idx]
+        }
+        return acc
+    }, {} as { [key: string]: number[] })
+    const songs: Song[] = await db.collection("song").find({ _id: { $in: songIds } }).toArray()
+    songs.forEach(song => {
+        const key = song._id.toString()
+        while (mp[key].length) {
+            const idx = mp[key].pop()
+            resultArray[idx as number] = song
+        }
+    })
+    return resultArray
 }
 
 const batchLoadUserFn1 = async (userIds: readonly string[]) => {
+    const mp = userIds.reduce((acc, cur, idx) => {
+        if (acc[cur]) {
+            acc[cur].push(idx)
+        } else {
+            acc[cur] = [idx]
+        }
+        return acc
+    }, {} as { [key: string]: number[] })
     const db = await DB.get() as Db
-    return await db.collection("user").find({ id: { $in: userIds } }).toArray()
+    const data = await db.collection("user").find({ id: { $in: userIds } }).toArray()
+    const resultArray = Array.from(Array(userIds.length))
+    data.forEach(item => {
+        const key = item.id
+        while (mp[key].length) {
+            const idx = mp[key].pop()
+            resultArray[idx as number] = item
+        }
+    })
+    return resultArray
 }
 
 
@@ -206,20 +239,20 @@ const batchLoadLikeStatus = async (bandData: readonly LikeStatusBatch[]) => {
 
 // export const followingStatusLoader = new DataLoader(batchLoadFollowingStatus)
 
-export const likeStatusLoader = new DataLoader(batchLoadLikeStatus)
+export const likeStatusLoader = new DataLoader(batchLoadLikeStatus, { cache: false })
 
-export const commentsLoader = new DataLoader(batchLoadComment)
+export const commentsLoader = new DataLoader(batchLoadComment, { cache: false })
 
-export const positionLoader = new DataLoader(batchLoadPosition)
+export const positionLoader = new DataLoader(batchLoadPosition, { cache: false })
 
 export const followingLoader = new DataLoader(batchLoadFollowingCount, { cache: false })
 export const followerLoader = new DataLoader(batchLoadFollowerCount, { cache: false })
-export const userLoader1 = new DataLoader(batchLoadUserFn1)
-export const songsLoader = new DataLoader(batchLoadSongFn)
-export const instrumentsLoader = new DataLoader(batchLoadInstrumentFn)
+export const userLoader1 = new DataLoader(batchLoadUserFn1, { cache: false })
+export const songsLoader = new DataLoader(batchLoadSongFn, { cache: false })
+export const instrumentsLoader = new DataLoader(batchLoadInstrumentFn, { cache: false })
 
-export const bandsLoader = new DataLoader(batchLoadBandFn)
+export const bandsLoader = new DataLoader(batchLoadBandFn, { cache: false })
 
-export const sessionsLoader = new DataLoader(batchLoadSessionFn)
+export const sessionsLoader = new DataLoader(batchLoadSessionFn, { cache: false })
 
 export const likeCountsLoader = new DataLoader(batchLoadLikeCountFn, { cache: false })
