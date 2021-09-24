@@ -429,7 +429,7 @@ describe("Library services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.errors[0].meesage, "삭제하는데 실패하였습니다")
+                equal(body.errors[0].message, "삭제하는데 실패하였습니다")
             })
         })
     })

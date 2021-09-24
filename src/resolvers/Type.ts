@@ -41,6 +41,9 @@ export const User = {
                 }
             }]).toArray().then(u => {
                 return u.flatMap(x => {
+                    if (x.band.length == 0) {
+                        return []
+                    }
                     const _id = x.band[0]._id.toString()
                     if (st.has(_id)) {
                         return []
