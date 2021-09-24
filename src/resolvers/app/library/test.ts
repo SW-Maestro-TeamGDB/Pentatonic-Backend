@@ -410,6 +410,28 @@ describe("Library services test", () => {
                 equal(body.data.deleteCover, true)
             })
         })
+        describe("Failure", () => {
+            it("cover is undefined", async () => {
+                const query = `
+                    mutation {
+                        deleteCover(
+                            input: {
+                                cover: {
+                                    coverId: "111111111111111111111111"
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].meesage, "삭제하는데 실패하였습니다")
+            })
+        })
     })
     describe("Query queryCover", () => {
         describe("Success", () => {
