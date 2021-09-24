@@ -96,7 +96,6 @@ export const permissions = shield({
         uploadCover: and(isLogin, isValidInput),
         updateCover: and(isLogin, isValidInput),
         updateBand: and(isLogin, isValidInput),
-        createFreeBand: and(isLogin, isValidInput),
         follow: and(isLogin, isValidInput),
         createComment: and(isLogin, isValidInput),
         deleteComment: and(isLogin, isValidInput),

@@ -4,7 +4,6 @@ import { Mutation as lib } from "resolvers/app/library"
 import { Mutation as band } from "resolvers/app/band"
 import { Mutation as audio } from "resolvers/app/audio"
 import { Mutation as follow } from "resolvers/app/follow"
-import { Mutation as freeSong } from "resolvers/app/freeBand"
 import { Mutation as like } from "resolvers/app/like"
 import { Mutation as comment } from "resolvers/app/comment"
 
@@ -15,7 +14,6 @@ export default {
     ...band,
     ...audio,
     ...follow,
-    ...freeSong,
     ...like,
     ...comment
 }

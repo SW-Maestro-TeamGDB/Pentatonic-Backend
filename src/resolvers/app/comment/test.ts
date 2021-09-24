@@ -299,7 +299,7 @@ describe("Comment services test", () => {
         it("test comments loaders", async () => {
             const query = ` 
                 query{ 
-                    queryFreeBand(
+                    queryBand(
                         filter: {
                             type: ALL
                         }
@@ -316,8 +316,8 @@ describe("Comment services test", () => {
                 .set("Content-Type", "application/json")
                 .send(JSON.stringify({ query }))
                 .expect(200)
-            equal(body.data.queryFreeBand[0].name, "demo")
-            equal(body.data.queryFreeBand[0].comment[0].content, "update test comment")
+            equal(body.data.queryBand[0].name, "demo")
+            equal(body.data.queryBand[0].comment[0].content, "update test comment")
         })
     })
 })

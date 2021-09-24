@@ -53,12 +53,6 @@ input CreateCommentInput {
     comment: CreateCommentInCommentInput!
 }
 
-
-
-extend type FreeBand {
-    comment: [Comment!]
-}
-
 extend type Band {
     comment: [Comment!]
 }

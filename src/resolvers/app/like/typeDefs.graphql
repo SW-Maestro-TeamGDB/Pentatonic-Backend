@@ -18,11 +18,6 @@ extend type Band {
     likeStatus: Boolean
 }
 
-extend type FreeBand {
-    likeCount: Int!
-    likeStatus: Boolean
-}
-
 extend type Mutation {
     like(
         input: LikeInput!
