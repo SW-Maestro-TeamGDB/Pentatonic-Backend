@@ -52,7 +52,7 @@ export const User = {
             })
     },
     library: (parent: UserInterface, args: void, context: Context) => {
-        if (context.user != null && context.user.id === parent.id) {
+        if (context?.user?.id === parent.id) {
             return context.db
                 .collection("library")
                 .find({ coverBy: context.user.id })
@@ -81,6 +81,12 @@ export const User = {
     },
     position: (parent: UserInterface, args: void, context: Context) =>
         context.loaders.positionLoader.load(parent.id),
+    phoneNumber: (parent: UserInterface, args: void, context: Context) => {
+        if (parent.id === context?.user?.id) {
+            return parent.phoneNumber
+        }
+        return null
+    },
 }
 
 export const UserLink = {
@@ -88,6 +94,12 @@ export const UserLink = {
         context.loaders.followerLoader.load(parent.id),
     followingCount: (parent: UserInterface, args: void, context: Context) =>
         context.loaders.followingLoader.load(parent.id),
+    phoneNumber: (parent: UserInterface, args: void, context: Context) => {
+        if (parent.id === context?.user?.id) {
+            return parent.phoneNumber
+        }
+        return null
+    },
 }
 export const BandLink = {
     bandId: (parent: BandInterface) => parent._id,

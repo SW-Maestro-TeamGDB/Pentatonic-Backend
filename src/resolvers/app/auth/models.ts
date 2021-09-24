@@ -4,6 +4,7 @@ import { ObjectID } from "mongodb"
 export interface User {
     _id: ObjectID
     id: string
+    phoneNumber: string
 }
 
 export interface IsValidIdInput {
