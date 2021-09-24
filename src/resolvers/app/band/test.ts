@@ -106,6 +106,27 @@ describe("Band services test", () => {
                 .expect(200)
             songIds.push(body.data.uploadSong.songId)
         })
+        it("Successfully uploaded a free song", async () => {
+            const query = `
+                    mutation{
+                        uploadFreeSong(
+                            input: {
+                                song: {
+                                    name: "Viva La Vida",
+                                    songURI: "${env.S3_URI}/result.mp3",
+                                    artist: "artist"
+                                }
+                            }
+                        )
+                    }`
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            songIds.push(body.data.uploadFreeSong)
+        })
         it("Successfully uploaded a cover - 1", async () => {
             const query = `
                 mutation {
@@ -221,7 +242,8 @@ describe("Band services test", () => {
                                 band: {
                                     songId:"${songIds[0]}",
                                     introduce:"Test-Band-1",
-                                    name:"테스트 밴드입니다 >.<"
+                                    name:"테스트 밴드입니다 >.<",
+                                    isSoloBand: false
                                 },
                                 sessionConfig:[
                                     {
@@ -265,7 +287,7 @@ describe("Band services test", () => {
                 equal(body.data.createBand.creator.id, "user1234")
                 bandIds.push(body.data.createBand.bandId)
             })
-            it("Successfully create band - 1", async () => {
+            it("Successfully create band - 2", async () => {
                 const query = `
                     mutation{
                         createBand(
@@ -273,7 +295,8 @@ describe("Band services test", () => {
                                 band: {
                                     songId:"${songIds[0]}",
                                     introduce:"test band - 2",
-                                    name:"test band - 2"
+                                    name:"test band - 2",
+                                    isSoloBand: false
                                 },
                                 sessionConfig:[
                                     {
@@ -315,6 +338,43 @@ describe("Band services test", () => {
                 equal(body.data.createBand.session[0].position, "DRUM")
                 equal(body.data.createBand.creator.username, "pukuba")
                 equal(body.data.createBand.creator.id, "user1234")
+                bandIds.push(body.data.createBand.bandId)
+            })
+            it("Successfully create free band - 3", async () => {
+                const query = `
+                    mutation{
+                        createBand(
+                            input: {
+                                band: {
+                                    songId:"${songIds[1]}",
+                                    introduce:"test band - 3",
+                                    name:"test band - 3",
+                                    isSoloBand: true
+                                },
+                                sessionConfig:[
+                                    {
+                                        session: DRUM,
+                                        maxMember:1
+                                    }
+                                ]
+                            }
+                        ){
+                            bandId
+                            name
+                            song {
+                                songId
+                            }
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.createBand.name, "test band - 3")
+                equal(body.data.createBand.song.songId, songIds[1])
                 bandIds.push(body.data.createBand.bandId)
             })
         })
@@ -596,6 +656,25 @@ describe("Band services test", () => {
             })
         })
         describe("Failure", () => {
+            it("Fail to update soloband session update", async () => {
+                const query = `
+                    mutation{
+                        input: {
+                            band: {
+                                bandId:"${bandIds[1]}"
+                            },
+                            sessionConfig: []
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.errors[0].message, "이 밴드는 솔로밴드입니다 세션 정보를 수정할 수 없습니다")
+            })
             it("Fail to update band - invalid bandId", async () => {
                 const query = `
                     mutation{
@@ -775,7 +854,7 @@ describe("Band services test", () => {
                 .set("Content-Type", "application/json")
                 .send(JSON.stringify({ query }))
                 .expect(200)
-            equal(body.data.queryBand[0].name, "test band - 2")
+            equal(body.data.queryBand[0].name, "test band - 3")
             equal(body.data.queryBand[1].name, "테스트 밴드 업데이트!!")
         })
     })

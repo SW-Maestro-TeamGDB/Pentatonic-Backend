@@ -1,11 +1,3 @@
-interface SongInterface {
-    songId: ObjectID!
-    duration: Float!
-    name: String!
-    artist: String!
-    songURI: URL!
-}
-
 type FreeSong implements SongInterface {
     songId: ObjectID!
     duration: Float!
