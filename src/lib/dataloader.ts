@@ -64,7 +64,7 @@ const batchLoadSessionFn = async (bandIds: readonly ObjectID[]) => {
     const document = await db.collection("freeBand").findOne({ _id: bandIds[0] })
     const collectionName = document === null ? "band" : "freeBand"
     const data = await Promise.all([
-        db.collection("session").find({ bandId: { $in: bandIds } }).toArray(),
+        db.collection("join").find({ bandId: { $in: bandIds } }).toArray(),
         db.collection(collectionName).find({ _id: { $in: bandIds } }).toArray()
     ])
     const coverId = data[0].map((e) => e.coverId)

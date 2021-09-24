@@ -56,7 +56,7 @@ export const updateFreeBand = async (parent: void, args: UpdateFreeBandInput, co
         })
     }
     if (args.input.sessionConfig !== undefined) {
-        const nowSession = await context.db.collection("session")
+        const nowSession = await context.db.collection("join")
             .find({ bandId: new ObjectID(args.input.band.bandId) })
             .toArray()
         const session = args.input.sessionConfig
@@ -94,7 +94,7 @@ export const updateFreeBand = async (parent: void, args: UpdateFreeBandInput, co
 export const joinFreeBand = async (parent: void, args: JoinFreeBandInput, context: Context) => {
     const data = await Promise.all([
         context.db.collection("freeBand").findOne({ _id: new ObjectID(args.input.band.bandId) }),
-        context.db.collection("session").find({
+        context.db.collection("join").find({
             bandId: new ObjectID(args.input.band.bandId),
             position: args.input.session.position
         }).toArray(),
@@ -117,19 +117,12 @@ export const joinFreeBand = async (parent: void, args: JoinFreeBandInput, contex
         if (!data[0]["sessions"][myPosition] || data[1].length >= data[0]["sessions"][myPosition]) {
             throw new Error()
         }
-        const result = await Promise.all([
-            context.db.collection("join").insertOne({
-                bandId: new ObjectID(args.input.band.bandId),
-                position: args.input.session.position,
-                userId: context.user.id
-            }),
-            context.db.collection("session").insertOne({
-                bandId: new ObjectID(args.input.band.bandId),
-                position: args.input.session.position,
-                coverId: new ObjectID(args.input.session.coverId)
-            }).then(({ result }) => result.n === 1)
-        ])
-        return result[1]
+        return context.db.collection("join").insertOne({
+            bandId: new ObjectID(args.input.band.bandId),
+            position: args.input.session.position,
+            userId: context.user.id,
+            coverId: new ObjectID(args.input.session.coverId)
+        }).then(({ result }) => result.n === 1)
     } catch {
         throw new ApolloError("세션이 가득찾거나 존재하지 않습니다")
     }
@@ -141,8 +134,8 @@ export const leaveFreeBand = async (parent: void, args: LeaveFreeBandInput, cont
         _id: new ObjectID(args.input.session.coverId)
     })
     if (cover !== null) {
-        const [session, band] = await Promise.all([
-            context.db.collection("session").findOne({
+        const [join, band] = await Promise.all([
+            context.db.collection("join").findOne({
                 bandId: new ObjectID(args.input.band.bandId),
                 coverId: new ObjectID(args.input.session.coverId)
             }),
@@ -151,20 +144,14 @@ export const leaveFreeBand = async (parent: void, args: LeaveFreeBandInput, cont
                 creatorId: uid
             })
         ])
-        if (session !== null) {
+        if (join !== null) {
             if (cover.coverBy.toString() === context.user.id || band !== null) {
-                const result = await Promise.all([
-                    context.db.collection("join").deleteOne({
-                        bandId: new ObjectID(args.input.band.bandId),
-                        position: cover.position,
-                        userId: cover.coverBy
-                    }),
-                    context.db.collection("session").deleteOne({
-                        bandId: new ObjectID(args.input.band.bandId),
-                        coverId: new ObjectID(args.input.session.coverId)
-                    }).then(({ result }) => result.n === 1)
-                ])
-                return result[1]
+                return context.db.collection("join").deleteOne({
+                    bandId: new ObjectID(args.input.band.bandId),
+                    position: cover.position,
+                    userId: cover.coverBy,
+                    coverId: new ObjectID(args.input.session.coverId)
+                }).then(({ result }) => result.n === 1)
             }
             throw new ApolloError("권한이 없습니다")
         } else {
@@ -182,7 +169,6 @@ export const deleteFreeBand = async (parent: void, args: DeleteFreeBandInput, co
     if (bandDeleteResult === true) {
         const bandId = new ObjectID(args.input.band.bandId)
         await Promise.all([
-            context.db.collection("session").deleteMany({ bandId }),
             context.db.collection("join").deleteMany({ bandId }),
             context.db.collection("like").deleteMany({ bandId }),
             context.db.collection("comment").deleteMany({ bandId }),
