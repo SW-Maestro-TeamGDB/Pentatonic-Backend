@@ -659,11 +659,15 @@ describe("Band services test", () => {
             it("Fail to update soloband session update", async () => {
                 const query = `
                     mutation{
-                        input: {
-                            band: {
-                                bandId:"${bandIds[1]}"
-                            },
-                            sessionConfig: []
+                        updateBand(
+                            input: {
+                                band: {
+                                    bandId:"${bandIds[2]}"
+                                },
+                                sessionConfig: []
+                            }
+                        ){
+                            name
                         }
                     }
                 `
@@ -673,6 +677,7 @@ describe("Band services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
+                console.log(body)
                 equal(body.errors[0].message, "이 밴드는 솔로밴드입니다 세션 정보를 수정할 수 없습니다")
             })
             it("Fail to update band - invalid bandId", async () => {
@@ -855,7 +860,7 @@ describe("Band services test", () => {
                 .send(JSON.stringify({ query }))
                 .expect(200)
             equal(body.data.queryBand[0].name, "test band - 3")
-            equal(body.data.queryBand[1].name, "테스트 밴드 업데이트!!")
+            equal(body.data.queryBand[1].name, "test band - 2")
         })
     })
     describe("Query likeStatus", () => {

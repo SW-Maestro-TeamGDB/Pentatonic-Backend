@@ -118,7 +118,7 @@ export const updateBand = async (parent: void, args: UpdateBandInput, context: C
     const query: UpdateBandQuery = {
         $set: data
     }
-    if (Object.keys(data).length === 0) {
+    if (Object.keys(data).length === 0 && !args.input.sessionConfig) {
         return context.db.collection("band").findOne({
             _id: new ObjectID(args.input.band.bandId)
         })
@@ -163,12 +163,12 @@ export const updateBand = async (parent: void, args: UpdateBandInput, context: C
 }
 
 export const deleteBand = async (parent: void, args: DeleteBandInput, context: Context) => {
-    const bandDeleteResult = await context.db.collection("band").deleteOne({
+    const bandDeleteResult = await context.db.collection("band").findOneAndDelete({
         _id: new ObjectID(args.input.band.bandId),
         creatorId: context.user.id
-    }).then(({ result }) => result.n === 1)
-    if (bandDeleteResult === true) {
-        await Promise.all([
+    }).then(({ value }) => value)
+    if (bandDeleteResult) {
+        const promiseArray = [
             context.db.collection("join").deleteMany({
                 bandId: new ObjectID(args.input.band.bandId)
             }),
@@ -178,7 +178,16 @@ export const deleteBand = async (parent: void, args: DeleteBandInput, context: C
             context.db.collection("comment").deleteMany({
                 bandId: new ObjectID(args.input.band.bandId)
             })
-        ])
+        ]
+        if (bandDeleteResult.isFreeBand) {
+            promiseArray.push(context.db.collection("song").deleteMany({
+                _id: new ObjectID(bandDeleteResult.songId)
+            }))
+            promiseArray.push(context.db.collection("library").deleteMany({
+                songId: new ObjectID(bandDeleteResult.songId)
+            }))
+        }
+        await Promise.all(promiseArray)
     }
-    return bandDeleteResult
+    return bandDeleteResult ? true : false
 }
