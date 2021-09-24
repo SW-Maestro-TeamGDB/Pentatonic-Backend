@@ -18,7 +18,13 @@ import { ApolloError } from "apollo-server-express"
 
 
 export const createBand = async (parent: void, args: CreateBandInput, context: Context) => {
+    if (args.input.band.isSoloBand) {
+        if (args.input.sessionConfig.length > 1 || args.input.sessionConfig[0].maxMember !== 1 || args.input.sessionConfig.length === 0) {
+            throw new ApolloError("솔로 밴드의 세션은 언제나 1명만 참여 가능합니다")
+        }
+    }
     const sessionArr: SessionInformation = sessionParse(args.input.sessionConfig)
+    const song = await context.db.collection("song").findOne({ _id: new ObjectID(args.input.band.songId) })
     return context.db.collection("band").insertOne({
         creatorId: context.user.id,
         name: args.input.band.name,
@@ -26,7 +32,9 @@ export const createBand = async (parent: void, args: CreateBandInput, context: C
         songId: new ObjectID(args.input.band.songId),
         backGroundURI: args.input.band.backGroundURI.href,
         sessions: { ...sessionArr },
-        createDate: new Date()
+        isFreeBand: song.freeSong ? true : false,
+        createDate: new Date(),
+        isSoloBand: args.input.band.isSoloBand
     }).then(({ ops }) => ops[0])
 }
 
@@ -116,6 +124,9 @@ export const updateBand = async (parent: void, args: UpdateBandInput, context: C
         })
     }
     if (args.input.sessionConfig !== undefined) {
+        if (bandInfo.isSoloBand) {
+            throw new ApolloError("이 밴드는 솔로밴드입니다 세션 정보를 수정할 수 없습니다")
+        }
         const nowSession = await context.db.collection("join")
             .find({ bandId: new ObjectID(args.input.band.bandId) })
             .toArray()

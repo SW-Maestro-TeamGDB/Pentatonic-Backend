@@ -42,6 +42,7 @@ export interface CreateBandInput {
             songId: ObjectID
             backGroundURI: URL
             introduce: string
+            isSoloBand: boolean
         }
         sessionConfig: SessionConfig[]
     }

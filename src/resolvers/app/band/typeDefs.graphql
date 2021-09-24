@@ -38,6 +38,7 @@ type Band implements BandInterface {
     backGroundURI: URL!
     createDate: Date!
     session: [Session]
+    isSoloBand: Boolean!
 }
 
 type BandLink {
@@ -48,6 +49,7 @@ type BandLink {
     introduce: String!
     backGroundURI: URL!
     createDate: Date!
+    isSoloBand: Boolean!
 }
 
 type Session {
@@ -66,6 +68,7 @@ input CreateBandArgsInput {
     introduce: String!
     backGroundURI: URL! = "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg"
     songId: ObjectID!
+    isSoloBand: Boolean!
 }
 
 input CreateBandInput {
