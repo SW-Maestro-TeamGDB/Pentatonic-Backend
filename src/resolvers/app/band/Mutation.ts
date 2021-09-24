@@ -170,13 +170,19 @@ export const deleteBand = async (parent: void, args: DeleteBandInput, context: C
         creatorId: context.user.id
     }).then(({ result }) => result.n === 1)
     if (bandDeleteResult === true) {
-        const bandId = new ObjectID(args.input.band.bandId)
         await Promise.all([
-            context.db.collection("session").deleteMany({ bandId }),
-            context.db.collection("join").deleteMany({ bandId }),
-            context.db.collection("like").deleteMany({ bandId }),
-            context.db.collection("comment").deleteMany({ bandId }),
-            context.db.collection("trend").deleteMany({ bandId })
+            context.db.collection("session").deleteMany({
+                bandId: new ObjectID(args.input.band.bandId)
+            }),
+            context.db.collection("join").deleteMany({
+                bandId: new ObjectID(args.input.band.bandId)
+            }),
+            context.db.collection("like").deleteMany({
+                bandId: new ObjectID(args.input.band.bandId)
+            }),
+            context.db.collection("comment").deleteMany({
+                bandId: new ObjectID(args.input.band.bandId)
+            })
         ])
     }
     return bandDeleteResult

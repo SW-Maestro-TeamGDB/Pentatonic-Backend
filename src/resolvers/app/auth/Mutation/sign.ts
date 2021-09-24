@@ -17,7 +17,6 @@ import {
 } from "resolvers/app/auth/models"
 import { isValidId, isValidUsername } from "resolvers/app/auth/Query"
 import { Context } from "config/types"
-import { DynamoDBCustomizations } from "aws-sdk/lib/services/dynamodb"
 
 export const sendAuthCode = async (parent: void, args: SendAuthCodeInput, context: Context) => {
     const { phoneNumber } = args.input
@@ -128,7 +127,8 @@ export const deleteAccount = async (parent: void, args: DeleteAccountInput, cont
         db.collection("follow").deleteMany({ userId: user.id }),
         db.collection("follow").deleteMany({ following: user.id }),
         db.collection("like").deleteMany({ userId: user.id }),
-        db.collection("trend").deleteMany({ userId: user.id })
+        db.collection("trend").deleteMany({ userId: user.id }),
+        db.collection("comment").deleteMany({ userId: user.id })
     ])
     return deleteUser[0].result.n === 1
 }

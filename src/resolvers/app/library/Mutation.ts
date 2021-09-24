@@ -86,8 +86,24 @@ export const updateCover = async (parent: void, args: UpdateCoverInput, context:
     }, query, { returnDocument: "after" }).then(({ value }) => value)
 }
 
-export const deleteCover = (parent: void, args: DeleteCoverInput, context: Context) =>
-    context.db.collection("library").deleteOne({
+export const deleteCover = async (parent: void, args: DeleteCoverInput, context: Context) => {
+    const deleteDocument = await context.db.collection("library").findOneAndDelete({
         _id: new ObjectID(args.input.cover.coverId),
         coverBy: context.user.id
-    }).then(({ deletedCount }) => deletedCount === 1)
+    })
+    if (deleteDocument) {
+        await Promise.all([
+            context.db.collection("session").deleteMany({
+                coverId: new ObjectID(args.input.cover.coverId)
+            }),
+            context.db.collection("join").deleteMany({
+                coverId: new ObjectID(args.input.cover.coverId),
+                userId: context.user.id
+            })
+        ])
+        return true
+    }
+    else {
+        throw new ApolloError("삭제할 수 없습니다")
+    }
+}
