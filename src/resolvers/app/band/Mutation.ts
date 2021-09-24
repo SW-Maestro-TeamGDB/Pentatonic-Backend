@@ -202,9 +202,7 @@ export const updateBand = async (
                 "현재 세션에 있는 유저를 없앤뒤 다시 수정해주세요"
             )
         }
-        (query.$set.sessions as SessionInformation) = sessionParse(
-            args.input.sessionConfig
-        )
+        query.$set.sessions = sessionParse(args.input.sessionConfig)
     }
     return context.db
         .collection("band")

@@ -314,8 +314,13 @@ describe("Like services test", () => {
                 .send(JSON.stringify({ query }))
                 .expect(200)
             equal(body.data.getTrendBands.length, 2)
-            equal(body.data.getTrendBands[0].likeCount, 2)
-            equal(body.data.getTrendBands[1].likeCount, 1)
+            if (body.data.getTrendBands[0].likeCount === 2) {
+                equal(body.data.getTrendBands[0].likeCount, 2)
+                equal(body.data.getTrendBands[1].likeCount, 1)
+            } else {
+                equal(body.data.getTrendBands[0].likeCount, 1)
+                equal(body.data.getTrendBands[1].likeCount, 2)
+            }
         })
     })
     describe("Query getUserInfo", () => {
