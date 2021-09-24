@@ -10,11 +10,20 @@ import DB from "config/connectDB"
 import jwt from "jsonwebtoken"
 import { Db } from "mongodb"
 import { includes } from "test/utils"
-const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
+const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(
+    3,
+    (env.PHONE_NUMBER as string).length
+)}`
 
-
-const fileUpload = (query: string, variables: { [x: string]: string }, token: string) => {
-    const map = Object.assign({}, Object.keys(variables).map(key => [`variables.${key}`]))
+const fileUpload = (
+    query: string,
+    variables: { [x: string]: string },
+    token: string
+) => {
+    const map = Object.assign(
+        {},
+        Object.keys(variables).map((key) => [`variables.${key}`])
+    )
     const response = request(app)
         .post("/api")
         .set({ Authorization: token })
@@ -28,12 +37,11 @@ const fileUpload = (query: string, variables: { [x: string]: string }, token: st
     return response
 }
 
-
 describe("User auth service test", () => {
     const token: string[] = []
     const uri: string[] = []
     after(async () => {
-        const db = await DB.get() as Db
+        const db = (await DB.get()) as Db
         await db.collection("user").deleteOne({ phoneNumber })
     })
     describe("SMS service test", () => {
@@ -59,12 +67,16 @@ describe("User auth service test", () => {
             })
             describe("Failure", () => {
                 before(async () => {
-                    const db = await DB.get() as Db
-                    await db.collection("user").insertOne({ phoneNumber: "+821000000000" })
+                    const db = (await DB.get()) as Db
+                    await db
+                        .collection("user")
+                        .insertOne({ phoneNumber: "+821000000000" })
                 })
                 after(async () => {
-                    const db = await DB.get() as Db
-                    await db.collection("user").deleteOne({ phoneNumber: "+821000000000" })
+                    const db = (await DB.get()) as Db
+                    await db
+                        .collection("user")
+                        .deleteOne({ phoneNumber: "+821000000000" })
                 })
                 it("If it's not a Korean phone number", async () => {
                     const query = `
@@ -100,7 +112,10 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "이미 해당 전화번호로 가입한 유저가 있습니다")
+                    equal(
+                        body.errors[0].message,
+                        "이미 해당 전화번호로 가입한 유저가 있습니다"
+                    )
                 })
             })
         })
@@ -209,7 +224,10 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "휴대번호 인증을 다시해야합니다")
+                    equal(
+                        body.errors[0].message,
+                        "휴대번호 인증을 다시해야합니다"
+                    )
                 })
                 it("If the username format is invalid - 1", async () => {
                     const query = `
@@ -233,7 +251,10 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    includes(body.errors[0].message, "username의 길이는 6이상 14이하여야 합니다")
+                    includes(
+                        body.errors[0].message,
+                        "username의 길이는 6이상 14이하여야 합니다"
+                    )
                 })
                 it("If the id format is invalid - 2", async () => {
                     const query = `
@@ -257,7 +278,10 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    includes(body.errors[0].message, "id의 길이는 6이상 14이하여야 합니다")
+                    includes(
+                        body.errors[0].message,
+                        "id의 길이는 6이상 14이하여야 합니다"
+                    )
                 })
                 it("If the username format is invalid - 3", async () => {
                     const query = `
@@ -281,7 +305,10 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    includes(body.errors[0].message, "id는 영문 소문자, 대문자, 숫자여야합니다")
+                    includes(
+                        body.errors[0].message,
+                        "id는 영문 소문자, 대문자, 숫자여야합니다"
+                    )
                 })
                 it("If the password format is invalid - 1", async () => {
                     const query = `
@@ -305,7 +332,10 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    includes(body.errors[0].message, "Password의 길이는 6이상 14이하여야 합니다")
+                    includes(
+                        body.errors[0].message,
+                        "Password의 길이는 6이상 14이하여야 합니다"
+                    )
                 })
                 it("If the password format is invalid - 2", async () => {
                     const query = `
@@ -329,7 +359,10 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    includes(body.errors[0].message, "Password는 영문 소문자, 대문자, 숫자, 특수문자여야 합니다")
+                    includes(
+                        body.errors[0].message,
+                        "Password는 영문 소문자, 대문자, 숫자, 특수문자여야 합니다"
+                    )
                 })
                 it("The authentication number does not match", async () => {
                     await (redis as Redis).setex(`${phoneNumber}`, 60, "123432")
@@ -354,7 +387,10 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "인증번호가 일치하지 않습니다")
+                    equal(
+                        body.errors[0].message,
+                        "인증번호가 일치하지 않습니다"
+                    )
                 })
             })
         })
@@ -403,7 +439,10 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "잘못된 아이디 또는 비밀번호를 입력하셨습니다")
+                    equal(
+                        body.errors[0].message,
+                        "잘못된 아이디 또는 비밀번호를 입력하셨습니다"
+                    )
                 })
                 it("If incorrectly entered password", async () => {
                     const query = `
@@ -423,7 +462,10 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "잘못된 아이디 또는 비밀번호를 입력하셨습니다")
+                    equal(
+                        body.errors[0].message,
+                        "잘못된 아이디 또는 비밀번호를 입력하셨습니다"
+                    )
                 })
             })
         })
@@ -511,7 +553,11 @@ describe("User auth service test", () => {
             })
             describe("Failure", () => {
                 it("If find a user who does not exist", async () => {
-                    await (redis as Redis).setex("canSend-::ffff:127.0.0.1", 60, `[${Date.now()},0]`)
+                    await (redis as Redis).setex(
+                        "canSend-::ffff:127.0.0.1",
+                        60,
+                        `[${Date.now()},0]`
+                    )
                     const query = `
                         mutation{
                             sendAuthCode(
@@ -527,7 +573,10 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "해당 전화번호로 가입한 유저가 없습니다")
+                    equal(
+                        body.errors[0].message,
+                        "해당 전화번호로 가입한 유저가 없습니다"
+                    )
                 })
                 it("If you are looking for a user who does not exist", async () => {
                     const query = ` 
@@ -545,7 +594,10 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "휴대번호 인증을 다시해야합니다")
+                    equal(
+                        body.errors[0].message,
+                        "휴대번호 인증을 다시해야합니다"
+                    )
                 })
                 it("the authentication number is wrong", async () => {
                     await (redis as Redis).setex(phoneNumber, 60, "123432")
@@ -564,14 +616,21 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "인증번호가 일치하지 않습니다")
+                    equal(
+                        body.errors[0].message,
+                        "인증번호가 일치하지 않습니다"
+                    )
                 })
             })
         })
         describe("Mutation resetPassword", () => {
             describe("Success", () => {
                 it("The password is reset normally", async () => {
-                    await (redis as Redis).setex("canSend-::ffff:127.0.0.1", 60, `[${Date.now() - 70000},4]`)
+                    await (redis as Redis).setex(
+                        "canSend-::ffff:127.0.0.1",
+                        60,
+                        `[${Date.now() - 70000},4]`
+                    )
                     const query = `
                         mutation{
                             resetPassword(
@@ -595,7 +654,11 @@ describe("User auth service test", () => {
             })
             describe("Failure", () => {
                 it("The authentication number is invalid", async () => {
-                    await (redis as Redis).setex("+82100000000000", 60, "555555")
+                    await (redis as Redis).setex(
+                        "+82100000000000",
+                        60,
+                        "555555"
+                    )
                     const query = `
                         mutation{
                             resetPassword(
@@ -614,7 +677,10 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "인증번호가 일치하지 않습니다")
+                    equal(
+                        body.errors[0].message,
+                        "인증번호가 일치하지 않습니다"
+                    )
                 })
                 it("If the user does not exist", async () => {
                     const query = `
@@ -635,10 +701,17 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "휴대번호 인증을 다시해야합니다")
+                    equal(
+                        body.errors[0].message,
+                        "휴대번호 인증을 다시해야합니다"
+                    )
                 })
                 it("If the number of requests exceeds - 1", async () => {
-                    await (redis as Redis).setex("canSend-::ffff:127.0.0.1", 60, `[${Date.now()},5]`)
+                    await (redis as Redis).setex(
+                        "canSend-::ffff:127.0.0.1",
+                        60,
+                        `[${Date.now()},5]`
+                    )
                     const query = `
                         mutation{
                             resetPassword(
@@ -660,7 +733,11 @@ describe("User auth service test", () => {
                     equal(body.errors[0].message, "잠시 뒤에 시도해주세요")
                 })
                 it("Password does not meet the condition", async () => {
-                    await (redis as Redis).setex("canSend-::ffff:127.0.0.1", 60, `[${Date.now()},0]`)
+                    await (redis as Redis).setex(
+                        "canSend-::ffff:127.0.0.1",
+                        60,
+                        `[${Date.now()},0]`
+                    )
                     const query = `
                         mutation{
                             resetPassword(
@@ -679,7 +756,10 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    includes(body.errors[0].message, "Password의 길이는 6이상 14이하여야 합니다")
+                    includes(
+                        body.errors[0].message,
+                        "Password의 길이는 6이상 14이하여야 합니다"
+                    )
                 })
                 it("If there is no record requesting the authentication number", async () => {
                     const query = `
@@ -700,7 +780,10 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "휴대번호 인증을 다시해야합니다")
+                    equal(
+                        body.errors[0].message,
+                        "휴대번호 인증을 다시해야합니다"
+                    )
                 })
             })
         })
@@ -724,7 +807,7 @@ describe("User auth service test", () => {
                     .post("/api")
                     .set({
                         "Content-Type": "application/json",
-                        "Authorization": token[0]
+                        Authorization: token[0],
                     })
                     .send(JSON.stringify({ query }))
                     .expect(200)
@@ -769,7 +852,10 @@ describe("User auth service test", () => {
                     .post("/api")
                     .set({
                         "Content-Type": "application/json",
-                        "Authorization": jwt.sign({ id: "hack1234", username: "hack1234321" }, env.JWT_SECRET)
+                        Authorization: jwt.sign(
+                            { id: "hack1234", username: "hack1234321" },
+                            env.JWT_SECRET
+                        ),
                     })
                     .send(JSON.stringify({ query }))
                     .expect(200)
@@ -792,7 +878,7 @@ describe("User auth service test", () => {
                     .post("/api")
                     .set({
                         "Content-Type": "application/json",
-                        "Authorization": token[0]
+                        Authorization: token[0],
                     })
                     .send(JSON.stringify({ query }))
                     .expect(200)
@@ -815,11 +901,14 @@ describe("User auth service test", () => {
                     .post("/api")
                     .set({
                         "Content-Type": "application/json",
-                        "Authorization": token[0]
+                        Authorization: token[0],
                     })
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                includes(body.errors[0].message, "Password는 영문 소문자, 대문자, 숫자, 특수문자여야 합니다")
+                includes(
+                    body.errors[0].message,
+                    "Password는 영문 소문자, 대문자, 숫자, 특수문자여야 합니다"
+                )
             })
         })
     })
@@ -835,11 +924,15 @@ describe("User auth service test", () => {
                             }
                         )
                     }`
-                const { body } = await fileUpload(query, {
-                    file: `src/test/test.jpg`
-                }, token[0])
+                const { body } = await fileUpload(
+                    query,
+                    {
+                        file: `src/test/test.jpg`,
+                    },
+                    token[0]
+                )
                 const result = await fetch(body.data.uploadImageFile, {
-                    method: "GET"
+                    method: "GET",
                 })
                 uri.push(body.data.uploadImageFile)
                 equal(result.status, 200)
@@ -853,11 +946,15 @@ describe("User auth service test", () => {
                             }
                         )
                     }`
-                const { body } = await fileUpload(query, {
-                    file: "src/test/test.png"
-                }, token[0])
+                const { body } = await fileUpload(
+                    query,
+                    {
+                        file: "src/test/test.png",
+                    },
+                    token[0]
+                )
                 const result = await fetch(body.data.uploadImageFile, {
-                    method: "GET"
+                    method: "GET",
                 })
                 uri.push(body.data.uploadImageFile)
                 equal(result.status, 200)
@@ -871,11 +968,15 @@ describe("User auth service test", () => {
                             }
                         )
                     }`
-                const { body } = await fileUpload(query, {
-                    file: "src/test/test.jpeg"
-                }, token[0])
+                const { body } = await fileUpload(
+                    query,
+                    {
+                        file: "src/test/test.jpeg",
+                    },
+                    token[0]
+                )
                 const result = await fetch(body.data.uploadImageFile, {
-                    method: "GET"
+                    method: "GET",
                 })
                 uri.push(body.data.uploadImageFile)
                 equal(result.status, 200)
@@ -891,9 +992,13 @@ describe("User auth service test", () => {
                             }
                         )
                     }`
-                const { body } = await fileUpload(query, {
-                    file: "src/test/test.zip"
-                }, token[0])
+                const { body } = await fileUpload(
+                    query,
+                    {
+                        file: "src/test/test.zip",
+                    },
+                    token[0]
+                )
                 equal(body.errors[0].message, "파일 확장자가 올바르지 않습니다")
             })
             it("If the user's token is not valid", async () => {
@@ -905,9 +1010,13 @@ describe("User auth service test", () => {
                             }
                         )
                     }`
-                const { body } = await fileUpload(query, {
-                    file: "src/test/test.png"
-                }, "14235412534231132")
+                const { body } = await fileUpload(
+                    query,
+                    {
+                        file: "src/test/test.png",
+                    },
+                    "14235412534231132"
+                )
                 equal(body.errors[0].message, "Authorization Error")
             })
         })
@@ -938,7 +1047,7 @@ describe("User auth service test", () => {
                     .post("/api")
                     .set({
                         "Content-Type": "application/json",
-                        "Authorization": token[0]
+                        Authorization: token[0],
                     })
                     .send(JSON.stringify({ query }))
                     .expect(200)
@@ -968,7 +1077,7 @@ describe("User auth service test", () => {
                     .post("/api")
                     .set({
                         "Content-Type": "application/json",
-                        "Authorization": token[0]
+                        Authorization: token[0],
                     })
                     .send(JSON.stringify({ query }))
                     .expect(200)
@@ -997,7 +1106,7 @@ describe("User auth service test", () => {
                     .post("/api")
                     .set({
                         "Content-Type": "application/json",
-                        "Authorization": token[0]
+                        Authorization: token[0],
                     })
                     .send(JSON.stringify({ query }))
                     .expect(200)
@@ -1028,7 +1137,10 @@ describe("User auth service test", () => {
                     .post("/api")
                     .set({
                         "Content-Type": "application/json",
-                        "Authorization": jwt.sign({ id: "gogo1234321" }, env.JWT_SECRET)
+                        Authorization: jwt.sign(
+                            { id: "gogo1234321" },
+                            env.JWT_SECRET
+                        ),
                     })
                     .send(JSON.stringify({ query }))
                     .expect(200)
@@ -1053,7 +1165,7 @@ describe("User auth service test", () => {
                     .post("/api")
                     .set({
                         "Content-Type": "application/json",
-                        "Authorization": token[0]
+                        Authorization: token[0],
                     })
                     .send(JSON.stringify({ query }))
                     .expect(200)
@@ -1075,7 +1187,7 @@ describe("User auth service test", () => {
                 `
                 const { body } = await request(app)
                     .get(`/api?query=${query}`)
-                    .set({ "Authorization": token[0] })
+                    .set({ Authorization: token[0] })
                     .expect(200)
                 equal(body.data.getUserInfo.id, "test1234")
                 equal(body.data.getUserInfo.username, "SeungWon")
@@ -1101,7 +1213,7 @@ describe("User auth service test", () => {
                     .post("/api")
                     .set({
                         "Content-Type": "application/json",
-                        "Authorization": token[0]
+                        Authorization: token[0],
                     })
                     .send(JSON.stringify({ query }))
                     .expect(200)
@@ -1123,7 +1235,7 @@ describe("User auth service test", () => {
                     .post("/api")
                     .set({
                         "Content-Type": "application/json",
-                        "Authorization": "1234342112341234"
+                        Authorization: "1234342112341234",
                     })
                     .send(JSON.stringify({ query }))
                     .expect(200)
@@ -1147,7 +1259,7 @@ describe("User auth service test", () => {
                     .post("/api")
                     .set({
                         "Content-Type": "application/json",
-                        "Authorization": token[0]
+                        Authorization: token[0],
                     })
                     .send(JSON.stringify({ query }))
                     .expect(200)

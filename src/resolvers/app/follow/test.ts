@@ -7,16 +7,19 @@ import DB from "config/connectDB"
 import * as Redis from "config/connectRedis"
 import * as loaders from "lib/dataloader"
 
-const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
+const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(
+    3,
+    (env.PHONE_NUMBER as string).length
+)}`
 let token: string = ""
 let token1: string = ""
 
 describe("Follow Service Test", () => {
     after(async () => {
-        const db = await DB.get() as Db
+        const db = (await DB.get()) as Db
         await Promise.all([
             db.collection("follow").deleteMany({}),
-            db.collection("user").deleteMany({})
+            db.collection("user").deleteMany({}),
         ])
     })
     before(async () => {
@@ -132,7 +135,10 @@ describe("Follow Service Test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.errors[0].message, "자기 자신을 팔로잉할 수 없습니다")
+                equal(
+                    body.errors[0].message,
+                    "자기 자신을 팔로잉할 수 없습니다"
+                )
             })
             it("If you follow someone who doesn't have one", async () => {
                 const query = `

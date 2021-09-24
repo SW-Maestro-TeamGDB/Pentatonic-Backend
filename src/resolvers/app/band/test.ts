@@ -10,12 +10,15 @@ import { Cover } from "resolvers/app/library/models"
 const songIds: string[] = []
 const coverIds: string[] = []
 const bandIds: string[] = []
-const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
+const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(
+    3,
+    (env.PHONE_NUMBER as string).length
+)}`
 let token: string = ""
 let token1: string = ""
 describe("Band services test", () => {
     after(async () => {
-        const db = await DB.get() as Db
+        const db = (await DB.get()) as Db
         await Promise.all([
             db.collection("user").deleteMany({}),
             db.collection("song").deleteMany({}),
@@ -23,7 +26,7 @@ describe("Band services test", () => {
             db.collection("band").deleteMany({}),
             db.collection("session").deleteMany({}),
             db.collection("join").deleteMany({}),
-            db.collection("like").deleteMany({})
+            db.collection("like").deleteMany({}),
         ])
     })
     describe("Before Register & upload", () => {
@@ -549,7 +552,10 @@ describe("Band services test", () => {
                     .set("Authorization", token1)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.errors[0].message, "세션이 가득찾거나 존재하지 않습니다")
+                equal(
+                    body.errors[0].message,
+                    "세션이 가득찾거나 존재하지 않습니다"
+                )
             })
         })
     })
@@ -677,7 +683,10 @@ describe("Band services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.errors[0].message, "이 밴드는 솔로밴드입니다 세션 정보를 수정할 수 없습니다")
+                equal(
+                    body.errors[0].message,
+                    "이 밴드는 솔로밴드입니다 세션 정보를 수정할 수 없습니다"
+                )
             })
             it("Fail to update band - invalid bandId", async () => {
                 const query = `
@@ -700,7 +709,10 @@ describe("Band services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.errors[0].message, "권한이 없거나 밴드가 올바르지 않습니다")
+                equal(
+                    body.errors[0].message,
+                    "권한이 없거나 밴드가 올바르지 않습니다"
+                )
             })
             it("Fail to update band - permission error", async () => {
                 const query = `
@@ -723,7 +735,10 @@ describe("Band services test", () => {
                     .set("Authorization", token1)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.errors[0].message, "권한이 없거나 밴드가 올바르지 않습니다")
+                equal(
+                    body.errors[0].message,
+                    "권한이 없거나 밴드가 올바르지 않습니다"
+                )
             })
             it("Fail to update band - Incorrect Session Update error - 1", async () => {
                 const query = `
@@ -747,7 +762,10 @@ describe("Band services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.errors[0].message, "현재 세션에 있는 유저를 없앤뒤 다시 수정해주세요")
+                equal(
+                    body.errors[0].message,
+                    "현재 세션에 있는 유저를 없앤뒤 다시 수정해주세요"
+                )
             })
             it("Fail to update band - Incorrect Session Update error - 2", async () => {
                 const query = `
@@ -774,7 +792,10 @@ describe("Band services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.errors[0].message, "현재 세션에 있는 유저를 없앤뒤 다시 수정해주세요")
+                equal(
+                    body.errors[0].message,
+                    "현재 세션에 있는 유저를 없앤뒤 다시 수정해주세요"
+                )
             })
         })
     })
@@ -951,7 +972,10 @@ describe("Band services test", () => {
                 .expect(200)
             equal(body.data.getUserInfo.band[0].bandId, bandIds[0])
             equal(body.data.getUserInfo.band[0].songId, songIds[0])
-            body.data.getUserInfo.library.forEach((x: { coverBy: { id: string } }) => equal(x.coverBy.id, "user1234"))
+            body.data.getUserInfo.library.forEach(
+                (x: { coverBy: { id: string } }) =>
+                    equal(x.coverBy.id, "user1234")
+            )
         })
         it("If you normally bring in other people's information", async () => {
             const query = `

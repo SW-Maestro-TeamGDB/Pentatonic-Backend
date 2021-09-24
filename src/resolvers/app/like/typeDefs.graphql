@@ -1,7 +1,5 @@
 extend type Query {
-    likeStatus(
-        bandId: ObjectID!
-    ): Boolean
+    likeStatus(bandId: ObjectID!): Boolean
 }
 
 input LikeInput {
@@ -19,7 +17,5 @@ extend type Band {
 }
 
 extend type Mutation {
-    like(
-        input: LikeInput!
-    ): Boolean
+    like(input: LikeInput!): Boolean
 }

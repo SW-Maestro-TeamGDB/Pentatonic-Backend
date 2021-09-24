@@ -3,11 +3,15 @@ import {
     IsValidIdInput,
     IsValidUsernameInput,
     FindIdInput,
-    GetUserInfoInput
+    GetUserInfoInput,
 } from "resolvers/app/auth/models"
 import { Context } from "config/types"
 
-export const isValidUsername = async (parent: void, args: IsValidUsernameInput, context: any) => {
+export const isValidUsername = async (
+    parent: void,
+    args: IsValidUsernameInput,
+    context: any
+) => {
     const { username } = args
     const result = await context.db.collection("user").findOne({ username })
     if (result) {
@@ -16,7 +20,11 @@ export const isValidUsername = async (parent: void, args: IsValidUsernameInput, 
     return true
 }
 
-export const isValidId = async (parent: void, args: IsValidIdInput, context: Context) => {
+export const isValidId = async (
+    parent: void,
+    args: IsValidIdInput,
+    context: Context
+) => {
     const { id } = args
     const result = await context.db.collection("user").findOne({ id })
     if (result) {
@@ -25,7 +33,11 @@ export const isValidId = async (parent: void, args: IsValidIdInput, context: Con
     return true
 }
 
-export const findId = async (parent: void, args: FindIdInput, context: Context) => {
+export const findId = async (
+    parent: void,
+    args: FindIdInput,
+    context: Context
+) => {
     const { phoneNumber, authCode } = args
     const { redis, db } = context
     const result = await redis.get(phoneNumber)
@@ -37,19 +49,24 @@ export const findId = async (parent: void, args: FindIdInput, context: Context) 
     }
     const validArgs = await Promise.all([
         redis.del(phoneNumber),
-        db.collection("user").findOne({ phoneNumber })
+        db.collection("user").findOne({ phoneNumber }),
     ])
     return {
-        id: validArgs[1].id
+        id: validArgs[1].id,
     }
 }
 
-export const getUserInfo = (parent: void, args: GetUserInfoInput, context: Context) =>
-    context.db.collection("user").findOne({ id: args.userId })
+export const getUserInfo = (
+    parent: void,
+    args: GetUserInfoInput,
+    context: Context
+) => context.db.collection("user").findOne({ id: args.userId })
 
-
-
-export const checkAuthCode = async (parent: void, args: FindIdInput, context: Context) => {
+export const checkAuthCode = async (
+    parent: void,
+    args: FindIdInput,
+    context: Context
+) => {
     const { phoneNumber, authCode } = args
     const result = await context.redis.get(phoneNumber)
     return result === authCode.toString()

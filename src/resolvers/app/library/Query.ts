@@ -2,16 +2,20 @@ import { Context } from "config/types"
 import {
     QueryCoverInput,
     CoverQuery,
-    GetCoverInput
+    GetCoverInput,
 } from "resolvers/app/library/models"
 import { ObjectID } from "mongodb"
 
-export const queryCover = (parent: void, args: QueryCoverInput, context: Context) => {
+export const queryCover = (
+    parent: void,
+    args: QueryCoverInput,
+    context: Context
+) => {
     const { type, content, sort } = args.filter
     const _id = sort === "DATE_ASC" ? 1 : -1
     const query: CoverQuery = {
         coverBy: context.user.id,
-        isFreeSong: false
+        isFreeSong: false,
     }
     if (type === "SONG_ID") {
         query.songId = new ObjectID(content)
@@ -29,5 +33,5 @@ export const getCover = (parent: void, args: GetCoverInput, context: Context) =>
     context.db.collection("library").findOne({
         coverBy: context.user.id,
         isFreeSong: false,
-        _id: new ObjectID(args.coverId)
+        _id: new ObjectID(args.coverId),
     })

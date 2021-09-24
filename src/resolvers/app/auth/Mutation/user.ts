@@ -19,14 +19,18 @@ export const uploadImageFile = async (parent: void, file: UploadImageInput) => {
     return uploadS3(stream, fileName, img.mimetype)
 }
 
-export const changeProfile = async (parent: void, args: ChangeProfileInput, context: Context) => {
+export const changeProfile = async (
+    parent: void,
+    args: ChangeProfileInput,
+    context: Context
+) => {
     const { db } = context
     if (Object.keys(args.input.user).length === 0) {
         return db.collection("user").findOne({ id: context.user.id })
     }
     const { profileURI, username, ...user } = args.input.user
     const query: ChangeProfileQuery = {
-        $set: user
+        $set: user,
     }
     if (username !== undefined) {
         await isValidUsername(undefined, { username }, { db })
@@ -35,5 +39,10 @@ export const changeProfile = async (parent: void, args: ChangeProfileInput, cont
     if (profileURI !== undefined) {
         query.$set.profileURI = profileURI.href
     }
-    return db.collection("user").findOneAndUpdate({ id: context.user.id }, query, { returnDocument: "after" }).then(({ value }) => value)
+    return db
+        .collection("user")
+        .findOneAndUpdate({ id: context.user.id }, query, {
+            returnDocument: "after",
+        })
+        .then(({ value }) => value)
 }

@@ -4,12 +4,12 @@ scalar Username
 scalar Upload
 scalar Name
 
-enum SORT_OPTION{
+enum SORT_OPTION {
     DATE_DESC
     DATE_ASC
 }
 
-enum SESSION_TYPE{
+enum SESSION_TYPE {
     VOCAL
     ACOUSTIC_GUITAR
     ELECTRIC_GUITAR

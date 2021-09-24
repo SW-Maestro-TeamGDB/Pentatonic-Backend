@@ -7,23 +7,15 @@ type Comment {
 }
 
 extend type Mutation {
-    createComment(
-        input: CreateCommentInput!
-    ): Comment
+    createComment(input: CreateCommentInput!): Comment
 
-    deleteComment(
-        input: DeleteCommentInput!
-    ): Boolean
+    deleteComment(input: DeleteCommentInput!): Boolean
 
-    updateComment(
-        input: UpdateCommentInput!
-    ): Comment
+    updateComment(input: UpdateCommentInput!): Comment
 }
 
 extend type Query {
-    getComments(
-        bandId: ObjectID!
-    ): [Comment!]!
+    getComments(bandId: ObjectID!): [Comment!]!
 }
 
 input UpdateCommentInComment {
@@ -42,7 +34,6 @@ input DeleteCommentInCommentInput {
 input DeleteCommentInput {
     comment: DeleteCommentInCommentInput!
 }
-
 
 input CreateCommentInCommentInput {
     content: String!

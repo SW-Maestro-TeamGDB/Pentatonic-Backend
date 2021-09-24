@@ -6,15 +6,17 @@ import { deepStrictEqual as equal } from "assert"
 import DB from "config/connectDB"
 import * as Redis from "config/connectRedis"
 
-
 const bandIds: string[] = []
 const commentIds: string[] = []
-const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
+const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(
+    3,
+    (env.PHONE_NUMBER as string).length
+)}`
 let token: string = ""
 let token1: string = ""
 describe("Comment services test", () => {
     after(async () => {
-        const db = await DB.get() as Db
+        const db = (await DB.get()) as Db
         await Promise.all([
             db.collection("user").deleteMany({}),
             db.collection("song").deleteMany({}),
@@ -24,7 +26,7 @@ describe("Comment services test", () => {
             db.collection("join").deleteMany({}),
             db.collection("like").deleteMany({}),
             db.collection("freeBand").deleteMany({}),
-            db.collection("comment").deleteMany({})
+            db.collection("comment").deleteMany({}),
         ])
     })
     before(async () => {
@@ -66,13 +68,13 @@ describe("Comment services test", () => {
         token = body.data.a
         token1 = body.data.b
 
-        const db = await DB.get() as Db
+        const db = (await DB.get()) as Db
         const { insertedId } = await db.collection("song").insertOne({
             name: "자유곡 예제 노래",
             artist: "demo",
             songURI: `${env.S3_URI}/result.mp3`,
             isFreeSong: true,
-            duration: 222.302041
+            duration: 222.302041,
         })
         const band1 = await db.collection("band").insertOne({
             name: "demo",
@@ -80,12 +82,12 @@ describe("Comment services test", () => {
             songId: insertedId,
             sessions: {
                 durm: 1,
-                violin: 1
+                violin: 1,
             },
             backGroundURI: "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg",
             creatorId: "user1234",
             isSoloBand: false,
-            createDate: new Date()
+            createDate: new Date(),
         })
         // const band2 = await db.collection("freeBand").insertOne({
         //     name: "demo",
@@ -210,7 +212,10 @@ describe("Comment services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.errors[0].message, "댓글이 존재하지 않거나 내가 작성한 댓글이 아닙니다")
+                equal(
+                    body.errors[0].message,
+                    "댓글이 존재하지 않거나 내가 작성한 댓글이 아닙니다"
+                )
             })
         })
     })
@@ -263,7 +268,10 @@ describe("Comment services test", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
 
-                equal(body.errors[0].message, "댓글이 존재하지 않거나 내가 작성한 댓글이 아닙니다")
+                equal(
+                    body.errors[0].message,
+                    "댓글이 존재하지 않거나 내가 작성한 댓글이 아닙니다"
+                )
             })
         })
     })
@@ -317,7 +325,10 @@ describe("Comment services test", () => {
                 .send(JSON.stringify({ query }))
                 .expect(200)
             equal(body.data.queryBand[0].name, "demo")
-            equal(body.data.queryBand[0].comment[0].content, "update test comment")
+            equal(
+                body.data.queryBand[0].comment[0].content,
+                "update test comment"
+            )
         })
     })
 })

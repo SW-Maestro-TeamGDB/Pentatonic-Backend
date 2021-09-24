@@ -4,20 +4,24 @@ import { MongoClient, Db } from "mongodb"
 let db: Db | null = null
 let instance: number = 0
 const connectDB = () => {
-
     const connect = async () => {
-
         try {
             const client = await MongoClient.connect(
-                process.env.NODE_ENV === "test" ?
-                    "mongodb://localhost:27017/test" :
-                    env.DB_HOST
-                , {
+                process.env.NODE_ENV === "test"
+                    ? "mongodb://localhost:27017/test"
+                    : env.DB_HOST,
+                {
                     useNewUrlParser: true,
-                    useUnifiedTopology: true
-                })
+                    useUnifiedTopology: true,
+                }
+            )
             const _db = client.db()
-            await _db.collection("trend").createIndex({ "createdAt": 1 }, { "expireAfterSeconds": 60 * 60 * 24 * 7 })
+            await _db
+                .collection("trend")
+                .createIndex(
+                    { createdAt: 1 },
+                    { expireAfterSeconds: 60 * 60 * 24 * 7 }
+                )
             return _db
         } catch (e) {
             console.log(e)
@@ -33,7 +37,6 @@ const connectDB = () => {
             db = await connect()
             return db
         }
-
     }
 
     return { get }

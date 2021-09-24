@@ -6,14 +6,16 @@ import { deepStrictEqual as equal } from "assert"
 import DB from "config/connectDB"
 import * as Redis from "config/connectRedis"
 
-
 const bandIds: string[] = []
-const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(3, (env.PHONE_NUMBER as string).length)}`
+const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(
+    3,
+    (env.PHONE_NUMBER as string).length
+)}`
 let token: string = ""
 let token1: string = ""
 describe("Like services test", () => {
     after(async () => {
-        const db = await DB.get() as Db
+        const db = (await DB.get()) as Db
         await Promise.all([
             db.collection("user").deleteMany({}),
             db.collection("song").deleteMany({}),
@@ -23,7 +25,7 @@ describe("Like services test", () => {
             db.collection("join").deleteMany({}),
             db.collection("like").deleteMany({}),
             db.collection("freeBand").deleteMany({}),
-            db.collection("trend").deleteMany({})
+            db.collection("trend").deleteMany({}),
         ])
     })
     before(async () => {
@@ -65,13 +67,13 @@ describe("Like services test", () => {
         token = body.data.a
         token1 = body.data.b
 
-        const db = await DB.get() as Db
+        const db = (await DB.get()) as Db
         const { insertedId } = await db.collection("song").insertOne({
             name: "자유곡 예제 노래",
             artist: "demo",
             songURI: `${env.S3_URI}/result.mp3`,
             isFreeSong: true,
-            duration: 222.302041
+            duration: 222.302041,
         })
         const band1 = await db.collection("band").insertOne({
             name: "demo",
@@ -79,24 +81,24 @@ describe("Like services test", () => {
             songId: insertedId,
             sessions: {
                 durm: 1,
-                violin: 1
+                violin: 1,
             },
             isSoloBand: false,
             backGroundURI: "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg",
             creatorId: "user1234",
-            createDate: new Date()
+            createDate: new Date(),
         })
         const band2 = await db.collection("band").insertOne({
             name: "demo",
             introduce: "demo",
             songId: insertedId,
             sessions: {
-                durm: 1
+                durm: 1,
             },
             isSoloBand: true,
             backGroundURI: "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg",
             creatorId: "user1234",
-            createDate: new Date()
+            createDate: new Date(),
         })
         bandIds.push(band1.insertedId.toString())
         bandIds.push(band2.insertedId.toString())
@@ -106,7 +108,7 @@ describe("Like services test", () => {
             coverURI: `${env.S3_URI}/result.mp3`,
             duration: 222.302041,
             position: "DRUM",
-            coverBy: "user1234"
+            coverBy: "user1234",
         })
         await db.collection("join").insertOne({
             bandId: band1.insertedId,

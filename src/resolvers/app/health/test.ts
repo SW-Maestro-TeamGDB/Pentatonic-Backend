@@ -9,9 +9,7 @@ describe("Server Health Check", () => {
                 test
             }
         `
-        await request(app)
-            .get(`/api?query=${query}`)
-            .expect(200)
+        await request(app).get(`/api?query=${query}`).expect(200)
     })
     it("Server Running Test-2", async () => {
         const query = `
@@ -22,7 +20,10 @@ describe("Server Health Check", () => {
         const { body } = await request(app)
             .get(`/api?query=${query}`)
             .expect(400)
-        equal(body.errors[0].message, 'Cannot query field "test1" on type "Query". Did you mean "test"?')
+        equal(
+            body.errors[0].message,
+            'Cannot query field "test1" on type "Query". Did you mean "test"?'
+        )
     })
     it("Apollo-Server Health Check", async () => {
         const { body } = await request(app)

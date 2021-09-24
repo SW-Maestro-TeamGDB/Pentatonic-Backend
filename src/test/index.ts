@@ -10,12 +10,9 @@ import * as redis from "config/connectRedis"
 
 import { customScalar } from "config/scalars"
 import { makeExecutableSchema } from "@graphql-tools/schema"
-import * as graphqlScalars from 'graphql-scalars'
+import * as graphqlScalars from "graphql-scalars"
 import { applyMiddleware } from "graphql-middleware"
-import {
-    permissions,
-    getUser
-} from "lib"
+import { permissions, getUser } from "lib"
 import * as loaders from "lib/dataloader"
 import express from "express"
 import expressPlayground from "graphql-playground-middleware-express"
@@ -34,42 +31,40 @@ app.use("/api-docs", express.static("docs"))
 
 const schema = makeExecutableSchema({
     typeDefs: `
-        ${graphqlScalars.typeDefs.join('\n')}
+        ${graphqlScalars.typeDefs.join("\n")}
         ${typeDefs}
     `,
     resolvers: {
         ...customScalar,
         ...resolvers,
         Upload: GraphQLUpload as import("graphql").GraphQLScalarType,
-        ...graphqlScalars.resolvers
-    }
+        ...graphqlScalars.resolvers,
+    },
 })
 
 const server = new ApolloServer({
     schema: applyMiddleware(schema, permissions),
     context: async ({ req }) => {
-        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+        const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress
         const db = await DB.get()
-        const token = req.headers.authorization || ''
+        const token = req.headers.authorization || ""
         const user = getUser(token)
         return {
             db,
             redis,
             user,
             ip,
-            loaders
+            loaders,
         }
     },
-    validationRules: [
-        depthLimit(8),
-    ],
+    validationRules: [depthLimit(8)],
     debug: true,
-    engine: false
+    engine: false,
 })
 
 server.applyMiddleware({
     app,
-    path: "/api"
+    path: "/api",
 })
 
 const httpServer = createServer(app)

@@ -9,7 +9,7 @@ const deploy = async () => {
     await ssh.connect({
         host: process.env.HOST,
         username: process.env.ID,
-        password: process.env.PW
+        password: process.env.PW,
     })
     await ssh.execCommand(`./deploy.sh`)
     process.exit(0)

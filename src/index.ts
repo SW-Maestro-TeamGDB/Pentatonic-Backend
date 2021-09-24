@@ -13,12 +13,9 @@ import { customScalar } from "config/scalars"
 
 import { makeExecutableSchema } from "@graphql-tools/schema"
 import { loadFilesSync } from "@graphql-tools/load-files"
-import * as graphqlScalars from 'graphql-scalars'
+import * as graphqlScalars from "graphql-scalars"
 import { applyMiddleware } from "graphql-middleware"
-import {
-    permissions,
-    getUser
-} from "lib"
+import { permissions, getUser } from "lib"
 import * as loaders from "lib/dataloader"
 import express from "express"
 import expressPlayground from "graphql-playground-middleware-express"
@@ -36,53 +33,60 @@ app.use("/api-docs", express.static("docs"))
 
 const schema = makeExecutableSchema({
     typeDefs: `
-        ${graphqlScalars.typeDefs.join('\n')}
+        ${graphqlScalars.typeDefs.join("\n")}
         ${typeDefs}
     `,
     resolvers: {
         ...customScalar,
         ...resolvers,
         Upload: GraphQLUpload as import("graphql").GraphQLScalarType,
-        ...graphqlScalars.resolvers
-    }
+        ...graphqlScalars.resolvers,
+    },
 })
 const start = async () => {
     const db = await DB.get()
     const server = new ApolloServer({
         schema: applyMiddleware(schema, permissions),
         context: ({ req }) => {
-            const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || null
-            const token = req.headers.authorization || ''
+            const ip =
+                req.headers["x-forwarded-for"] ||
+                req.socket.remoteAddress ||
+                null
+            const token = req.headers.authorization || ""
             const user = getUser(token)
             return {
                 db,
                 redis,
                 user,
                 ip,
-                loaders
+                loaders,
             }
         },
-        validationRules: [
-            depthLimit(8),
-        ],
+        validationRules: [depthLimit(8)],
         plugins: [
             ApolloServerPluginUsageReporting({
-                sendVariableValues: { all: true }
-            })
+                sendVariableValues: { all: true },
+            }),
         ],
-        debug: false
+        debug: false,
     })
 
     server.applyMiddleware({
         app,
-        path: "/api"
+        path: "/api",
     })
 
     const httpServer = createServer(app)
     httpServer.timeout = 50000
     httpServer.listen({ port: env.PORT }, () => {
-        console.log(`GraphQL API Running at http://localhost:${env.PORT || 4000}/api`)
-        console.log(`GraphQL Docs Running at http://localhost:${env.PORT || 4000}/api-docs`)
+        console.log(
+            `GraphQL API Running at http://localhost:${env.PORT || 4000}/api`
+        )
+        console.log(
+            `GraphQL Docs Running at http://localhost:${
+                env.PORT || 4000
+            }/api-docs`
+        )
     })
 }
 

@@ -1,4 +1,4 @@
 export interface PositionRank {
-    position?: string,
+    position?: string
     likeCount: number
 }

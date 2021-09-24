@@ -36,7 +36,6 @@ export interface JWTUser {
     id: string
 }
 
-
 export interface Context extends Loaders {
     user: JWTUser
     db: Db

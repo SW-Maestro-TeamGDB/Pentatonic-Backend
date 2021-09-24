@@ -2,61 +2,45 @@ extend type Mutation {
     """
     파일을 업로드
     """
-    uploadDefaultFile(
-        input: UploadDefaultFileInput!
-    ): URL
+    uploadDefaultFile(input: UploadDefaultFileInput!): URL
 
     """
     Song을 업로드
     """
-    uploadSong(
-        input: UploadSongInput!
-    ): Song
+    uploadSong(input: UploadSongInput!): Song
 
     """
     Song을 업데이트
     """
-    updateSong(
-        input: UpdateSongInput!
-    ): Song
+    updateSong(input: UpdateSongInput!): Song
 
     """
     Song과 같이 제공되는 Instrument를 업로드
     """
-    uploadInstrument(
-        input: UploadInstrumentInput!
-    ): Instrument
+    uploadInstrument(input: UploadInstrumentInput!): Instrument
 
     """
     Song과 같이 제공되는 Instrument를 업데이트
     """
-    updateInstrument(
-        input: UpdateInstrumentInput!
-    ): Instrument
+    updateInstrument(input: UpdateInstrumentInput!): Instrument
 
     """
     Song을 삭제
     """
-    deleteSong(
-        input: DeleteSongInput!
-    ): Boolean
+    deleteSong(input: DeleteSongInput!): Boolean
 
     """
     Instrument을 삭제
     """
-    deleteInstrument(
-        input: DeleteInstrumentInput!
-    ): Boolean
+    deleteInstrument(input: DeleteInstrumentInput!): Boolean
 
-    uploadFreeSong(
-        input: UploadFreeSongInput!
-    ): ObjectID!
+    uploadFreeSong(input: UploadFreeSongInput!): ObjectID!
 }
 
 """
 삭제할 instrument의 정보
 """
-input DeleteInstrument{
+input DeleteInstrument {
     "instrument의 id"
     instId: ObjectID!
 }
@@ -64,7 +48,7 @@ input DeleteInstrument{
 """
 deleteInstrument Mutation의 input
 """
-input DeleteInstrumentInput{
+input DeleteInstrumentInput {
     "권한을 확인하기 위한 코드"
     code: String!
     "삭제할 instrument의 정보"
@@ -89,16 +73,12 @@ input DeleteSong {
 }
 
 extend type Query {
-    getSong(
-        songId: ObjectID!
-    ): Song
+    getSong(songId: ObjectID!): Song
 
-    querySong(
-        filter: QuerySongInput! 
-    ): [Song!] 
+    querySong(filter: QuerySongInput!): [Song!]
 }
 
-enum GetSongsFilter{
+enum GetSongsFilter {
     ALL
     NAME
     ARTIST
@@ -106,7 +86,7 @@ enum GetSongsFilter{
 
 input QuerySongInput {
     type: GetSongsFilter!
-    content: String 
+    content: String
     level: Int
     genre: GENRE_TYPE
     weeklyChallenge: Boolean
@@ -116,7 +96,7 @@ input QuerySongInput {
 """
 Instrument를 Update 할때 사용하는 정보
 """
-input UpdateInstrumentArgs{
+input UpdateInstrumentArgs {
     "song의 id"
     songId: ObjectID
     "instrument의 id"
@@ -147,7 +127,6 @@ input UploadDefaultFileInput {
     file: Upload!
 }
 
-
 """
 uploadSong Mutation의 input
 """
@@ -175,7 +154,6 @@ type Instrument {
     position: SESSION_TYPE!
 }
 
-
 interface SongInterface {
     songId: ObjectID!
     duration: Float!
@@ -183,7 +161,9 @@ interface SongInterface {
     artist: String!
 }
 
-"""올라와 있는 곡에 대한 타입"""
+"""
+올라와 있는 곡에 대한 타입
+"""
 type Song implements SongInterface {
     "song의 Id"
     songId: ObjectID!
@@ -213,7 +193,7 @@ type Song implements SongInterface {
 }
 
 """
-노래의 기본 음원을 업로드 할때 사용하는 input 
+노래의 기본 음원을 업로드 할때 사용하는 input
 """
 input SongInput {
     "song의 제목"
@@ -237,7 +217,7 @@ input SongInput {
 }
 
 """
-업로드 할 Instrument의 정보를 입력하는 input 
+업로드 할 Instrument의 정보를 입력하는 input
 """
 input UploadInstrumentArgs {
     "음원의 Id"
@@ -250,7 +230,7 @@ input UploadInstrumentArgs {
 }
 
 """
-uploadInstrument Mutation의 input 
+uploadInstrument Mutation의 input
 """
 input UploadInstrumentInput {
     "권한을 확인하기 위한 코드"
@@ -260,7 +240,7 @@ input UploadInstrumentInput {
 }
 
 """
-Song을 Update할때 사용되는 input 
+Song을 Update할때 사용되는 input
 """
 input UpdateSong {
     "song의 id"

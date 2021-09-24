@@ -1,3 +1,3 @@
 ignore:
-  - "src/config"
-  - "src/resolvers/app/*/test.ts"
+    - "src/config"
+    - "src/resolvers/app/*/test.ts"

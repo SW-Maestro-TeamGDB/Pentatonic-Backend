@@ -19,7 +19,11 @@ export const denoiseFilter = async (audioURI: string) => {
             -c:a ${codec} -strict -2 -b:a 360k \
             ${filenameSplit[filenameSplit.length - 2]}.m4a -y
         `)
-        const result = await uploadS3(`${filenameSplit[filenameSplit.length - 2]}.m4a`, `${filenameSplit[filenameSplit.length - 2]}-1.m4a`, "audio/wav")
+        const result = await uploadS3(
+            `${filenameSplit[filenameSplit.length - 2]}.m4a`,
+            `${filenameSplit[filenameSplit.length - 2]}-1.m4a`,
+            "audio/wav"
+        )
         deleteFile(`${filenameSplit[filenameSplit.length - 2]}.m4a`)
         return result
     } catch (e) {
@@ -33,9 +37,15 @@ export const convertMp3ToM4a = async (audioURI: string) => {
     const filenameSplit = filename.split(".")
     try {
         await exec(`
-            ffmpeg -i '${audioURI}' -c:a aac -strict -2 -b:a 360k ${filenameSplit[filenameSplit.length - 2]}.m4a  -y
+            ffmpeg -i '${audioURI}' -c:a aac -strict -2 -b:a 360k ${
+            filenameSplit[filenameSplit.length - 2]
+        }.m4a  -y
         `)
-        const result = await uploadS3(`${filenameSplit[filenameSplit.length - 2]}.m4a`, `${filenameSplit[filenameSplit.length - 2]}-1.m4a`, "audio/wav")
+        const result = await uploadS3(
+            `${filenameSplit[filenameSplit.length - 2]}.m4a`,
+            `${filenameSplit[filenameSplit.length - 2]}-1.m4a`,
+            "audio/wav"
+        )
         deleteFile(`${filenameSplit[filenameSplit.length - 2]}.m4a`)
         return result
     } catch (e) {
@@ -44,15 +54,22 @@ export const convertMp3ToM4a = async (audioURI: string) => {
     }
 }
 export const mergeAudios = async (audios: string[], audioName: string) => {
-    const ffmpegInputs = audios.map((uri: string) => `-i ${uri}`)
+    const ffmpegInputs = audios
+        .map((uri: string) => `-i ${uri}`)
         .toString()
         .split(",")
         .join(" ")
     try {
         await exec(`
             ffmpeg ${ffmpegInputs} \\
-            -filter_complex amix=inputs=${audios.length}:duration=first:dropout_transition=3,volume=3 \\
-            -c:a ${audioName.endsWith(".wav") ? 'pcm_s16le -strict -2' : 'mp3 -strict -2 -b:a 320k'} \\
+            -filter_complex amix=inputs=${
+                audios.length
+            }:duration=first:dropout_transition=3,volume=3 \\
+            -c:a ${
+                audioName.endsWith(".wav")
+                    ? "pcm_s16le -strict -2"
+                    : "mp3 -strict -2 -b:a 320k"
+            } \\
             ${audioName} -y
         `)
         if (audioName.endsWith(".wav")) {
@@ -65,7 +82,6 @@ export const mergeAudios = async (audios: string[], audioName: string) => {
             deleteFile(audioName)
             return result
         }
-
     } catch (e) {
         deleteFile(audioName)
         return new ApolloError(e)

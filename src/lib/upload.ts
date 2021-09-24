@@ -8,16 +8,23 @@ const region = env.AWS_REGION as string
 const S3 = new AWS.S3({
     region,
     accessKeyId: env.AWS_ID as string,
-    secretAccessKey: env.AWS_PW as string
+    secretAccessKey: env.AWS_PW as string,
 })
 const Bucket = env.AWS_BUCKET as string
-export const uploadS3 = async (fileStream: ReadStream | string, Key: string, ContentType: string) => {
+export const uploadS3 = async (
+    fileStream: ReadStream | string,
+    Key: string,
+    ContentType: string
+) => {
     const params = {
         Bucket,
         Key,
-        Body: typeof fileStream === "string" ? createReadStream(fileStream) : fileStream,
+        Body:
+            typeof fileStream === "string"
+                ? createReadStream(fileStream)
+                : fileStream,
         ACL: "public-read",
-        ContentType
+        ContentType,
     }
     try {
         await S3.upload(params).promise()

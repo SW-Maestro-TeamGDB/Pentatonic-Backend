@@ -29,7 +29,7 @@ export interface UploadFreeSongInput {
 
 export interface QuerySongInput {
     filter: {
-        type: "ALL" | "ARTIST" | "NAME",
+        type: "ALL" | "ARTIST" | "NAME"
         level?: number
         genre?: SongGenres
         content?: string
@@ -41,7 +41,6 @@ export interface QuerySongInput {
 export interface GetSongInput {
     songId: ObjectID
 }
-
 
 export interface UploadSongInput {
     input: {
@@ -62,7 +61,7 @@ export interface UploadSongInput {
 
 export interface DeleteInstrumentInput {
     input: {
-        code: string,
+        code: string
         instrument: {
             instId: ObjectID
         }
@@ -81,7 +80,6 @@ export interface UploadInstrumentInput {
     }
 }
 
-
 export interface DeleteSongInput {
     input: {
         code: string
@@ -90,8 +88,6 @@ export interface DeleteSongInput {
         }
     }
 }
-
-
 
 export interface UpdateInstrumentInput {
     input: {
@@ -152,8 +148,6 @@ export interface UpdateSongInput {
 }
 
 export type SongKeys = keyof UpdateSongInput["input"]["song"]
-
-
 
 export interface UploadDefaultImgInput {
     input: {

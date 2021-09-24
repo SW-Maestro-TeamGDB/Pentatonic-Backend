@@ -1,6 +1,5 @@
 import { ObjectID } from "mongodb"
 
-
 export interface CreateCommentInput {
     input: {
         comment: {
@@ -35,7 +34,6 @@ export interface UpdateCommentInput {
         }
     }
 }
-
 
 export interface GetCommentsInput {
     bandId: ObjectID

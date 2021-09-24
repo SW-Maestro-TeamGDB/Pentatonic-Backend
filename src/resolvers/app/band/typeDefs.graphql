@@ -61,7 +61,7 @@ type Session {
 input SessionConfigInput {
     session: SESSION_TYPE!
     maxMember: Int!
-}   
+}
 
 input CreateBandArgsInput {
     name: String!
@@ -93,7 +93,7 @@ input JoinBandArgsInput {
     bandId: ObjectID!
 }
 
-input JoinSessionInput{
+input JoinSessionInput {
     coverId: ObjectID!
     position: SESSION_TYPE!
 }
@@ -107,7 +107,7 @@ input LeaveSessionArgsInput {
     coverId: ObjectID!
 }
 
-input LeaveBandInput{
+input LeaveBandInput {
     band: JoinBandArgsInput!
     session: LeaveSessionArgsInput!
 }
@@ -117,29 +117,18 @@ input DeleteBandInput {
 }
 
 extend type Mutation {
-    createBand(
-        input: CreateBandInput!
-    ): Band
+    createBand(input: CreateBandInput!): Band
 
-    updateBand(
-        input: UpdateBandInput!
-    ): Band
+    updateBand(input: UpdateBandInput!): Band
 
-    joinBand(
-        input: JoinBandInput!
-    ): Boolean
+    joinBand(input: JoinBandInput!): Boolean
 
-    leaveBand(
-        input: LeaveBandInput!
-    ): Boolean
+    leaveBand(input: LeaveBandInput!): Boolean
 
-    deleteBand(
-        input: DeleteBandInput!
-    ): Boolean
+    deleteBand(input: DeleteBandInput!): Boolean
 }
 
-
-enum BandFilter{
+enum BandFilter {
     NAME
     INTRODUCE
     CREATOR_ID
@@ -152,14 +141,10 @@ input QueryBandInput {
     sort: SORT_OPTION! = DATE_DESC
 }
 
-extend type Query{
-    queryBand(
-        filter: QueryBandInput!
-    ): [Band!]
+extend type Query {
+    queryBand(filter: QueryBandInput!): [Band!]
 
-    getBand(
-        bandId: ObjectID!
-    ): Band
+    getBand(bandId: ObjectID!): Band
 
     getRankedBands: [Band!]
 

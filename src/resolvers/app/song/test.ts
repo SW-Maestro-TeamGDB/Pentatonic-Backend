@@ -6,7 +6,10 @@ import { Db } from "mongodb"
 import { deepStrictEqual as equal } from "assert"
 import DB from "config/connectDB"
 const fileUpload = (query: string, variables: { [x: string]: string }) => {
-    const map = Object.assign({}, Object.keys(variables).map(key => [`variables.${key}`]))
+    const map = Object.assign(
+        {},
+        Object.keys(variables).map((key) => [`variables.${key}`])
+    )
     const response = request(app)
         .post("/api")
         .set("Content-Type", "multipart/form-data")
@@ -24,17 +27,18 @@ const songIds: string[] = []
 const instrumentIds: string[] = []
 describe("Penta-Tonic Song Services", () => {
     after(async () => {
-        const db = await DB.get() as Db
+        const db = (await DB.get()) as Db
         await Promise.all([
             db.collection("song").deleteMany({}),
-            db.collection("instrument").deleteMany({})
+            db.collection("instrument").deleteMany({}),
         ])
     })
     describe("Upload Services test", () => {
         describe("Mutation uploadDefaultFile", () => {
             describe("Failure", () => {
                 it("If the code is not correct", async () => {
-                    const { body } = await fileUpload(`
+                    const { body } = await fileUpload(
+                        `
                         mutation($file: Upload!) {
                             uploadDefaultFile(
                                 input: {
@@ -42,15 +46,21 @@ describe("Penta-Tonic Song Services", () => {
                                     file: $file
                                 }
                             )
-                        }`, {
-                        file: "src/test/test.jpg"
-                    }).expect(200)
-                    equal(body.errors[0].message, "관리자 코드가 알맞지 않습니다")
+                        }`,
+                        {
+                            file: "src/test/test.jpg",
+                        }
+                    ).expect(200)
+                    equal(
+                        body.errors[0].message,
+                        "관리자 코드가 알맞지 않습니다"
+                    )
                 }).timeout(50000)
             })
             describe("Success", () => {
                 it(".mp3 file is uploaded normally", async () => {
-                    const { body } = await fileUpload(`
+                    const { body } = await fileUpload(
+                        `
                         mutation($file: Upload!) {
                             uploadDefaultFile(
                                 input: {
@@ -58,17 +68,20 @@ describe("Penta-Tonic Song Services", () => {
                                     file: $file
                                 }
                             )
-                        }`, {
-                        file: "src/test/viva/violin.mp3"
-                    }).expect(200)
+                        }`,
+                        {
+                            file: "src/test/viva/violin.mp3",
+                        }
+                    ).expect(200)
                     uri.push(body.data.uploadDefaultFile)
                     const result = await fetch(body.data.uploadDefaultFile, {
-                        method: "GET"
+                        method: "GET",
                     })
                     equal(result.status, 200)
                 }).timeout(50000)
                 it(".jpg file is uploaded normally", async () => {
-                    const { body } = await fileUpload(`
+                    const { body } = await fileUpload(
+                        `
                         mutation($file: Upload!) {
                             uploadDefaultFile(
                                 input: {
@@ -76,12 +89,14 @@ describe("Penta-Tonic Song Services", () => {
                                     file: $file
                                 }
                             )
-                        }`, {
-                        file: "src/test/test.jpg"
-                    }).expect(200)
+                        }`,
+                        {
+                            file: "src/test/test.jpg",
+                        }
+                    ).expect(200)
                     uri.push(body.data.uploadDefaultFile)
                     const result = await fetch(body.data.uploadDefaultFile, {
-                        method: "GET"
+                        method: "GET",
                     })
                     equal(result.status, 200)
                 }).timeout(50000)
@@ -202,7 +217,10 @@ describe("Penta-Tonic Song Services", () => {
                         .send(JSON.stringify({ query }))
                         .expect(200)
 
-                    equal(body.errors[0].message, "관리자 코드가 알맞지 않습니다")
+                    equal(
+                        body.errors[0].message,
+                        "관리자 코드가 알맞지 않습니다"
+                    )
                 })
                 it("If you didn't read the sound source file normally", async () => {
                     const query = `
@@ -231,7 +249,10 @@ describe("Penta-Tonic Song Services", () => {
                         .set("Content-Type", "application/json")
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "음원 파일을 정상적으로 읽지 못했습니다")
+                    equal(
+                        body.errors[0].message,
+                        "음원 파일을 정상적으로 읽지 못했습니다"
+                    )
                 })
             })
         })
@@ -274,7 +295,10 @@ describe("Penta-Tonic Song Services", () => {
                         .set("Content-Type", "application/json")
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.data.updateSong.songURI, env.S3_URI + "/result.mp3")
+                    equal(
+                        body.data.updateSong.songURI,
+                        env.S3_URI + "/result.mp3"
+                    )
                     equal(body.data.updateSong.songId, songIds[0])
                     equal(body.data.updateSong.songImg, uri[1])
                     equal(body.data.updateSong.name, "Viva La Vida")
@@ -306,7 +330,10 @@ describe("Penta-Tonic Song Services", () => {
                         .set("Content-Type", "application/json")
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.data.updateSong.songURI, env.S3_URI + "/result.mp3")
+                    equal(
+                        body.data.updateSong.songURI,
+                        env.S3_URI + "/result.mp3"
+                    )
                     equal(body.data.updateSong.songId, songIds[0])
                     equal(body.data.updateSong.songImg, uri[1])
                     equal(body.data.updateSong.name, "Viva La Vida")
@@ -365,7 +392,10 @@ describe("Penta-Tonic Song Services", () => {
                         .set("Content-Type", "application/json")
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "음원 파일을 정상적으로 읽지 못했습니다")
+                    equal(
+                        body.errors[0].message,
+                        "음원 파일을 정상적으로 읽지 못했습니다"
+                    )
                 })
             })
         })
@@ -400,9 +430,18 @@ describe("Penta-Tonic Song Services", () => {
                         .send(JSON.stringify({ query }))
                         .expect(200)
                     equal(body.data.uploadInstrument.songId, songIds[0])
-                    equal(body.data.uploadInstrument.instURI, `${env.S3_URI}/song1-Guitar.mp3`)
-                    equal(body.data.uploadInstrument.name, "viva la vida demo guitar")
-                    equal(body.data.uploadInstrument.position, "ACOUSTIC_GUITAR")
+                    equal(
+                        body.data.uploadInstrument.instURI,
+                        `${env.S3_URI}/song1-Guitar.mp3`
+                    )
+                    equal(
+                        body.data.uploadInstrument.name,
+                        "viva la vida demo guitar"
+                    )
+                    equal(
+                        body.data.uploadInstrument.position,
+                        "ACOUSTIC_GUITAR"
+                    )
                     instrumentIds.push(body.data.uploadInstrument.instId)
                 })
                 it("If you normally upload the instrument - 2", async () => {
@@ -431,7 +470,10 @@ describe("Penta-Tonic Song Services", () => {
                         .send(JSON.stringify({ query }))
                         .expect(200)
                     equal(body.data.uploadInstrument.songId, songIds[1])
-                    equal(body.data.uploadInstrument.instURI, `${env.S3_URI}/song1-Guitar.mp3`)
+                    equal(
+                        body.data.uploadInstrument.instURI,
+                        `${env.S3_URI}/song1-Guitar.mp3`
+                    )
                     equal(body.data.uploadInstrument.name, "name")
                     instrumentIds.push(body.data.uploadInstrument.instId)
                 })
@@ -462,7 +504,10 @@ describe("Penta-Tonic Song Services", () => {
                         .set("Content-Type", "application/json")
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "음원 파일을 정상적으로 읽지 못했습니다")
+                    equal(
+                        body.errors[0].message,
+                        "음원 파일을 정상적으로 읽지 못했습니다"
+                    )
                 })
             })
         })
@@ -497,8 +542,14 @@ describe("Penta-Tonic Song Services", () => {
                         .expect(200)
 
                     equal(body.data.updateInstrument.songId, songIds[0])
-                    equal(body.data.updateInstrument.instURI, `${env.S3_URI}/song1-Drum.mp3`)
-                    equal(body.data.updateInstrument.name, "Viva La Vida demo Drum")
+                    equal(
+                        body.data.updateInstrument.instURI,
+                        `${env.S3_URI}/song1-Drum.mp3`
+                    )
+                    equal(
+                        body.data.updateInstrument.name,
+                        "Viva La Vida demo Drum"
+                    )
                     equal(body.data.updateInstrument.instId, instrumentIds[0])
                     equal(body.data.updateInstrument.position, "DRUM")
                 })
@@ -521,7 +572,10 @@ describe("Penta-Tonic Song Services", () => {
                         .set("Content-Type", "application/json")
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.data.updateInstrument.name, "Viva La Vida demo Drum")
+                    equal(
+                        body.data.updateInstrument.name,
+                        "Viva La Vida demo Drum"
+                    )
                 })
                 it("If only one update is made normally", async () => {
                     const query = `
@@ -543,7 +597,10 @@ describe("Penta-Tonic Song Services", () => {
                         .set("Content-Type", "application/json")
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.data.updateInstrument.name, "Viva La Vida demo Guitar")
+                    equal(
+                        body.data.updateInstrument.name,
+                        "Viva La Vida demo Guitar"
+                    )
                 })
             })
             describe("Failure", () => {
@@ -571,7 +628,10 @@ describe("Penta-Tonic Song Services", () => {
                         .set("Content-Type", "application/json")
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    equal(body.errors[0].message, "음원 파일을 정상적으로 읽지 못했습니다")
+                    equal(
+                        body.errors[0].message,
+                        "음원 파일을 정상적으로 읽지 못했습니다"
+                    )
                 })
             })
         })
@@ -646,7 +706,10 @@ describe("Penta-Tonic Song Services", () => {
                     .send(JSON.stringify({ query }))
                     .expect(200)
                 equal(body.data.querySong[0].name, "Viva La Vida")
-                equal(body.data.querySong[0].songId, body.data.querySong[0].instrument[0].songId)
+                equal(
+                    body.data.querySong[0].songId,
+                    body.data.querySong[0].instrument[0].songId
+                )
             })
             it("Get all songs sorted by date desc", async () => {
                 const query = `

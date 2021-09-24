@@ -15,17 +15,17 @@ export interface SessionInformation {
 }
 
 const SessionDirection = {
-    VOCAL: 'VOCAL',
-    ACOUSTIC_GUITAR: 'ACOUSTIC_GUITAR',
-    ELECTRIC_GUITAR: 'ELECTRIC_GUITAR',
-    BASS: 'BASS',
-    DRUM: 'DRUM',
-    KEYBOARD: 'KEYBOARD',
-    VIOLIN: 'VIOLIN',
-    CELLO: 'CELLO',
-    GAYAGEUM: 'GAYAGEUM',
-    HAEGEUM: 'HAEGEUM',
-    GEOMUNGO: 'GEOMUNGO'
+    VOCAL: "VOCAL",
+    ACOUSTIC_GUITAR: "ACOUSTIC_GUITAR",
+    ELECTRIC_GUITAR: "ELECTRIC_GUITAR",
+    BASS: "BASS",
+    DRUM: "DRUM",
+    KEYBOARD: "KEYBOARD",
+    VIOLIN: "VIOLIN",
+    CELLO: "CELLO",
+    GAYAGEUM: "GAYAGEUM",
+    HAEGEUM: "HAEGEUM",
+    GEOMUNGO: "GEOMUNGO",
 } as const
 
 export type SessionType = typeof SessionDirection[keyof typeof SessionDirection]
@@ -68,8 +68,6 @@ export interface BatchSesssion {
     cover?: Session[]
 }
 
-
-
 export interface UpdateBandInput {
     input: {
         band: {
@@ -108,7 +106,6 @@ export interface JoinBandInput {
     }
 }
 
-
 export interface OutBandInput {
     input: {
         band: {
@@ -145,7 +142,7 @@ export interface BandQuery {
     }
     creatorId?: {
         $regex?: RegExp
-    },
+    }
     songId?: {
         $in: ObjectID[]
     }

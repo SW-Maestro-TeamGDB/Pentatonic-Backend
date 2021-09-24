@@ -15,5 +15,5 @@ export default {
     ...audio,
     ...follow,
     ...like,
-    ...comment
+    ...comment,
 }

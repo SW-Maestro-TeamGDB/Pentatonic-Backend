@@ -7,7 +7,6 @@ import { Query as follow } from "resolvers/app/follow"
 import { Query as like } from "resolvers/app/like"
 import { Query as comment } from "resolvers/app/comment"
 
-
 export default {
     ...health,
     ...auth,
@@ -16,5 +15,5 @@ export default {
     ...band,
     ...follow,
     ...like,
-    ...comment
+    ...comment,
 }

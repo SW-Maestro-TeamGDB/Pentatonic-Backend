@@ -4,5 +4,5 @@ import * as Type from "resolvers/Type"
 export default {
     Query,
     Mutation,
-    ...Type
+    ...Type,
 }

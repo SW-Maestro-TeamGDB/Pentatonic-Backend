@@ -30,7 +30,6 @@ export interface UpdateCoverInput {
     }
 }
 
-
 export interface UploadCoverInput {
     input: {
         cover: {
@@ -49,7 +48,6 @@ export interface ChangeCoverQuery {
     }
 }
 
-
 export interface Cover {
     songId: ObjectID
     coverBy: string
@@ -67,12 +65,10 @@ export interface DeleteCoverInput {
     }
 }
 
-
-
 export interface CoverQuery {
     coverBy: string
     isFreeSong: boolean
-    name?: { "$regex"?: RegExp }
+    name?: { $regex?: RegExp }
     songId?: ObjectID
     position?: string
 }

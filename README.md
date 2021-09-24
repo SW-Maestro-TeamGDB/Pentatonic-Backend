@@ -6,22 +6,24 @@
 
 pukuba graphql-ts-boilerplate
 
-
 docker build
-``` docker
+
+```docker
 docker-compose up -d --build
 ```
 
-## GraphQL Apollo Server 
-- Node.js
-    - TypeScript
-    - apollo-server-express
-    
-- Database
-    - MongoDB
+## GraphQL Apollo Server
 
-- WebServer
-    - Nginx
+-   Node.js
+    -   TypeScript
+    -   apollo-server-express
+-   Database
 
-- Test
-    - Mocha.JS
+    -   MongoDB
+
+-   WebServer
+
+    -   Nginx
+
+-   Test
+    -   Mocha.JS

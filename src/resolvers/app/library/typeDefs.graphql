@@ -1,37 +1,32 @@
 extend type Mutation {
-    """커버 파일을 업로드"""
-    uploadCoverFile(
-        input: UploadCoverFileInput!
-    ): URL
+    """
+    커버 파일을 업로드
+    """
+    uploadCoverFile(input: UploadCoverFileInput!): URL
 
-    """커버 정보를 업로드"""
-    uploadCover(
-        input: UploadCoverInput!
-    ): Cover
+    """
+    커버 정보를 업로드
+    """
+    uploadCover(input: UploadCoverInput!): Cover
 
-    """커버를 수정"""
-    updateCover(
-        input: UpdateCoverInput!
-    ): Cover
+    """
+    커버를 수정
+    """
+    updateCover(input: UpdateCoverInput!): Cover
 
-    """커버를 삭제"""
-    deleteCover(
-        input: DeleteCoverInput!
-    ): Boolean
+    """
+    커버를 삭제
+    """
+    deleteCover(input: DeleteCoverInput!): Boolean
 }
 
 extend type Query {
+    getCover(coverId: ObjectID!): Cover
 
-    getCover(
-        coverId: ObjectID!
-    ): Cover
-
-    queryCover(
-        filter: QueryCoverInput!
-    ): [Cover!]
+    queryCover(filter: QueryCoverInput!): [Cover!]
 }
 
-enum CoverFilter{
+enum CoverFilter {
     ALL
     NAME
     SONG_ID
@@ -45,15 +40,17 @@ input QueryCoverInput {
 }
 
 "삭제할 커버의 정보"
-input DeleteCover{
+input DeleteCover {
     "커버의 id"
     coverId: ObjectID!
 }
-"""deleteCover Mutation의 input"""
+"""
+deleteCover Mutation의 input
+"""
 input DeleteCoverInput {
     "삭제할 커버의 정보"
     cover: DeleteCover!
-}   
+}
 
 "업데이트할 커버의 정보"
 input UpdateCover {
@@ -64,19 +61,25 @@ input UpdateCover {
     position: SESSION_TYPE
 }
 
-"""updateCover Mutation의 input"""
+"""
+updateCover Mutation의 input
+"""
 input UpdateCoverInput {
     "업데이트할 커버의 정보"
     cover: UpdateCover!
 }
 
-"""uploadCoverFile Mutation의 input"""
+"""
+uploadCoverFile Mutation의 input
+"""
 input UploadCoverFileInput {
     "파일"
     file: Upload!
 }
 
-"""커버 정보"""
+"""
+커버 정보
+"""
 input CoverInput {
     "커버의 제목 ex) 승원이의 viva la vida 바이올린 커버"
     name: String!
@@ -87,13 +90,17 @@ input CoverInput {
     position: SESSION_TYPE!
 }
 
-"""uploadCover Mutation의 input"""
+"""
+uploadCover Mutation의 input
+"""
 input UploadCoverInput {
     "커버 정보"
     cover: CoverInput!
 }
 
-"""커버한 데이터"""
+"""
+커버한 데이터
+"""
 type Cover {
     "커버한 곡의 Id"
     songId: ObjectID!

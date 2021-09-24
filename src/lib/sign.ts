@@ -9,7 +9,8 @@ export const createHashedPassword = (password: string) => {
     return hashedPassword
 }
 
-export const checkPassword = (password: string, hashedPassword: string) => compareSync(password, hashedPassword)
+export const checkPassword = (password: string, hashedPassword: string) =>
+    compareSync(password, hashedPassword)
 
 export const getUser = (token: string): JWTUser | null => {
     try {

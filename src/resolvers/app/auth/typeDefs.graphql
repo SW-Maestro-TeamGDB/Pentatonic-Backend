@@ -1,85 +1,61 @@
-type Mutation{
+type Mutation {
     """
     회원가입
     """
-    register(
-        input: RegisterInput!
-    ): JWT
+    register(input: RegisterInput!): JWT
 
     """
     인증번호를 전송합니다 (발송성공 ? true : false)
     """
     sendAuthCode(
-        "휴대번호 정보를 입력해야합니다" 
+        "휴대번호 정보를 입력해야합니다"
         input: sendAuthCodeInput!
     ): Boolean
 
     """
     로그인
     """
-    login(
-        input: LoginInput!
-    ): JWT
+    login(input: LoginInput!): JWT
 
     """
     비밀번호를 재설정 합니다
     """
-    resetPassword(
-        input: ResetPasswordInput!
-    ): Boolean
+    resetPassword(input: ResetPasswordInput!): Boolean
 
     """
     비밀번호를 변경합니다
     """
-    changePassword(
-        input: ChangePasswordInput!
-    ): Boolean
+    changePassword(input: ChangePasswordInput!): Boolean
 
     """
     이미지를 Upload하고 URL을 반환합니다
     """
-    uploadImageFile(
-        input: UploadImageInput!
-    ): URL
+    uploadImageFile(input: UploadImageInput!): URL
 
     """
     사용자의 프로필을 변경합니다
     """
-    changeProfile(
-        input: ChangeProfileInput!
-    ): User
+    changeProfile(input: ChangeProfileInput!): User
 
     """
     계정을 삭제합니다
     """
-    deleteAccount(
-        input: DeleteAccountInput!
-    ): Boolean
+    deleteAccount(input: DeleteAccountInput!): Boolean
 }
 
-type Query{
-    """유저의 정보를 가져옵니다"""
-    getUserInfo(
-        userId: Id!
-    ): User
+type Query {
+    """
+    유저의 정보를 가져옵니다
+    """
+    getUserInfo(userId: Id!): User
 
-    findId(
-        phoneNumber: PhoneNumber!,
-        authCode: Int!
-    ): FindIdResult
+    findId(phoneNumber: PhoneNumber!, authCode: Int!): FindIdResult
 
-    isValidId(
-        id: Id!
-    ): Boolean
+    isValidId(id: Id!): Boolean
 
-    isValidUsername(
-        username: Username!
-    ): Boolean!
+    isValidUsername(username: Username!): Boolean!
 
-    checkAuthCode(
-        phoneNumber: PhoneNumber!,
-        authCode: Int!
-    ): Boolean!
+    checkAuthCode(phoneNumber: PhoneNumber!, authCode: Int!): Boolean!
 }
 
 interface IUser {
@@ -123,7 +99,7 @@ type PositionRank {
 """
 FindId Query 의 반환 결과입니다
 """
-type FindIdResult{
+type FindIdResult {
     "아이디"
     id: Id!
 }
@@ -131,7 +107,7 @@ type FindIdResult{
 """
 uploadImage Mutation의 input 입니다
 """
-input UploadImageInput{
+input UploadImageInput {
     "파일 입니다"
     file: Upload!
 }
@@ -150,10 +126,10 @@ input sendAuthCodeInput {
 input ResetPasswordInput {
     "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
     phoneNumber: PhoneNumber!
-    
+
     "authenticationNumber 는 123456 와 같은 100000~999999 사이의 숫자 입니다"
     authCode: Int!
-    
+
     "유저의 정보를 담습니다"
     user: PasswordArgs!
 }
@@ -180,7 +156,7 @@ input RegisterInput {
 
     "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
     phoneNumber: PhoneNumber!
-    
+
     "authenticationNumber 는 123456 와 같은 100000~999999 사이의 숫자 입니다"
     authCode: Int!
 }
@@ -204,7 +180,9 @@ input LoginInput {
     user: LoginArgs!
 }
 
-"""비밀번호를 입력하는 input 입니다"""
+"""
+비밀번호를 입력하는 input 입니다
+"""
 input PasswordArgs {
     "계정의 password 입니다"
     password: Password!
@@ -213,7 +191,7 @@ input PasswordArgs {
 """
 비밀번호를 변경하는 input 입니다
 """
-input ChangePasswordArgs{
+input ChangePasswordArgs {
     "변경할 비밀번호 입니다"
     changePassword: Password!
     "현 비밀번호 입니다"
@@ -240,7 +218,7 @@ input ChangeProfileArgs {
     introduce: String
     "계정의 회원 유형 입니다"
     type: Int
-} 
+}
 
 """
 changeProfile Mutation에 사용되는 input 입니다

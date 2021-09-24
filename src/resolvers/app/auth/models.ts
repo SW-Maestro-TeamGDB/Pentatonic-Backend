@@ -36,7 +36,7 @@ export interface RegisterInput {
             password: string
             username: string
             type: number
-        },
+        }
         phoneNumber: string
         authCode: number
     }
@@ -49,7 +49,6 @@ export interface LoginInput {
             password: string
         }
     }
-
 }
 
 export interface ChangePasswordInput {
@@ -92,7 +91,6 @@ export interface ChangeProfileQuery {
     }
 }
 
-
 export interface DeleteAccountInput {
     input: {
         user: {
@@ -100,8 +98,6 @@ export interface DeleteAccountInput {
         }
     }
 }
-
-
 
 export interface SendAuthCodeInput {
     input: {
