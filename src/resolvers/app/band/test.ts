@@ -677,7 +677,6 @@ describe("Band services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                console.log(body)
                 equal(body.errors[0].message, "이 밴드는 솔로밴드입니다 세션 정보를 수정할 수 없습니다")
             })
             it("Fail to update band - invalid bandId", async () => {
