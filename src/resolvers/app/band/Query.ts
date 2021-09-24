@@ -46,15 +46,12 @@ export const getRankedBands = async (parent: void, args: void, context: Context)
         }
     ]).limit(100).toArray()
     const bandIds = likeCounts.map(x => x._id)
-    const [bands, freeBands] = await Promise.all([
-        context.db.collection("band").find({ _id: { $in: bandIds } }).toArray(),
-        context.db.collection("freeBand").find({ _id: { $in: bandIds } }).toArray()
-    ])
+    const bands = await context.db.collection("band").find({ _id: { $in: bandIds } }).toArray()
     const mp = likeCounts.reduce((acc, cur, index) => {
         acc[cur._id.toString()] = index
         return acc
     }, {})
-    return bands.concat(freeBands).sort((a, b) => mp[a._id.toString()] - mp[b._id.toString()]).slice(0, 99)
+    return bands.sort((a, b) => mp[a._id.toString()] - mp[b._id.toString()])
 }
 
 export const getTrendBands = async (parent: void, args: void, context: Context) => {
@@ -70,13 +67,10 @@ export const getTrendBands = async (parent: void, args: void, context: Context) 
         }
     ]).limit(100).toArray()
     const bandIds = likeCounts.map(x => x._id)
-    const [bands, freeBands] = await Promise.all([
-        context.db.collection("band").find({ _id: { $in: bandIds } }).toArray(),
-        context.db.collection("freeBand").find({ _id: { $in: bandIds } }).toArray()
-    ])
+    const bands = await context.db.collection("band").find({ _id: { $in: bandIds } }).toArray()
     const mp = likeCounts.reduce((acc, cur, index) => {
         acc[cur._id.toString()] = index
         return acc
     }, {})
-    return bands.concat(freeBands).sort((a, b) => mp[a._id.toString()] - mp[b._id.toString()]).slice(0, 99)
+    return bands.sort((a, b) => mp[a._id.toString()] - mp[b._id.toString()])
 }

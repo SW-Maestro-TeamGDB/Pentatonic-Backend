@@ -7,7 +7,8 @@ import {
     UpdateInstrumentInput,
     UpdateInstrumentQuery,
     DeleteSongInput,
-    DeleteInstrumentInput
+    DeleteInstrumentInput,
+    UploadFreeSongInput
 } from "resolvers/app/song/models"
 import { Context } from "config/types"
 import { uploadS3, getAudioDuration } from "lib"
@@ -18,6 +19,17 @@ export const uploadDefaultFile = async (parent: void, args: UploadDefaultImgInpu
     const stream = file.createReadStream()
     const fileName = `${Date.now()}-${file.filename}`
     return uploadS3(stream, fileName, file.mimetype)
+}
+
+export const uploadFreeSong = async (parent: void, args: UploadFreeSongInput, context: Context) => {
+    const duration = await getAudioDuration(args.input.song.songURI.href)
+    return await context.db.collection("song").insertOne({
+        name: args.input.song.name,
+        artist: args.input.song.artist,
+        songURI: args.input.song.songURI,
+        isFreeSong: true,
+        duration
+    }).then(({ insertedId }) => insertedId)
 }
 
 export const uploadSong = async (parent: void, args: UploadSongInput, context: Context) => {

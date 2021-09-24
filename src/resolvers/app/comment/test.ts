@@ -74,7 +74,7 @@ describe("Comment services test", () => {
             isFreeSong: true,
             duration: 222.302041
         })
-        const band1 = await db.collection("freeBand").insertOne({
+        const band1 = await db.collection("band").insertOne({
             name: "demo",
             introduce: "demo",
             songId: insertedId,
@@ -84,6 +84,7 @@ describe("Comment services test", () => {
             },
             backGroundURI: "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg",
             creatorId: "user1234",
+            isSoloBand: false,
             createDate: new Date()
         })
         // const band2 = await db.collection("freeBand").insertOne({

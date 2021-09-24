@@ -17,6 +17,15 @@ export interface Song {
     band: Band
 }
 
+export interface UploadFreeSongInput {
+    input: {
+        song: {
+            name: string
+            songURI: URL
+            artist: string
+        }
+    }
+}
 
 export interface QuerySongInput {
     filter: {

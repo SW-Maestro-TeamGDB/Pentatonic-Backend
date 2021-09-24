@@ -73,7 +73,7 @@ describe("Like services test", () => {
             isFreeSong: true,
             duration: 222.302041
         })
-        const band1 = await db.collection("freeBand").insertOne({
+        const band1 = await db.collection("band").insertOne({
             name: "demo",
             introduce: "demo",
             songId: insertedId,
@@ -81,17 +81,19 @@ describe("Like services test", () => {
                 durm: 1,
                 violin: 1
             },
+            isSoloBand: false,
             backGroundURI: "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg",
             creatorId: "user1234",
             createDate: new Date()
         })
-        const band2 = await db.collection("freeBand").insertOne({
+        const band2 = await db.collection("band").insertOne({
             name: "demo",
             introduce: "demo",
             songId: insertedId,
             sessions: {
                 durm: 1
             },
+            isSoloBand: true,
             backGroundURI: "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg",
             creatorId: "user1234",
             createDate: new Date()
@@ -106,43 +108,23 @@ describe("Like services test", () => {
             position: "DRUM",
             coverBy: "user1234"
         })
-        const lib1 = await db.collection("library").insertOne({
-            name: "자유곡업로드테스트",
-            songId: insertedId,
-            coverURI: `${env.S3_URI}/result.mp3`,
-            duration: 222.302041,
-            position: "VIOLIN",
-            coverBy: "user1234"
-        })
         await db.collection("join").insertOne({
             bandId: band1.insertedId,
             position: "DRUM",
-            userId: "user1234"
+            userId: "user1234",
+            coverId: lib.insertedId,
         })
         await db.collection("join").insertOne({
             bandId: band2.insertedId,
             position: "DRUM",
-            userId: "user1234"
+            userId: "user1234",
+            coverId: lib.insertedId,
         })
         await db.collection("join").insertOne({
             bandId: band1.insertedId,
             position: "VIOLIN",
-            userId: "user1234"
-        })
-        await db.collection("session").insertOne({
-            bandId: band1.insertedId,
-            position: "DRUM",
+            userId: "user1234",
             coverId: lib.insertedId,
-        })
-        await db.collection("session").insertOne({
-            bandId: band2.insertedId,
-            position: "DRUM",
-            coverId: lib.insertedId,
-        })
-        await db.collection("session").insertOne({
-            bandId: band1.insertedId,
-            position: "VIOLIN",
-            coverId: lib1.insertedId,
         })
     })
     describe("Mutation like", () => {

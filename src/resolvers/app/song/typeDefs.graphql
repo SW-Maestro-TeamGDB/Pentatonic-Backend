@@ -47,6 +47,10 @@ extend type Mutation {
     deleteInstrument(
         input: DeleteInstrumentInput!
     ): Boolean
+
+    uploadFreeSong(
+        input: UploadFreeSongInput!
+    ): ObjectID!
 }
 
 """
@@ -167,8 +171,16 @@ type Instrument {
     "instrument의 이름"
     name: String!
     "파일의 길이"
-    duration: Float!
+    duration: Float
     position: SESSION_TYPE!
+}
+
+
+interface SongInterface {
+    songId: ObjectID!
+    duration: Float!
+    name: String!
+    artist: String!
 }
 
 """올라와 있는 곡에 대한 타입"""
@@ -180,23 +192,23 @@ type Song implements SongInterface {
     "song의 음원 URI"
     songURI: URL!
     "song의 이미지 URI"
-    songImg: URL!
+    songImg: URL
     "song의 장르"
-    genre: GENRE_TYPE!
+    genre: GENRE_TYPE
     "song의 artist"
     artist: String!
     "song이 포함되어있는 album"
-    album: String!
+    album: String
     "해당 곡이 weeklyChallenge 인가"
     weeklyChallenge: Boolean!
     "song의 duration"
     duration: Float!
     "song의 level"
-    level: Int!
+    level: Int
     "해당 songId를 가지고 있는 Instruments"
-    instrument: [Instrument!]!
+    instrument: [Instrument!]
     "음원 발매의 날짜"
-    releaseDate: Date!
+    releaseDate: Date
     band: [Band!]!
 }
 
@@ -283,7 +295,7 @@ input UpdateSongInput {
     song: UpdateSong!
 }
 
-enum GENRE_TYPE{
+enum GENRE_TYPE {
     HIP_HOP
     ELECTRONIC
     BLUES
@@ -294,4 +306,14 @@ enum GENRE_TYPE{
     DANCE
     BALLAD
     K_POP
+}
+
+input UploadFreeSongInSong {
+    name: String!
+    songURI: URL!
+    artist: String!
+}
+
+input UploadFreeSongInput {
+    song: UploadFreeSongInSong!
 }
