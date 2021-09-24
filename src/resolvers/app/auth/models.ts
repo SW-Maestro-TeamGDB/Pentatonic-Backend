@@ -101,7 +101,7 @@ export interface DeleteAccountInput {
 
 export interface SendAuthCodeInput {
     input: {
-        isRegistration: Boolean
+        isRegistration: boolean
         phoneNumber: string
     }
 }

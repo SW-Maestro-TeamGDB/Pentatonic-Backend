@@ -5,14 +5,13 @@ import { Db } from "mongodb"
 import { deepStrictEqual as equal } from "assert"
 import DB from "config/connectDB"
 import * as Redis from "config/connectRedis"
-import * as loaders from "lib/dataloader"
 
 const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(
     3,
     (env.PHONE_NUMBER as string).length
 )}`
-let token: string = ""
-let token1: string = ""
+let token = ""
+let token1 = ""
 
 describe("Follow Service Test", () => {
     after(async () => {

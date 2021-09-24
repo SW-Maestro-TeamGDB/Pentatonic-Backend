@@ -13,7 +13,7 @@ const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(
     3,
     (env.PHONE_NUMBER as string).length
 )}`
-let token: string = ""
+let token = ""
 
 const fileUpload = (
     query: string,

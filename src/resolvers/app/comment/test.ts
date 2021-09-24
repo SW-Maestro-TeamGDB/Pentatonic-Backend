@@ -12,8 +12,8 @@ const phoneNumber = `+8210${(env.PHONE_NUMBER as string).slice(
     3,
     (env.PHONE_NUMBER as string).length
 )}`
-let token: string = ""
-let token1: string = ""
+let token = ""
+let token1 = ""
 describe("Comment services test", () => {
     after(async () => {
         const db = (await DB.get()) as Db
