@@ -1119,6 +1119,26 @@ describe("Band services test", () => {
                     .expect(200)
                 equal(body.data.deleteBand, true)
             })
+            it("Successfully delete free band - 2", async () => {
+                const query = `
+                    mutation{
+                        deleteBand(
+                            input: {
+                                band: {
+                                    bandId: "${bandIds[2]}"
+                                }
+                            }
+                        )
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .set("Authorization", token)
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                equal(body.data.deleteBand, true)
+            })
         })
         describe("Failure", () => {
             it("nonexistent band", async () => {

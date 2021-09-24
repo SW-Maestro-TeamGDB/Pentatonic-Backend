@@ -32,7 +32,7 @@ export const createBand = async (parent: void, args: CreateBandInput, context: C
         songId: new ObjectID(args.input.band.songId),
         backGroundURI: args.input.band.backGroundURI.href,
         sessions: { ...sessionArr },
-        isFreeBand: song.freeSong ? true : false,
+        isFreeBand: song.isFreeSong === true ? true : false,
         createDate: new Date(),
         isSoloBand: args.input.band.isSoloBand
     }).then(({ ops }) => ops[0])
