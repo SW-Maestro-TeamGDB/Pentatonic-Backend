@@ -5,7 +5,7 @@ import {
     GetBandInput,
     DefaultBandQuery
 } from "resolvers/app/band/models"
-import { snakeToCamel } from "lib"
+import { snakeToCamel, shuffle } from "lib"
 import { ObjectID } from "mongodb"
 
 export const queryBand = async (parent: void, args: QueryBandInput, context: Context) => {
@@ -68,9 +68,5 @@ export const getTrendBands = async (parent: void, args: void, context: Context) 
     ]).limit(100).toArray()
     const bandIds = likeCounts.map(x => x._id)
     const bands = await context.db.collection("band").find({ _id: { $in: bandIds } }).toArray()
-    const mp = likeCounts.reduce((acc, cur, index) => {
-        acc[cur._id.toString()] = index
-        return acc
-    }, {})
-    return bands.sort((a, b) => mp[a._id.toString()] - mp[b._id.toString()])
+    return shuffle(bands)
 }
