@@ -62,7 +62,7 @@ interface IUser {
     id: Id!
     username: Username!
     profileURI: URL!
-    phoneNumber: PhoneNumber!
+    phoneNumber: PhoneNumber
     prime: Boolean!
     introduce: String!
     type: Int!
@@ -79,7 +79,7 @@ type User implements IUser {
     "프로필 사진"
     profileURI: URL!
     "휴대번호"
-    phoneNumber: PhoneNumber!
+    phoneNumber: PhoneNumber
     "프리미엄 유저인지"
     prime: Boolean!
     "자기소개 메세지"
@@ -89,6 +89,16 @@ type User implements IUser {
     band: [BandLink!]!
     library: [Cover!]
     position: [PositionRank]
+}
+
+type UserLink implements IUser {
+    id: Id!
+    username: Username!
+    profileURI: URL!
+    prime: Boolean!
+    introduce: String!
+    phoneNumber: PhoneNumber
+    type: Int!
 }
 
 type PositionRank {

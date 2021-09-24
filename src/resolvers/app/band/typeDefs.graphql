@@ -21,16 +21,6 @@ interface BandInterface {
     creator: UserLink!
 }
 
-type UserLink implements IUser {
-    id: Id!
-    username: Username!
-    profileURI: URL!
-    prime: Boolean!
-    introduce: String!
-    phoneNumber: PhoneNumber!
-    type: Int!
-}
-
 type Band implements BandInterface {
     bandId: ObjectID!
     song: SongLink!
