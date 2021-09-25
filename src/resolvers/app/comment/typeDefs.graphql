@@ -16,6 +16,19 @@ extend type Mutation {
 
 extend type Query {
     getComments(bandId: ObjectID!): [Comment!]!
+        @deprecated(reason: "Use queryComments instead")
+
+    queryComments(
+        first: Int! = 10
+        after: ObjectID
+        bandId: ObjectID!
+        sort: SORT_OPTION! = DATE_DESC
+    ): CommentOutPut
+}
+
+type CommentOutPut {
+    comment: [Comment!]!
+    pageInfo: PageInfo!
 }
 
 input UpdateCommentInComment {

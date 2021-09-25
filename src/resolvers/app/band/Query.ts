@@ -144,7 +144,7 @@ export const queryBands = async (
         bands,
         pageInfo: {
             hasNextPage: bands.length === first,
-            endCursor: bands[bands.length - 1]?._id.toString(),
+            endCursor: bands[bands.length - 1]._id,
         },
     }
 }

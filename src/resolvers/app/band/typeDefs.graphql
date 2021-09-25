@@ -145,7 +145,7 @@ extend type Query {
 
     queryBands(
         filter: QueryBandInput!
-        first: Int! = 20
+        first: Int! = 10
         after: String
     ): BandOutPut
 }

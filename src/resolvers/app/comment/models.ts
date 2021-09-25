@@ -1,4 +1,5 @@
 import { ObjectID } from "mongodb"
+import { Cursor } from "config/types"
 
 export interface CreateCommentInput {
     input: {
@@ -36,5 +37,18 @@ export interface UpdateCommentInput {
 }
 
 export interface GetCommentsInput {
+    bandId: ObjectID
+}
+
+export interface QueryCommentsInput extends Cursor {
+    bandId: ObjectID
+    sort: "DATE_DESC" | "DATE_ASC"
+}
+
+export interface CommentQuery {
+    _id?: {
+        $gt?: ObjectID
+        $lt?: ObjectID
+    }
     bandId: ObjectID
 }
