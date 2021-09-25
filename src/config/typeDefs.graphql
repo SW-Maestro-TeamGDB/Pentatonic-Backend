@@ -22,3 +22,8 @@ enum SESSION_TYPE {
     HAEGEUM
     GEOMUNGO
 }
+
+type PageInfo {
+    endCursor: String
+    hasNextPage: Boolean!
+}

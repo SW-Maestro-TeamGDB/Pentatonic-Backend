@@ -4,6 +4,7 @@ import {
     BandQuery,
     GetBandInput,
     DefaultBandQuery,
+    QueryBandsInput,
 } from "resolvers/app/band/models"
 import { snakeToCamel, shuffle } from "lib"
 import { ObjectID } from "mongodb"
@@ -16,7 +17,7 @@ export const queryBand = async (
     const { type, content, sort } = args.filter
     const _id = sort === "DATE_ASC" ? 1 : -1
     const text = new RegExp(content || "", "ig")
-    const query: BandQuery | DefaultBandQuery =
+    const query: BandQuery & DefaultBandQuery =
         type !== "ALL"
             ? { [snakeToCamel(type)]: { $regex: text } }
             : {
@@ -99,4 +100,51 @@ export const getTrendBands = async (
         .find({ _id: { $in: bandIds } })
         .toArray()
     return shuffle(bands)
+}
+
+export const queryBands = async (
+    parent: void,
+    args: QueryBandsInput,
+    context: Context
+) => {
+    const { first, after, filter } = args
+    const _id = filter.sort === "DATE_ASC" ? 1 : -1
+    const text = new RegExp(filter.content || "", "ig")
+    const query: BandQuery & DefaultBandQuery = {}
+    if (after) {
+        query._id = { [_id === -1 ? "$lt" : "$gt"]: new ObjectID(after) }
+    }
+    if (filter.type !== "ALL") {
+        query[snakeToCamel(filter.type) as "name" | "introduce"] = {
+            $regex: text,
+        }
+    } else {
+        query["$or"] = [
+            { creatorId: { $regex: text } },
+            { introduce: { $regex: text } },
+            { name: { $regex: text } },
+            {
+                songId: {
+                    $in: await context.db
+                        .collection("song")
+                        .find({ name: { $regex: text } })
+                        .toArray()
+                        .then((x) => x.map((y) => y._id)),
+                },
+            },
+        ]
+    }
+    const bands = await context.db
+        .collection("band")
+        .find(query)
+        .sort({ _id })
+        .limit(first)
+        .toArray()
+    return {
+        bands,
+        pageInfo: {
+            hasNextPage: bands.length === first,
+            endCursor: bands[bands.length - 1]?._id.toString(),
+        },
+    }
 }

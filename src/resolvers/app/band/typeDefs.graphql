@@ -135,10 +135,22 @@ input QueryBandInput {
 
 extend type Query {
     queryBand(filter: QueryBandInput!): [Band!]
+        @deprecated(reason: "Use queryBands instead")
 
     getBand(bandId: ObjectID!): Band
 
     getRankedBands: [Band!]
 
     getTrendBands: [Band!]
+
+    queryBands(
+        filter: QueryBandInput!
+        first: Int! = 20
+        after: String
+    ): BandOutPut
+}
+
+type BandOutPut {
+    bands: [Band!]!
+    pageInfo: PageInfo!
 }

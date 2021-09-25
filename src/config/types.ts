@@ -41,3 +41,8 @@ export interface Context extends Loaders {
     db: Db
     redis: Redis
 }
+
+export interface Cursor {
+    first: number
+    after?: string
+}

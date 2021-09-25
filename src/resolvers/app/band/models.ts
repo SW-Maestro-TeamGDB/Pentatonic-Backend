@@ -1,4 +1,5 @@
 import { ObjectID } from "mongodb"
+import { Cursor } from "config/types"
 
 export interface SessionInformation {
     vocal?: number
@@ -146,6 +147,10 @@ export interface BandQuery {
     songId?: {
         $in: ObjectID[]
     }
+    _id?: {
+        $lt?: ObjectID
+        $gt?: ObjectID
+    }
 }
 
 export interface DefaultBandQuery {
@@ -155,3 +160,5 @@ export interface DefaultBandQuery {
 export interface GetBandInput {
     bandId: ObjectID
 }
+
+export interface QueryBandsInput extends QueryBandInput, Cursor {}
