@@ -799,6 +799,66 @@ describe("Band services test", () => {
             })
         })
     })
+    describe("Query queryBands", () => {
+        let cursor = ""
+        it("Success to queryBands first data", async () => {
+            const query = `
+                query{
+                    queryBands(
+                        filter: {
+                            type: ALL
+                        },
+                        first: 1
+                    ){
+                        bands { 
+                            name
+                        },
+                        pageInfo { 
+                            endCursor,
+                            hasNextPage
+                        }
+                    }
+                } 
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.queryBands.pageInfo.hasNextPage, true)
+            equal(body.data.queryBands.bands[0].name, "test band - 3")
+            cursor = body.data.queryBands.pageInfo.endCursor
+        })
+        it("Success to queryBands get second data", async () => {
+            const query = `
+                query{
+                    queryBands(
+                        filter: {
+                            type: ALL
+                        },
+                        first: 1,
+                        after: "${cursor}"
+                    ){
+                        bands { 
+                            name
+                        },
+                        pageInfo { 
+                            endCursor,
+                            hasNextPage
+                        }
+                    }
+                } 
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+            equal(body.data.queryBands.pageInfo.hasNextPage, true)
+            equal(body.data.queryBands.bands[0].name, "test band - 2")
+        })
+    })
     describe("Query queryBand", () => {
         it("Searching by Band Name & sort DATE_DESC", async () => {
             const query = `
