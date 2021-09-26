@@ -42,12 +42,18 @@ type BandLink {
     backGroundURI: URL!
     createDate: Date!
     isSoloBand: Boolean!
+    session: [SessionLink]!
 }
 
 type Session {
     position: SESSION_TYPE!
     maxMember: Int!
     cover: [Cover!]
+}
+
+type SessionLink {
+    position: SESSION_TYPE!
+    maxMember: Int!
 }
 
 input SessionConfigInput {

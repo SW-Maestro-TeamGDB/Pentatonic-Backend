@@ -120,9 +120,7 @@ const batchLoadSessionFn = async (bandIds: readonly ObjectID[]) => {
         const position = snakeToCamel(
             coverData.position
         ) as keyof SessionInformation
-        ;(resultArray[id][sessionMap[position]]["cover"] as Session[]).push(
-            coverData
-        )
+        resultArray[id][sessionMap[position]]["cover"]?.push(coverData)
     })
     return resultArray.map((e: BatchSesssion[]) =>
         e.filter((f: BatchSesssion) => Object.keys(f).length !== 0)

@@ -259,6 +259,10 @@ describe("Like services test", () => {
                         name
                         likeCount
                         likeStatus
+                        session { 
+                            position
+                            maxMember
+                        }
                     }
                 }
             `
@@ -268,6 +272,7 @@ describe("Like services test", () => {
                 .set("Authorization", token)
                 .send(JSON.stringify({ query }))
                 .expect(200)
+            equal(Array.isArray(body.data.getRankedBands[0].session), true)
             equal(body.data.getRankedBands.length, 2)
             equal(body.data.getRankedBands[0].likeStatus, true)
             equal(body.data.getRankedBands[0].likeCount, 2)
