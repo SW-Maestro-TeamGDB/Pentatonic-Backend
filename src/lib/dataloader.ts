@@ -14,6 +14,7 @@ import { snakeToCamel, camelToSnake } from "lib"
 import { PositionRank } from "lib/models"
 import { Comment } from "resolvers/app/comment/models"
 import { LikeStatusBatch } from "resolvers/app/like/models"
+import { Follow } from "resolvers/app/follow/models"
 
 const generateIdxTable = (keys: readonly (string | ObjectID)[]) =>
     keys.reduce((acc, cur, idx) => {
@@ -292,18 +293,27 @@ const batchLoadLikeStatus = async (bandData: readonly LikeStatusBatch[]) => {
     return resultArray
 }
 
-// const batchLoadFollowingStatus = async (userIds: readonly string[]) => {
-//     const mp = new Map(), resultArr = Array.from(Array(userIds.length), () => false)
-//     userIds.forEach((x, idx) => mp.set(x, idx))
-//     const db = await DB.get() as Db
-//     await db.collection("follow").aggregate([
-//         { $match: { userId: { $in: userIds } } },
-//         { $group: { _id: "$userId", count: { $sum: 1 } } }
-//     ]).toArray().then(x => x.forEach(({ _id, count }) => resultArr[mp.get(_id)] = count !== 0))
-//     return resultArr
-// }
+const batchLoadFollowingStatus = async (follow: readonly Follow[]) => {
+    const resultArr = Array.from(Array(follow.length), () => false)
+    const idxTable = generateIdxTable(follow.map((x) => x.following))
+    const db = (await DB.get()) as Db
+    await db
+        .collection("follow")
+        .find({ $or: follow as Follow[] })
+        .toArray()
+        .then((x) =>
+            x.forEach((data) => {
+                idxTable[data.following].forEach(
+                    (idx) => (resultArr[idx] = true)
+                )
+            })
+        )
+    return resultArr
+}
 
-// export const followingStatusLoader = new DataLoader(batchLoadFollowingStatus)
+export const followingStatusLoader = new DataLoader(batchLoadFollowingStatus, {
+    cache: false,
+})
 
 export const likeStatusLoader = new DataLoader(batchLoadLikeStatus, {
     cache: false,

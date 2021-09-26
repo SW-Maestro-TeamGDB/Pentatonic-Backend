@@ -3,6 +3,7 @@ import { Db, ObjectID } from "mongodb"
 import DataLoader from "dataloader"
 import * as loaders from "lib/dataloader"
 import { LikeStatusBatch } from "resolvers/app/like/models"
+import { Follow } from "resolvers/app/follow/models"
 
 export interface File {
     filename: string
@@ -20,7 +21,7 @@ interface Loaders {
         likeCountsLoader: DataLoader<ObjectID, any, ObjectID>
         followerLoader: DataLoader<string, any, string>
         followingLoader: DataLoader<string, any, string>
-        followingStatusLoader: DataLoader<string, any, string>
+        followingStatusLoader: DataLoader<Follow, any, Follow>
         positionLoader: DataLoader<string, any, string>
         commentsLoader: DataLoader<ObjectID, any, ObjectID>
         likeStatusLoader: DataLoader<LikeStatusBatch, any, LikeStatusBatch>

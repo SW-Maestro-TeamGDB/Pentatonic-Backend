@@ -15,6 +15,7 @@ extend type User {
 extend type UserLink {
     followerCount: Int!
     followingCount: Int!
+    followingStatus: Boolean
 }
 
 extend type Query {

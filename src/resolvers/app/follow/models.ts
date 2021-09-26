@@ -13,3 +13,8 @@ export interface GetFollowerListInput {
 export interface GetFollowingListInput {
     userId: string
 }
+
+export interface Follow {
+    userId: string
+    following: string
+}

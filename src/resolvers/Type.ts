@@ -70,15 +70,12 @@ export const User = {
         args: void,
         context: Context
     ) => {
-        if (context.user === null || context.user.id === parent.id) return null
-        return context.db
-            .collection("follow")
-            .find({
-                userId: context.user.id,
-                following: parent.id,
-            })
-            .count()
-            .then((x) => x === 1)
+        if (context.user === null || context?.user?.id === parent.id)
+            return null
+        return context.loaders.followingStatusLoader.load({
+            userId: context.user.id,
+            following: parent.id,
+        })
     },
     position: (parent: UserInterface, args: void, context: Context) =>
         context.loaders.positionLoader.load(parent.id),
@@ -100,6 +97,18 @@ export const UserLink = {
             return parent.phoneNumber
         }
         return null
+    },
+    followingStatus: async (
+        parent: UserInterface,
+        args: void,
+        context: Context
+    ) => {
+        if (context.user === null || context?.user?.id === parent.id)
+            return null
+        return context.loaders.followingStatusLoader.load({
+            userId: context.user.id,
+            following: parent.id,
+        })
     },
 }
 export const BandLink = {
