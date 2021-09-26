@@ -297,6 +297,43 @@ describe("Like services test", () => {
             equal(body.data.getRankedBands[1].likeStatus, true)
         })
     })
+    describe("Query getBand", () => {
+        it("get band likeStauts with authorization headers", async () => {
+            const query = `
+                query{
+                    getBand(
+                        bandId: "${bandIds[0]}"
+                    ){
+                        likeStatus
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .set("Authorization", token)
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getBand.likeStatus, false)
+        })
+        it("get band likeStauts with empty headers", async () => {
+            const query = `
+                query{
+                    getBand(
+                        bandId: "${bandIds[0]}"
+                    ){
+                        likeStatus
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getBand.likeStatus, null)
+        })
+    })
     describe("Query getTrendBands", () => {
         it("get band by sorted latest likeCount", async () => {
             const query = `

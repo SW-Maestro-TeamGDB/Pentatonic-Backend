@@ -1175,13 +1175,14 @@ describe("User auth service test", () => {
     })
     describe("Query getUserInfo", () => {
         describe("Success", () => {
-            it("If you bring my personal information normally", async () => {
+            it("Get the information using the getUserInfo query with authorization headers", async () => {
                 const query = `
                     query{
                         getUserInfo(userId:"test1234"){
                             id
                             username
                             type
+                            phoneNumber
                         }
                     }
                 `
@@ -1192,6 +1193,26 @@ describe("User auth service test", () => {
                 equal(body.data.getUserInfo.id, "test1234")
                 equal(body.data.getUserInfo.username, "SeungWon")
                 equal(body.data.getUserInfo.type, 3)
+                equal(body.data.getUserInfo.phoneNumber, phoneNumber)
+            })
+            it("Get the information using the getUserInfo query with empty headers", async () => {
+                const query = `
+                    query{
+                        getUserInfo(userId:"test1234"){
+                            id
+                            username
+                            type
+                            phoneNumber
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .get(`/api?query=${query}`)
+                    .expect(200)
+                equal(body.data.getUserInfo.id, "test1234")
+                equal(body.data.getUserInfo.username, "SeungWon")
+                equal(body.data.getUserInfo.type, 3)
+                equal(body.data.getUserInfo.phoneNumber, null)
             })
         })
     })

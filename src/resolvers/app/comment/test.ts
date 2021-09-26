@@ -325,9 +325,55 @@ describe("Comment services test", () => {
                 .expect(200)
             equal(body.data.queryComments.pageInfo.hasNextPage, true)
         })
+        it("get Successfully band comments order by DATE_ASC", async () => {
+            const query = `
+                query {
+                    queryComments(
+                        bandId: "${bandIds[0]}",
+                        first: 1,
+                        sort: DATE_ASC,
+                        after:"111111111111111111111111"
+                    ){
+                        pageInfo {
+                            hasNextPage
+                        }
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.queryComments.pageInfo.hasNextPage, true)
+        })
+        it("get Successfully band comments order by DATE_DESC", async () => {
+            const query = `
+                query {
+                    queryComments(
+                        bandId: "${bandIds[0]}",
+                        first: 1,
+                        sort: DATE_DESC,
+                        after:"111111111111111111111111"
+                    ){
+                        pageInfo {
+                            hasNextPage
+                            endCursor
+                        }
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.queryComments.pageInfo.hasNextPage, false)
+            equal(body.data.queryComments.pageInfo.endCursor, null)
+        })
     })
     describe("Query getBand get Comments", () => {
-        it("get Successfully get comments in band", async () => {
+        it("Get comments to band using getBand query - 1", async () => {
             const query = `
                 query {
                     getBand(
@@ -347,6 +393,32 @@ describe("Comment services test", () => {
                 .send(JSON.stringify({ query }))
                 .expect(200)
             equal(body.data.getBand.comment.pageInfo.hasNextPage, false)
+        })
+        it("Get comments to band using getBand query with after arguments", async () => {
+            const query = `
+                query {
+                    getBand(
+                        bandId: "${bandIds[0]}"
+                    ){
+                        comment(
+                            first:100,
+                            after: "111111111111111111111111"
+                        ){
+                            pageInfo{
+                                hasNextPage
+                                endCursor
+                            }
+                        }
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getBand.comment.pageInfo.hasNextPage, false)
+            equal(body.data.getBand.comment.pageInfo.endCursor, null)
         })
     })
 })
