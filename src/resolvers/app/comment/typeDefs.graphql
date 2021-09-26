@@ -27,7 +27,7 @@ extend type Query {
 }
 
 type CommentOutPut {
-    comment: [Comment!]!
+    comments: [Comment!]!
     pageInfo: PageInfo!
 }
 
@@ -58,5 +58,5 @@ input CreateCommentInput {
 }
 
 extend type Band {
-    comment: [Comment!]
+    comment(after: ObjectID, first: Int! = 10): CommentOutPut!
 }

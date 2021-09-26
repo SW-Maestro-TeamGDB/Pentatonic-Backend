@@ -303,18 +303,40 @@ describe("Comment services test", () => {
         })
     })
 
-    describe("Query QueryFreeBand", () => {
-        it("test comments loaders", async () => {
-            const query = ` 
-                query{ 
-                    queryBand(
-                        filter: {
-                            type: ALL
-                        }
+    describe("Query queryComments", async () => {
+        it("get Successfully band comments", async () => {
+            const query = `
+                query {
+                    queryComments(
+                        bandId: "${bandIds[0]}",
+                        first: 1
                     ){
-                        name
-                        comment {
-                            content
+                        pageInfo {
+                            hasNextPage
+                        }
+                    }
+                }
+            `
+
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.queryComments.pageInfo.hasNextPage, true)
+        })
+    })
+    describe("Query getBand get Comments", () => {
+        it("get Successfully get comments in band", async () => {
+            const query = `
+                query {
+                    getBand(
+                        bandId: "${bandIds[0]}"
+                    ){
+                        comment(first:100){
+                            pageInfo{
+                                hasNextPage
+                            }
                         }
                     }
                 }
@@ -324,11 +346,7 @@ describe("Comment services test", () => {
                 .set("Content-Type", "application/json")
                 .send(JSON.stringify({ query }))
                 .expect(200)
-            equal(body.data.queryBand[0].name, "demo")
-            equal(
-                body.data.queryBand[0].comment[0].content,
-                "update test comment"
-            )
+            equal(body.data.getBand.comment.pageInfo.hasNextPage, false)
         })
     })
 })

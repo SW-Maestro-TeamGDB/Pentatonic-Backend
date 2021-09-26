@@ -5,9 +5,10 @@ import {
 import { Cover as CoverInterface } from "resolvers/app/library/models"
 import { Band as BandInterface } from "resolvers/app/band/models"
 import { User as UserInterface } from "resolvers/app/auth/models"
-
-import { Context } from "config/types"
+import { CommentQuery } from "resolvers/app/comment/models"
+import { Context, Cursor } from "config/types"
 import { Comment as CommentInterface } from "resolvers/app/comment/models"
+import { ObjectID } from "mongodb"
 
 export const Song = {
     songId: (parent: SongInterface) => parent._id,
@@ -146,8 +147,27 @@ export const Band = {
         context.loaders.userLoader1.load(parent.creatorId),
     likeCount: (parent: BandInterface, args: void, context: Context) =>
         context.loaders.likeCountsLoader.load(parent._id),
-    comment: (parent: BandInterface, args: void, context: Context) =>
-        context.loaders.commentsLoader.load(parent._id),
+    comment: async (parent: BandInterface, args: Cursor, context: Context) => {
+        const query: CommentQuery = {
+            bandId: parent._id,
+        }
+        if (args.after) {
+            query._id = { $lt: new ObjectID(args.after) }
+        }
+        const comments = await context.db
+            .collection("comment")
+            .find(query)
+            .sort({ _id: -1 })
+            .limit(args.first)
+            .toArray()
+        return {
+            comments,
+            pageInfo: {
+                endCursor: comments[comments.length - 1]?._id,
+                hasNextPage: comments.length === args.first,
+            },
+        }
+    },
     likeStatus: (parent: BandInterface, args: void, context: Context) => {
         if (context.user === null) return null
         return context.loaders.likeStatusLoader.load({

@@ -139,9 +139,9 @@ extend type Query {
 
     getBand(bandId: ObjectID!): Band
 
-    getRankedBands: [Band!]
+    getRankedBands: [BandLink!]
 
-    getTrendBands: [Band!]
+    getTrendBands: [BandLink!]
 
     queryBands(
         filter: QueryBandInput!
@@ -151,6 +151,6 @@ extend type Query {
 }
 
 type BandOutPut {
-    bands: [Band!]!
+    bands: [BandLink]!
     pageInfo: PageInfo!
 }
