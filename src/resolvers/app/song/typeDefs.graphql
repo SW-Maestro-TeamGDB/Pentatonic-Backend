@@ -281,7 +281,7 @@ enum GENRE_TYPE {
     BLUES
     POP
     JAZZ
-    CALLSICAL
+    CLASSICAL
     ROCK
     DANCE
     BALLAD

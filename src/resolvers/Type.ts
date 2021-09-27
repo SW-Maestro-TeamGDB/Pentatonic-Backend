@@ -124,6 +124,8 @@ export const BandLink = {
     },
     session: (parent: BandInterface, args: void, context: Context) =>
         context.loaders.sessionsLoader.load(parent._id),
+    song: (parent: BandInterface, args: void, context: Context) =>
+        context.loaders.songsLoader.load(parent.songId),
 }
 
 export const SongLink = {

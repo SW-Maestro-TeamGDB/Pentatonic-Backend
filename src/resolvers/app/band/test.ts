@@ -1011,7 +1011,9 @@ describe("Band services test", () => {
                         username
                         band{
                             bandId
-                            songId
+                            song{ 
+                                songId
+                            }
                             likeCount
                         }
                         library{
@@ -1031,7 +1033,7 @@ describe("Band services test", () => {
                 .send(JSON.stringify({ query }))
                 .expect(200)
             equal(body.data.getUserInfo.band[0].bandId, bandIds[0])
-            equal(body.data.getUserInfo.band[0].songId, songIds[0])
+            equal(body.data.getUserInfo.band[0].song.songId, songIds[0])
             body.data.getUserInfo.library.forEach(
                 (x: { coverBy: { id: string } }) =>
                     equal(x.coverBy.id, "user1234")
@@ -1045,7 +1047,9 @@ describe("Band services test", () => {
                         username
                         band{
                             bandId
-                            songId
+                            song{ 
+                                songId
+                            }
                         }
                         library{
                             songId
@@ -1061,7 +1065,7 @@ describe("Band services test", () => {
                 .send(JSON.stringify({ query }))
                 .expect(200)
             equal(body.data.getUserInfo.band[0].bandId, bandIds[0])
-            equal(body.data.getUserInfo.band[0].songId, songIds[0])
+            equal(body.data.getUserInfo.band[0].song.songId, songIds[0])
             equal(body.data.getUserInfo.library, null)
         })
     })
