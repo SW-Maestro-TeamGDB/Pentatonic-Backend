@@ -3,7 +3,7 @@ extend type Query {
 }
 
 input LikeInput {
-    band: JoinBandArgsInput!
+    band: JoinBandInBandInput!
 }
 
 extend type BandLink {

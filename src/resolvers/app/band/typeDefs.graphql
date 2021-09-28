@@ -42,7 +42,7 @@ type BandLink {
     backGroundURI: URL!
     createDate: Date!
     isSoloBand: Boolean!
-    session: [SessionLink]!
+    session: [Session]!
 }
 
 type Session {
@@ -51,17 +51,12 @@ type Session {
     cover: [Cover!]
 }
 
-type SessionLink {
-    position: SESSION_TYPE!
-    maxMember: Int!
-}
-
 input SessionConfigInput {
     session: SESSION_TYPE!
     maxMember: Int!
 }
 
-input CreateBandArgsInput {
+input CreateBandInBandInput {
     name: String!
     introduce: String!
     backGroundURI: URL! = "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg"
@@ -71,10 +66,10 @@ input CreateBandArgsInput {
 
 input CreateBandInput {
     sessionConfig: [SessionConfigInput!]!
-    band: CreateBandArgsInput!
+    band: CreateBandInBandInput!
 }
 
-input UpdateBandArgsInput {
+input UpdateBandInBandInput {
     bandId: ObjectID!
     name: String
     introduce: String
@@ -83,35 +78,35 @@ input UpdateBandArgsInput {
 }
 
 input UpdateBandInput {
-    band: UpdateBandArgsInput!
+    band: UpdateBandInBandInput!
     sessionConfig: [SessionConfigInput]
 }
 
-input JoinBandArgsInput {
+input JoinBandInBandInput {
     bandId: ObjectID!
 }
 
-input JoinSessionInput {
+input JoinBandInSessionInput {
     coverId: ObjectID!
     position: SESSION_TYPE!
 }
 
 input JoinBandInput {
-    band: JoinBandArgsInput!
-    session: JoinSessionInput!
+    band: JoinBandInBandInput!
+    session: JoinBandInSessionInput!
 }
 
-input LeaveSessionArgsInput {
+input LeaveBandInSessionInput {
     coverId: ObjectID!
 }
 
 input LeaveBandInput {
-    band: JoinBandArgsInput!
-    session: LeaveSessionArgsInput!
+    band: JoinBandInBandInput!
+    session: LeaveBandInSessionInput!
 }
 
 input DeleteBandInput {
-    band: JoinBandArgsInput!
+    band: JoinBandInBandInput!
 }
 
 extend type Mutation {
