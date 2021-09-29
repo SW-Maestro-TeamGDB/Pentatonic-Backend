@@ -1,52 +1,22 @@
 type Mutation {
-    """
-    회원가입
-    """
     register(input: RegisterInput!): JWT
 
-    """
-    인증번호를 전송합니다 (발송성공 ? true : false)
-    """
-    sendAuthCode(
-        "휴대번호 정보를 입력해야합니다"
-        input: sendAuthCodeInput!
-    ): Boolean
+    sendAuthCode(input: sendAuthCodeInput!): Boolean
 
-    """
-    로그인
-    """
     login(input: LoginInput!): JWT
 
-    """
-    비밀번호를 재설정 합니다
-    """
     resetPassword(input: ResetPasswordInput!): Boolean
 
-    """
-    비밀번호를 변경합니다
-    """
     changePassword(input: ChangePasswordInput!): Boolean
 
-    """
-    이미지를 Upload하고 URL을 반환합니다
-    """
     uploadImageFile(input: UploadImageInput!): URL
 
-    """
-    사용자의 프로필을 변경합니다
-    """
     changeProfile(input: ChangeProfileInput!): User
 
-    """
-    계정을 삭제합니다
-    """
     deleteAccount(input: DeleteAccountInput!): Boolean
 }
 
 type Query {
-    """
-    유저의 정보를 가져옵니다
-    """
     getUserInfo(userId: Id!): User
 
     findId(phoneNumber: PhoneNumber!, authCode: Int!): FindIdResult
@@ -68,23 +38,13 @@ interface UserInterface {
     type: Int!
 }
 
-"""
-유저의 개인 정보 입니다
-"""
 type User implements UserInterface {
-    "아이디"
     id: Id!
-    "유저 네임"
     username: Username!
-    "프로필 사진"
     profileURI: URL!
-    "휴대번호"
     phoneNumber: PhoneNumber
-    "프리미엄 유저인지"
     prime: Boolean!
-    "자기소개 메세지"
     introduce: String!
-    "회원 유형"
     type: Int!
     band: [Band!]!
     library: [Cover!]
@@ -96,142 +56,74 @@ type PositionRank {
     likeCount: Int!
 }
 
-"""
-FindId Query 의 반환 결과입니다
-"""
 type FindIdResult {
-    "아이디"
     id: Id!
 }
 
-"""
-uploadImage Mutation의 input 입니다
-"""
 input UploadImageInput {
-    "파일 입니다"
     file: Upload!
 }
 
-"""
-sendAuthCode Mutation의 input 입니다
-"""
 input sendAuthCodeInput {
-    "회원가입인지: true, 아이디 | 비밀번호 찾기인지: false"
     isRegistration: Boolean!
-
-    "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
     phoneNumber: PhoneNumber!
 }
 
 input ResetPasswordInput {
-    "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
     phoneNumber: PhoneNumber!
 
-    "authenticationNumber 는 123456 와 같은 100000~999999 사이의 숫자 입니다"
     authCode: Int!
 
-    "유저의 정보를 담습니다"
     user: UserInPassword!
 }
-"""
-회원가입에 사용되는 input 입니다
-"""
+
 input RegisterArgs {
-    "유저 네임"
     username: Username!
-    "유저 아이디"
     id: Id!
-    "유저 비밀번호"
     password: Password!
-    "회원 유형"
     type: Int!
 }
 
-"""
-register Mutation에 사용되는 input 입니다
-"""
 input RegisterInput {
-    "유저의 정보를 담습니다"
     user: RegisterArgs!
-
-    "phoneNumber 은 +821012345678 와 같은 형식이여야 합니다"
     phoneNumber: PhoneNumber!
-
-    "authenticationNumber 는 123456 와 같은 100000~999999 사이의 숫자 입니다"
     authCode: Int!
 }
 
-"""
-로그인에 사용되는 input 입니다
-"""
 input LoginInUser {
-    "계정의 id 입니다"
     id: Id!
 
-    "계정의 password 입니다"
     password: Password!
 }
 
-"""
-Login Mutation에 사용되는 input 입니다
-"""
 input LoginInput {
-    "유저의 정보를 담습니다"
     user: LoginInUser!
 }
 
-"""
-비밀번호를 입력하는 input 입니다
-"""
 input UserInPassword {
-    "계정의 password 입니다"
     password: Password!
 }
 
-"""
-비밀번호를 변경하는 input 입니다
-"""
 input ChangePasswordArgs {
-    "변경할 비밀번호 입니다"
     changePassword: Password!
-    "현 비밀번호 입니다"
     password: Password!
 }
 
-"""
-changePassword Mutation에 사용되는 input 입니다
-"""
 input ChangePasswordInput {
-    "유저의 정보를 담습니다"
     user: UserInPassword!
 }
 
-"""
-프로필을 변경하는 input 입니다 업데이트할 필드만 담아 요청합니다
-"""
 input ChangeProfileArgs {
-    "계정의 username 입니다"
     username: Username
-    "계정의 profileURI 입니다"
     profileURI: URL
-    "계정의 자기소개 글 입니다"
     introduce: String
-    "계정의 회원 유형 입니다"
     type: Int
 }
 
-"""
-changeProfile Mutation에 사용되는 input 입니다
-"""
 input ChangeProfileInput {
-    "유저의 정보를 담습니다"
     user: ChangeProfileArgs!
 }
 
-"""
-deleteAccount Mutation에 사용되는 input 입니다
-"""
 input DeleteAccountInput {
-    "유저의 정보를 담습니다"
     user: UserInPassword!
 }

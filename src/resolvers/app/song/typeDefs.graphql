@@ -1,74 +1,38 @@
 extend type Mutation {
-    """
-    파일을 업로드
-    """
     uploadDefaultFile(input: UploadDefaultFileInput!): URL
 
-    """
-    Song을 업로드
-    """
     uploadSong(input: UploadSongInput!): Song
 
-    """
-    Song을 업데이트
-    """
     updateSong(input: UpdateSongInput!): Song
 
-    """
-    Song과 같이 제공되는 Instrument를 업로드
-    """
     uploadInstrument(input: UploadInstrumentInput!): Instrument
 
-    """
-    Song과 같이 제공되는 Instrument를 업데이트
-    """
     updateInstrument(input: UpdateInstrumentInput!): Instrument
 
-    """
-    Song을 삭제
-    """
     deleteSong(input: DeleteSongInput!): Boolean
 
-    """
-    Instrument을 삭제
-    """
     deleteInstrument(input: DeleteInstrumentInput!): Boolean
 
     uploadFreeSong(input: UploadFreeSongInput!): ObjectID!
 }
 
-"""
-삭제할 instrument의 정보
-"""
-input DeleteInstrument {
-    "instrument의 id"
+input InstrumentInDeleteInstrumentInput {
     instId: ObjectID!
 }
 
-"""
-deleteInstrument Mutation의 input
-"""
 input DeleteInstrumentInput {
-    "권한을 확인하기 위한 코드"
     code: String!
-    "삭제할 instrument의 정보"
-    instrument: DeleteInstrument!
+
+    instrument: InstrumentInDeleteInstrumentInput!
 }
-"""
-deleteSong Mutation의 input
-"""
+
 input DeleteSongInput {
-    "권한을 확인하기 위한 코드"
     code: String!
-    "삭제할 song의 정보"
+
     song: DeleteSong!
 }
 
-"""
-삭제할 song의 정보
-"""
 input DeleteSong {
-    "song의 id"
     songId: ObjectID!
 }
 
@@ -93,63 +57,34 @@ input QuerySongInput {
     sort: SORT_OPTION! = DATE_DESC
 }
 
-"""
-Instrument를 Update 할때 사용하는 정보
-"""
 input UpdateInstrumentArgs {
-    "song의 id"
     songId: ObjectID
-    "instrument의 id"
     instId: ObjectID!
-    "instrument의 name"
     name: String
-    "파일의 주소"
     instURI: URL
     position: SESSION_TYPE
 }
-"""
-updateInstrument Mutation의 input
-"""
+
 input UpdateInstrumentInput {
-    "권한을 확인하기 위한 코드"
     code: String!
-    "업데이트할 instrument의 정보"
     instrument: UpdateInstrumentArgs!
 }
 
-"""
-uploadDefaultFile Mutation의 input
-"""
 input UploadDefaultFileInput {
-    "권한을 확인하기 위한 코드"
     code: String!
-    "업로드할 파일"
     file: Upload!
 }
 
-"""
-uploadSong Mutation의 input
-"""
 input UploadSongInput {
-    "권한을 확인하기 위한 코드"
     code: String!
-    "음원 정보"
     song: SongInput!
 }
 
-"""
-Instrument
-"""
 type Instrument {
-    "데모 세션에 대한 id"
     instId: ObjectID!
-    "해당 연주가 업로드 되어있는 노래에 대한 id"
     songId: ObjectID!
-    "instreumt의 URI"
     instURI: URL!
-    "instrument의 이름"
     name: String!
-    "파일의 길이"
     duration: Float
     position: SESSION_TYPE!
 }
@@ -161,118 +96,62 @@ interface SongInterface {
     artist: String!
 }
 
-"""
-올라와 있는 곡에 대한 타입
-"""
 type Song implements SongInterface {
-    "song의 Id"
     songId: ObjectID!
-    "song의 제목"
     name: String!
-    "song의 음원 URI"
     songURI: URL!
-    "song의 이미지 URI"
     songImg: URL
-    "song의 장르"
     genre: GENRE_TYPE
-    "song의 artist"
     artist: String!
-    "song이 포함되어있는 album"
     album: String
-    "해당 곡이 weeklyChallenge 인가"
     weeklyChallenge: Boolean!
-    "song의 duration"
     duration: Float!
-    "song의 level"
     level: Int
-    "해당 songId를 가지고 있는 Instruments"
     instrument: [Instrument!]
-    "음원 발매의 날짜"
     releaseDate: Date
     band: [Band!]!
 }
 
-"""
-노래의 기본 음원을 업로드 할때 사용하는 input
-"""
 input SongInput {
-    "song의 제목"
     name: String!
-    "song의 음원 URI"
     songURI: URL!
-    "song의 이미지 URI"
     songImg: URL!
-    "song의 장르"
     genre: GENRE_TYPE!
-    "song의 artist"
     artist: String!
-    "해당 song이 포함되어있는 album"
     album: String!
-    "해당 song이 weeklyChallenge 인가"
     weeklyChallenge: Boolean!
-    "song의 난이도"
     level: Int!
-    "음원의 날짜"
     releaseDate: Date!
 }
 
-"""
-업로드 할 Instrument의 정보를 입력하는 input
-"""
 input UploadInstrumentArgs {
-    "음원의 Id"
     songId: ObjectID!
-    "Instrument의 name"
     name: String!
-    "Instrument의 음원 URI"
     instURI: URL!
     position: SESSION_TYPE!
 }
 
-"""
-uploadInstrument Mutation의 input
-"""
 input UploadInstrumentInput {
-    "권한을 확인하기 위한 코드"
     code: String!
-    "업로드할 Instrument의 정보"
     instrument: UploadInstrumentArgs!
 }
 
-"""
-Song을 Update할때 사용되는 input
-"""
-input UpdateSong {
-    "song의 id"
+input SongInUpdateSongInput {
     songId: ObjectID!
-    "song의 name"
     name: String
-    "song의 음원 URI"
     songURI: URL
-    "song의 이미지 URI"
     songImg: URL
-    "song의 장르"
     genre: GENRE_TYPE
-    "song의 artist"
     artist: String
-    "song의 album"
     album: String
-    "song의 난이도"
     level: Int
-    "song의 발매의 날짜"
     releaseDate: Date
-    "song이 weeklyChallenge 인가"
     weeklyChallenge: Boolean
 }
 
-"""
-updateSong Mutation의 input
-"""
 input UpdateSongInput {
-    "권한을 확인하기 위한 코드"
     code: String!
-    "업데이트할 song의 정보"
-    song: UpdateSong!
+    song: SongInUpdateSongInput!
 }
 
 enum GENRE_TYPE {

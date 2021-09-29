@@ -1,22 +1,10 @@
 extend type Mutation {
-    """
-    커버 파일을 업로드
-    """
     uploadCoverFile(input: UploadCoverFileInput!): URL
 
-    """
-    커버 정보를 업로드
-    """
     uploadCover(input: UploadCoverInput!): Cover
 
-    """
-    커버를 수정
-    """
     updateCover(input: UpdateCoverInput!): Cover
 
-    """
-    커버를 삭제
-    """
     deleteCover(input: DeleteCoverInput!): Boolean
 }
 
@@ -39,80 +27,45 @@ input QueryCoverInput {
     sort: SORT_OPTION! = DATE_DESC
 }
 
-"삭제할 커버의 정보"
-input DeleteCover {
-    "커버의 id"
+input CoverInDeleteCoverInput {
     coverId: ObjectID!
-}
-"""
-deleteCover Mutation의 input
-"""
-input DeleteCoverInput {
-    "삭제할 커버의 정보"
-    cover: DeleteCover!
 }
 
-"업데이트할 커버의 정보"
-input UpdateCover {
-    "커버의 id"
+input DeleteCoverInput {
+    cover: CoverInDeleteCoverInput!
+}
+
+input CoverinUpdateCoverInput {
     coverId: ObjectID!
-    "커버의 이름"
     name: String
     position: SESSION_TYPE
 }
 
-"""
-updateCover Mutation의 input
-"""
 input UpdateCoverInput {
-    "업데이트할 커버의 정보"
-    cover: UpdateCover!
+    cover: CoverinUpdateCoverInput!
 }
 
-"""
-uploadCoverFile Mutation의 input
-"""
 input UploadCoverFileInput {
-    "파일"
     file: Upload!
 }
 
-"""
-커버 정보
-"""
-input CoverInput {
-    "커버의 제목 ex) 승원이의 viva la vida 바이올린 커버"
+input CoverInUploadCoverInput {
     name: String!
-    "커버 파일의 주소"
     coverURI: URL!
-    "어떤 노래에 커버를 하였는지 노래Id"
     songId: ObjectID!
     position: SESSION_TYPE!
 }
 
-"""
-uploadCover Mutation의 input
-"""
 input UploadCoverInput {
-    "커버 정보"
-    cover: CoverInput!
+    cover: CoverInUploadCoverInput!
 }
 
-"""
-커버한 데이터
-"""
 type Cover {
-    "커버한 곡의 Id"
     songId: ObjectID!
-    "커버한 사람의 id"
     coverBy: User!
-    "커버 파일의 주소"
     coverURI: URL!
-    "고유 커버 Id"
     coverId: ObjectID!
-    "커버의 길이"
     duration: Float!
-    "커버의 제목"
     name: String!
     date: DateTime!
     position: SESSION_TYPE!
