@@ -27,29 +27,29 @@ input QueryCoverInput {
     sort: SORT_OPTION! = DATE_DESC
 }
 
-input CoverInDeleteCoverInput {
+input DeleteCoverIdInput {
     coverId: ObjectID!
 }
 
 input DeleteCoverInput {
-    cover: CoverInDeleteCoverInput!
+    cover: DeleteCoverIdInput!
 }
 
-input CoverinUpdateCoverInput {
+input UpdateCoverAllInput {
     coverId: ObjectID!
     name: String
     position: SESSION_TYPE
 }
 
 input UpdateCoverInput {
-    cover: CoverinUpdateCoverInput!
+    cover: UpdateCoverAllInput!
 }
 
 input UploadCoverFileInput {
     file: Upload!
 }
 
-input CoverInUploadCoverInput {
+input UploadCoverAllInput {
     name: String!
     coverURI: URL!
     songId: ObjectID!
@@ -57,7 +57,7 @@ input CoverInUploadCoverInput {
 }
 
 input UploadCoverInput {
-    cover: CoverInUploadCoverInput!
+    cover: UploadCoverAllInput!
 }
 
 type Cover {

@@ -16,23 +16,23 @@ extend type Mutation {
     uploadFreeSong(input: UploadFreeSongInput!): ObjectID!
 }
 
-input InstrumentInDeleteInstrumentInput {
+input DeleteInstrumentIdInput {
     instId: ObjectID!
 }
 
 input DeleteInstrumentInput {
     code: String!
 
-    instrument: InstrumentInDeleteInstrumentInput!
+    instrument: DeleteInstrumentIdInput!
 }
 
 input DeleteSongInput {
     code: String!
 
-    song: DeleteSong!
+    song: DeleteSongIdInput!
 }
 
-input DeleteSong {
+input DeleteSongIdInput {
     songId: ObjectID!
 }
 
@@ -57,7 +57,7 @@ input QuerySongInput {
     sort: SORT_OPTION! = DATE_DESC
 }
 
-input UpdateInstrumentArgs {
+input UpdateInstrumentAllInput {
     songId: ObjectID
     instId: ObjectID!
     name: String
@@ -67,7 +67,7 @@ input UpdateInstrumentArgs {
 
 input UpdateInstrumentInput {
     code: String!
-    instrument: UpdateInstrumentArgs!
+    instrument: UpdateInstrumentAllInput!
 }
 
 input UploadDefaultFileInput {
@@ -77,7 +77,7 @@ input UploadDefaultFileInput {
 
 input UploadSongInput {
     code: String!
-    song: SongInput!
+    song: UploadSongAllInput!
 }
 
 type Instrument {
@@ -112,7 +112,7 @@ type Song implements SongInterface {
     band: [Band!]!
 }
 
-input SongInput {
+input UploadSongAllInput {
     name: String!
     songURI: URL!
     songImg: URL!
@@ -124,7 +124,7 @@ input SongInput {
     releaseDate: Date!
 }
 
-input UploadInstrumentArgs {
+input UploadInstrumentAllInput {
     songId: ObjectID!
     name: String!
     instURI: URL!
@@ -133,10 +133,10 @@ input UploadInstrumentArgs {
 
 input UploadInstrumentInput {
     code: String!
-    instrument: UploadInstrumentArgs!
+    instrument: UploadInstrumentAllInput!
 }
 
-input SongInUpdateSongInput {
+input UpdateSongAllInput {
     songId: ObjectID!
     name: String
     songURI: URL
@@ -151,7 +151,7 @@ input SongInUpdateSongInput {
 
 input UpdateSongInput {
     code: String!
-    song: SongInUpdateSongInput!
+    song: UpdateSongAllInput!
 }
 
 enum GENRE_TYPE {
@@ -167,12 +167,12 @@ enum GENRE_TYPE {
     K_POP
 }
 
-input UploadFreeSongInSong {
+input UploadFreeSongAllInput {
     name: String!
     songURI: URL!
     artist: String!
 }
 
 input UploadFreeSongInput {
-    song: UploadFreeSongInSong!
+    song: UploadFreeSongAllInput!
 }

@@ -69,15 +69,19 @@ input sendAuthCodeInput {
     phoneNumber: PhoneNumber!
 }
 
+input ResetUserPasswordInput {
+    password: String!
+}
+
 input ResetPasswordInput {
     phoneNumber: PhoneNumber!
 
     authCode: Int!
 
-    user: UserInPassword!
+    user: ResetUserPasswordInput!
 }
 
-input RegisterArgs {
+input RegeisterUserInput {
     username: Username!
     id: Id!
     password: Password!
@@ -85,35 +89,30 @@ input RegisterArgs {
 }
 
 input RegisterInput {
-    user: RegisterArgs!
+    user: RegeisterUserInput!
     phoneNumber: PhoneNumber!
     authCode: Int!
 }
 
-input LoginInUser {
+input LoginUserInput {
     id: Id!
-
     password: Password!
 }
 
 input LoginInput {
-    user: LoginInUser!
+    user: LoginUserInput!
 }
 
-input UserInPassword {
+input ChangeUserPasswordInput {
     password: Password!
-}
-
-input ChangePasswordArgs {
     changePassword: Password!
-    password: Password!
 }
 
 input ChangePasswordInput {
-    user: UserInPassword!
+    user: ChangeUserPasswordInput!
 }
 
-input ChangeProfileArgs {
+input ChangeUserProfileInput {
     username: Username
     profileURI: URL
     introduce: String
@@ -121,9 +120,13 @@ input ChangeProfileArgs {
 }
 
 input ChangeProfileInput {
-    user: ChangeProfileArgs!
+    user: ChangeUserProfileInput!
+}
+
+input DeleteUserAccountInput {
+    password: Password!
 }
 
 input DeleteAccountInput {
-    user: UserInPassword!
+    user: DeleteUserAccountInput!
 }

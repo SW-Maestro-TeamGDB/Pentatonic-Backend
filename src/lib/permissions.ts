@@ -139,6 +139,9 @@ export const permissions = shield(
             queryBand: isValidInput,
             getSong: isValidInput,
             querySong: isValidInput,
+            getFollowerList: isValidInput,
+            getFollowingList: isValidInput,
+            getRankedUser: isValidInput,
         },
     },
     { allowExternalErrors: true }

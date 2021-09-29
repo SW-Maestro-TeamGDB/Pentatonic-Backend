@@ -1264,7 +1264,7 @@ describe("User auth service test", () => {
             })
         })
         describe("Success", () => {
-            it("If you normally leave the membership", async () => {
+            it("If you normally delete account", async () => {
                 const query = `
                     mutation{
                         deleteAccount(

@@ -2,8 +2,12 @@ extend type Query {
     likeStatus(bandId: ObjectID!): Boolean
 }
 
+input LikeBandIdInput {
+    bandId: ObjectID!
+}
+
 input LikeInput {
-    band: JoinBandInBandInput!
+    band: LikeBandIdInput!
 }
 
 extend type Band {

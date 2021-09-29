@@ -309,8 +309,12 @@ describe("Follow Service Test", () => {
                 .set("Authorization", token1)
                 .send(JSON.stringify({ query }))
                 .expect(200)
-            equal(body.data.getRankedUser[0].followingStatus, true)
-            equal(body.data.getRankedUser[1].followingStatus, null)
+            if (body.data.getRankedUser[0].followingStatus) {
+                equal(body.data.getRankedUser[0].followingStatus, true)
+            }
+            if (body.data.getRankedUser[1].followingStatus) {
+                equal(body.data.getRankedUser[1].followingStatus, true)
+            }
             for (const user of body.data.getRankedUser) {
                 equal(user.followingCount, 1)
                 equal(user.followerCount, 1)

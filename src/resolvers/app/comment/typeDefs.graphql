@@ -31,30 +31,30 @@ type CommentOutPut {
     pageInfo: PageInfo!
 }
 
-input UpdateCommentInComment {
+input UpdateCommentAllInput {
     commentId: ObjectID!
     content: String!
 }
 
 input UpdateCommentInput {
-    comment: UpdateCommentInComment!
+    comment: UpdateCommentAllInput!
 }
 
-input DeleteCommentInCommentInput {
+input DeleteCommentIdInput {
     commentId: ObjectID!
 }
 
 input DeleteCommentInput {
-    comment: DeleteCommentInCommentInput!
+    comment: DeleteCommentIdInput!
 }
 
-input CreateCommentInCommentInput {
+input CreateCommentAllInput {
     content: String!
     bandId: ObjectID!
 }
 
 input CreateCommentInput {
-    comment: CreateCommentInCommentInput!
+    comment: CreateCommentAllInput!
 }
 
 extend type Band {
