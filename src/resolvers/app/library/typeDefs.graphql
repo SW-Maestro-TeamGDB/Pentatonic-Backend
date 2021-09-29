@@ -105,7 +105,7 @@ type Cover {
     "커버한 곡의 Id"
     songId: ObjectID!
     "커버한 사람의 id"
-    coverBy: UserLink!
+    coverBy: User!
     "커버 파일의 주소"
     coverURI: URL!
     "고유 커버 Id"
@@ -116,5 +116,5 @@ type Cover {
     name: String!
     date: DateTime!
     position: SESSION_TYPE!
-    song: SongLink!
+    song: Song!
 }

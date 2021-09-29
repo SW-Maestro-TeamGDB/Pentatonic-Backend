@@ -1,6 +1,6 @@
 type Comment {
     bandId: ObjectID!
-    user: UserLink!
+    user: User!
     content: String!
     createdAt: DateTime!
     commentId: ObjectID!

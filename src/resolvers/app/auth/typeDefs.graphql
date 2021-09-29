@@ -58,7 +58,7 @@ type Query {
     checkAuthCode(phoneNumber: PhoneNumber!, authCode: Int!): Boolean!
 }
 
-interface IUser {
+interface UserInterface {
     id: Id!
     username: Username!
     profileURI: URL!
@@ -71,7 +71,7 @@ interface IUser {
 """
 유저의 개인 정보 입니다
 """
-type User implements IUser {
+type User implements UserInterface {
     "아이디"
     id: Id!
     "유저 네임"
@@ -86,19 +86,9 @@ type User implements IUser {
     introduce: String!
     "회원 유형"
     type: Int!
-    band: [BandLink!]!
+    band: [Band!]!
     library: [Cover!]
     position: [PositionRank]
-}
-
-type UserLink implements IUser {
-    id: Id!
-    username: Username!
-    profileURI: URL!
-    prime: Boolean!
-    introduce: String!
-    phoneNumber: PhoneNumber
-    type: Int!
 }
 
 type PositionRank {
@@ -141,7 +131,7 @@ input ResetPasswordInput {
     authCode: Int!
 
     "유저의 정보를 담습니다"
-    user: PasswordArgs!
+    user: UserInPassword!
 }
 """
 회원가입에 사용되는 input 입니다
@@ -174,7 +164,7 @@ input RegisterInput {
 """
 로그인에 사용되는 input 입니다
 """
-input LoginArgs {
+input LoginInUser {
     "계정의 id 입니다"
     id: Id!
 
@@ -187,13 +177,13 @@ Login Mutation에 사용되는 input 입니다
 """
 input LoginInput {
     "유저의 정보를 담습니다"
-    user: LoginArgs!
+    user: LoginInUser!
 }
 
 """
 비밀번호를 입력하는 input 입니다
 """
-input PasswordArgs {
+input UserInPassword {
     "계정의 password 입니다"
     password: Password!
 }
@@ -213,7 +203,7 @@ changePassword Mutation에 사용되는 input 입니다
 """
 input ChangePasswordInput {
     "유저의 정보를 담습니다"
-    user: ChangePasswordArgs!
+    user: UserInPassword!
 }
 
 """
@@ -243,5 +233,5 @@ deleteAccount Mutation에 사용되는 input 입니다
 """
 input DeleteAccountInput {
     "유저의 정보를 담습니다"
-    user: PasswordArgs!
+    user: UserInPassword!
 }

@@ -1,48 +1,23 @@
-type SongLink {
-    songId: ObjectID!
-    name: String!
-    songURI: URL!
-    songImg: URL!
-    genre: String!
-    artist: String!
-    album: String!
-    weeklyChallenge: Boolean!
-    duration: Float!
-    level: Int!
-    releaseDate: Date!
-}
-
 interface BandInterface {
     bandId: ObjectID!
     name: String!
     introduce: String!
     backGroundURI: URL!
     session: [Session]
-    creator: UserLink!
+    creator: User!
 }
 
 type Band implements BandInterface {
     bandId: ObjectID!
-    song: SongLink!
+    song: Song!
     name: String!
     introduce: String!
-    creator: UserLink!
+    creator: User!
     backGroundURI: URL!
     createDate: Date!
     session: [Session]
     isSoloBand: Boolean!
-}
-
-type BandLink {
-    bandId: ObjectID!
-    song: SongLink!
-    creatorId: Id!
-    name: String!
-    introduce: String!
-    backGroundURI: URL!
-    createDate: Date!
-    isSoloBand: Boolean!
-    session: [Session]!
+    isFreeBand: Boolean!
 }
 
 type Session {
@@ -140,9 +115,9 @@ extend type Query {
 
     getBand(bandId: ObjectID!): Band
 
-    getRankedBands: [BandLink!]
+    getRankedBands: [Band!]
 
-    getTrendBands: [BandLink!]
+    getTrendBands: [Band!]
 
     queryBands(
         filter: QueryBandInput!
@@ -152,6 +127,6 @@ extend type Query {
 }
 
 type BandOutPut {
-    bands: [BandLink]!
+    bands: [Band]!
     pageInfo: PageInfo!
 }

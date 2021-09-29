@@ -87,51 +87,6 @@ export const User = {
     },
 }
 
-export const UserLink = {
-    followerCount: (parent: UserInterface, args: void, context: Context) =>
-        context.loaders.followerLoader.load(parent.id),
-    followingCount: (parent: UserInterface, args: void, context: Context) =>
-        context.loaders.followingLoader.load(parent.id),
-    phoneNumber: (parent: UserInterface, args: void, context: Context) => {
-        if (parent.id === context?.user?.id) {
-            return parent.phoneNumber
-        }
-        return null
-    },
-    followingStatus: async (
-        parent: UserInterface,
-        args: void,
-        context: Context
-    ) => {
-        if (context.user === null || context?.user?.id === parent.id)
-            return null
-        return context.loaders.followingStatusLoader.load({
-            userId: context.user.id,
-            following: parent.id,
-        })
-    },
-}
-export const BandLink = {
-    bandId: (parent: BandInterface) => parent._id,
-    likeCount: (parent: BandInterface, args: void, context: Context) =>
-        context.loaders.likeCountsLoader.load(parent._id),
-    likeStatus: (parent: BandInterface, args: void, context: Context) => {
-        if (context.user === null) return null
-        return context.loaders.likeStatusLoader.load({
-            userId: context.user.id,
-            bandId: parent._id,
-        })
-    },
-    session: (parent: BandInterface, args: void, context: Context) =>
-        context.loaders.sessionsLoader.load(parent._id),
-    song: (parent: BandInterface, args: void, context: Context) =>
-        context.loaders.songsLoader.load(parent.songId),
-}
-
-export const SongLink = {
-    songId: (parent: SongInterface) => parent._id,
-}
-
 export const Comment = {
     commentId: (parent: CommentInterface) => parent._id,
     user: (parent: CommentInterface, args: void, context: Context) =>

@@ -6,11 +6,6 @@ input LikeInput {
     band: JoinBandInBandInput!
 }
 
-extend type BandLink {
-    likeCount: Int!
-    likeStatus: Boolean
-}
-
 extend type Band {
     likeCount: Int!
     likeStatus: Boolean
