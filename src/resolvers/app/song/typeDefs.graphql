@@ -94,6 +94,7 @@ interface SongInterface {
     duration: Float!
     name: String!
     artist: String!
+    songURI: URL!
 }
 
 type Song implements SongInterface {

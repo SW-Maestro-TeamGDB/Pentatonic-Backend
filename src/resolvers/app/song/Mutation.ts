@@ -36,8 +36,9 @@ export const uploadFreeSong = async (
         .insertOne({
             name: args.input.song.name,
             artist: args.input.song.artist,
-            songURI: args.input.song.songURI,
+            songURI: args.input.song.songURI.href,
             isFreeSong: true,
+            weeklyChallenge: false,
             duration,
         })
         .then(({ insertedId }) => insertedId)
