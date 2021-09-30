@@ -28,17 +28,7 @@ type Query {
     checkAuthCode(phoneNumber: PhoneNumber!, authCode: Int!): Boolean!
 }
 
-interface UserInterface {
-    id: Id!
-    username: Username!
-    profileURI: URL!
-    phoneNumber: PhoneNumber
-    prime: Boolean!
-    introduce: String!
-    type: Int!
-}
-
-type User implements UserInterface {
+type User {
     id: Id!
     username: Username!
     profileURI: URL!
@@ -81,7 +71,7 @@ input ResetPasswordInput {
     user: ResetUserPasswordInput!
 }
 
-input RegeisterUserInput {
+input RegisterUserInput {
     username: Username!
     id: Id!
     password: Password!
@@ -89,7 +79,7 @@ input RegeisterUserInput {
 }
 
 input RegisterInput {
-    user: RegeisterUserInput!
+    user: RegisterUserInput!
     phoneNumber: PhoneNumber!
     authCode: Int!
 }
