@@ -56,7 +56,10 @@ export const User = {
         if (context?.user?.id === parent.id) {
             return context.db
                 .collection("library")
-                .find({ coverBy: context.user.id })
+                .find({
+                    coverBy: context.user.id,
+                    isFreeSong: false,
+                })
                 .toArray()
         }
         return null
