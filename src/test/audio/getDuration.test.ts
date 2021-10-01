@@ -10,6 +10,6 @@ describe("getAudioDuration unit test", () => {
     }).timeout(100000)
     it("get duration of the mp3", async () => {
         const audioDuration = await getAudioDuration(`${env.S3_URI}/mr-2.mp3`)
-        equal(216 <= audioDuration && audioDuration <= 217, true)
+        equal(1 <= audioDuration && audioDuration <= 217, true)
     }).timeout(100000)
 }).timeout(100000 << 1)
