@@ -10,49 +10,28 @@ export const denoiseFilter = async (audioURI: string) => {
     const filename = audioURI.substring(audioURI.lastIndexOf("/") + 1)
     const filenameSplit = filename.split(".")
     try {
-        if (!audioURI.endsWith("m4a") && !audioURI.endsWith("mp3")) {
-            throw new Error("m4a / mp3 파일만 업로드 가능합니다")
+        if (!audioURI.endsWith("mp3")) {
+            throw new Error("mp3 파일만 업로드 가능합니다")
         }
-        const codec = audioURI.endsWith("m4a") ? "alac" : "aac"
+        const codec = "libmp3lame"
         await exec(`
             ffmpeg -i '${audioURI}' -af "arnndn=m=src/lib/mp.rnnn" \
-            -c:a ${codec} -strict -2 -b:a 360k \
-            ${filenameSplit[filenameSplit.length - 2]}.m4a -y
+            -c:a ${codec} -strict -2 -b:a 192k \
+            ${filenameSplit[filenameSplit.length - 2]}.mp3 -y
         `)
         const result = await uploadS3(
-            `${filenameSplit[filenameSplit.length - 2]}.m4a`,
-            `${filenameSplit[filenameSplit.length - 2]}-1.m4a`,
-            "audio/wav"
+            `${filenameSplit[filenameSplit.length - 2]}.mp3`,
+            `${filenameSplit[filenameSplit.length - 2]}.mp3`,
+            "audio/mpeg"
         )
-        deleteFile(`${filenameSplit[filenameSplit.length - 2]}.m4a`)
+        deleteFile(`${filenameSplit[filenameSplit.length - 2]}.mp3`)
         return result
     } catch (e) {
-        deleteFile(`${filenameSplit[filenameSplit.length - 2]}.m4a`)
-        throw new ApolloError(e)
+        deleteFile(`${filenameSplit[filenameSplit.length - 2]}.mp3`)
+        throw new ApolloError("audio denoise error")
     }
 }
 
-export const convertMp3ToM4a = async (audioURI: string) => {
-    const filename = audioURI.substring(audioURI.lastIndexOf("/") + 1)
-    const filenameSplit = filename.split(".")
-    try {
-        await exec(`
-            ffmpeg -i '${audioURI}' -c:a aac -strict -2 -b:a 360k ${
-            filenameSplit[filenameSplit.length - 2]
-        }.m4a  -y
-        `)
-        const result = await uploadS3(
-            `${filenameSplit[filenameSplit.length - 2]}.m4a`,
-            `${filenameSplit[filenameSplit.length - 2]}-1.m4a`,
-            "audio/wav"
-        )
-        deleteFile(`${filenameSplit[filenameSplit.length - 2]}.m4a`)
-        return result
-    } catch (e) {
-        deleteFile(`${filenameSplit[filenameSplit.length - 2]}.m4a`)
-        throw new ApolloError(e)
-    }
-}
 export const mergeAudios = async (audios: string[], audioName: string) => {
     const ffmpegInputs = audios
         .map((uri: string) => `-i ${uri}`)
@@ -68,7 +47,7 @@ export const mergeAudios = async (audios: string[], audioName: string) => {
             -c:a ${
                 audioName.endsWith(".wav")
                     ? "pcm_s16le -strict -2"
-                    : "mp3 -strict -2 -b:a 320k"
+                    : "mp3 -strict -2 -b:a 192k"
             } \\
             ${audioName} -y
         `)
@@ -84,7 +63,7 @@ export const mergeAudios = async (audios: string[], audioName: string) => {
         }
     } catch (e) {
         deleteFile(audioName)
-        return new ApolloError(e)
+        return new ApolloError("audio merge error")
     }
 }
 

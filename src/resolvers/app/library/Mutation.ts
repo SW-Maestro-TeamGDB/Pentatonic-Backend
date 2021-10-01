@@ -7,11 +7,11 @@ import {
 } from "resolvers/app/library/models"
 import { Context } from "config/types"
 import { ApolloError } from "apollo-server-express"
-import { uploadS3, getAudioDuration, denoiseFilter, convertMp3ToM4a } from "lib"
+import { uploadS3, getAudioDuration, denoiseFilter } from "lib"
 import { ObjectID } from "mongodb"
 
 const isValidAudio = (name: string) => {
-    for (const extension of ["mp3", "m4a"]) {
+    for (const extension of ["mp3"]) {
         if (name.endsWith(extension)) {
             return true
         }
@@ -26,7 +26,7 @@ export const uploadCoverFile = async (
 ) => {
     const file = await args.input.file
     if (isValidAudio(file.filename) === false) {
-        throw new ApolloError("mp3, m4a 파일이 아닙니다")
+        throw new ApolloError("mp3 파일이 아닙니다")
     }
     const stream = file.createReadStream()
     const fileName = `${Date.now()}-${file.filename}`
@@ -48,8 +48,6 @@ export const uploadCover = async (
     }
     if (position !== "DRUM") {
         coverURI.href = (await denoiseFilter(coverURI.href)) as string
-    } else if (position === "DRUM" && coverURI.href.endsWith("mp3")) {
-        coverURI.href = (await convertMp3ToM4a(coverURI.href)) as string
     }
     const coverBy = context.user.id
     return context.db
