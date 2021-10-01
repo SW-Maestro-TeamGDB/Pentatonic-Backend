@@ -7,10 +7,22 @@ export const mergeAudios = async (
     args: MergeAudiosInput,
     context: Context
 ) => {
-    const audios = args.input.audios.map((x) => x.href)
-    const fileName = `${cryptoRandomString({
+    const audios = args.input.audios.map((x) => x.href).sort()
+    const fileName = `${Date.now()}-${cryptoRandomString({
         length: 16,
         type: "url-safe",
     })}.mp3`
-    return merge(audios, fileName)
+    const cache = await context.db
+        .collection("audio")
+        .findOne({ audios: audios.join("/") })
+    if (cache) {
+        return cache.link
+    } else {
+        const link = await merge(audios, fileName)
+        await context.db.collection("audio").insertOne({
+            audios: audios.join("/"),
+            link,
+        })
+        return link
+    }
 }
