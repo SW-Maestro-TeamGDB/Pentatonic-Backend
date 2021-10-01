@@ -164,7 +164,7 @@ describe("Band services test", () => {
                             cover: {
                                 name: "승원이의 Viva La Vida Violin 커버",
                                 songId: "${songIds[0]}",
-                                coverURI: "${env.S3_URI}/violin.m4a",
+                                coverURI: "${env.S3_URI}/violin.mp3",
                                 position: VIOLIN
                             }
                         }
@@ -190,7 +190,7 @@ describe("Band services test", () => {
                             cover: {
                                 name: "승원이의 Viva La Vida Violin 커버",
                                 songId: "${songIds[0]}",
-                                coverURI: "${env.S3_URI}/violin.m4a",
+                                coverURI: "${env.S3_URI}/violin.mp3",
                                 position: VIOLIN
                             }
                         }

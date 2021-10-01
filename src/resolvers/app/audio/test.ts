@@ -11,6 +11,10 @@ import jwt from "jsonwebtoken"
 import { Db } from "mongodb"
 
 describe("Audio Services Test", () => {
+    after(async () => {
+        const db = (await DB.get()) as Db
+        await db.collection("audio").deleteMany({})
+    })
     describe("Mutation mergeAudios", () => {
         describe("Success", () => {
             it("Successfully merged audio file normally", async () => {
@@ -19,9 +23,9 @@ describe("Audio Services Test", () => {
                         mergeAudios(
                             input: {
                                 audios: [
-                                    "${env.S3_URI}/violin.m4a",
-                                    "${env.S3_URI}/piano.m4a",
-                                    "${env.S3_URI}/drum.m4a"
+                                    "${env.S3_URI}/violin.mp3",
+                                    "${env.S3_URI}/violin.mp3",
+                                    "${env.S3_URI}/violin.mp3"
                                 ]
                             }
                         )

@@ -140,13 +140,13 @@ describe("Library services test", () => {
                     },
                     token
                 )
-                equal(body.errors[0].message, "mp3, m4a 파일이 아닙니다")
+                equal(body.errors[0].message, "mp3 파일이 아닙니다")
             })
         })
     })
     describe("Mutation uploadCover", () => {
         describe("Success", () => {
-            it("Successfully uploaded a cover .m4a - 1", async () => {
+            it("Successfully uploaded a cover .mp3 - 1", async () => {
                 const query = `
                     mutation {
                         uploadCover(
@@ -186,7 +186,7 @@ describe("Library services test", () => {
                 coverIds.push(body.data.uploadCover.coverId)
                 equal(typeof body.data.uploadCover.coverId, "string")
             }).timeout(500000)
-            it("Successfully uploaded a cover .m4a - 2", async () => {
+            it("Successfully uploaded a cover .mp3 - 2", async () => {
                 const query = `
                     mutation {
                         uploadCover(
@@ -212,7 +212,7 @@ describe("Library services test", () => {
                 coverIds.push(body.data.uploadCover.coverId)
                 equal(typeof body.data.uploadCover.coverId, "string")
             }).timeout(50000)
-            it("Successfully uploaded a cover .m4a - 3", async () => {
+            it("Successfully uploaded a cover .mp3 - 3", async () => {
                 const query = `
                     mutation {
                         uploadCover(
@@ -220,7 +220,7 @@ describe("Library services test", () => {
                                 cover: {
                                     name: "승원이의 Viva La Vida Violin 커버 - 1",
                                     songId: "${songIds[0]}",
-                                    coverURI: "${env.S3_URI}/violin.m4a",
+                                    coverURI: "${env.S3_URI}/violin.mp3",
                                     position: VIOLIN
                                 }
                             }
@@ -321,10 +321,7 @@ describe("Library services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(
-                    body.errors[0].message,
-                    "Error: m4a / mp3 파일만 업로드 가능합니다"
-                )
+                equal(body.errors[0].message, "audio denoise error")
             }).timeout(50000)
             it("invalid songId", async () => {
                 const query = `
