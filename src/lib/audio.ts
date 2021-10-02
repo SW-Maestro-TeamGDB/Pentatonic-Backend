@@ -2,20 +2,28 @@ import { exec as syncExec } from "child_process"
 import util from "util"
 import { uploadS3 } from "lib"
 import { ApolloError } from "apollo-server-express"
+import { RemakeAudioInput } from "lib"
 const exec = util.promisify(syncExec)
 import { unlink } from "fs"
 const deleteFile = util.promisify(unlink)
 
-export const denoiseFilter = async (audioURI: string) => {
+export const remakeAudio = async (args: RemakeAudioInput) => {
+    const { audioURI, echoDecays, echoDelay, syncDelay, position } = args
     const filename = audioURI.substring(audioURI.lastIndexOf("/") + 1)
     const filenameSplit = filename.split(".")
+    if (!audioURI.endsWith("mp3")) {
+        throw new ApolloError("mp3 파일만 업로드 가능합니다")
+    }
+    const codec = "libmp3lame"
+    const ss = syncDelay < 0 ? syncDelay * -1 : 0.0
+    const delays = syncDelay > 0 ? syncDelay * 1000 : 0.0
     try {
-        if (!audioURI.endsWith("mp3")) {
-            throw new Error("mp3 파일만 업로드 가능합니다")
-        }
-        const codec = "libmp3lame"
         await exec(`
-            ffmpeg -i '${audioURI}' -af "arnndn=m=src/lib/mp.rnnn" \
+            ffmpeg -i '${audioURI}' -ss ${ss} -af "${
+            position !== "DRUM" ? "arnndn=m=src/lib/mp.rnnn," : ""
+        } \
+            aecho=${0.6}:${0.3}:${echoDelay}:${echoDecays}, \
+            adelay=delays=${delays}:all=1,volume=3" \
             -c:a ${codec} -strict -2 -b:a 192k \
             ${filenameSplit[filenameSplit.length - 2]}.mp3 -y
         `)
@@ -27,8 +35,9 @@ export const denoiseFilter = async (audioURI: string) => {
         deleteFile(`${filenameSplit[filenameSplit.length - 2]}.mp3`)
         return result
     } catch (e) {
+        console.log(e)
         deleteFile(`${filenameSplit[filenameSplit.length - 2]}.mp3`)
-        throw new ApolloError("audio denoise error")
+        throw new ApolloError("음원 정제 실패")
     }
 }
 

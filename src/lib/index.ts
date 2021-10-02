@@ -4,6 +4,7 @@ export * from "lib/sign"
 export * from "lib/upload"
 export * from "lib/audio"
 export * from "lib/dataloader"
+export * from "lib/models"
 
 import { SessionInformation, SessionConfig } from "resolvers/app/band/models"
 
