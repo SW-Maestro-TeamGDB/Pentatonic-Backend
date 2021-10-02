@@ -321,7 +321,7 @@ describe("Library services test", () => {
                     .set("Authorization", token)
                     .send(JSON.stringify({ query }))
                     .expect(200)
-                equal(body.errors[0].message, "audio denoise error")
+                equal(body.errors[0].message, "mp3 파일만 업로드 가능합니다")
             }).timeout(50000)
             it("invalid songId", async () => {
                 const query = `

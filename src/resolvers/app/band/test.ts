@@ -140,6 +140,9 @@ describe("Band services test", () => {
                                 songId: "${songIds[0]}",
                                 coverURI: "${env.S3_URI}/song1-Drum.mp3",
                                 position: DRUM
+                            },
+                            filter: {
+                                syncDelay: -1.1
                             }
                         }
                     ){
@@ -166,6 +169,9 @@ describe("Band services test", () => {
                                 songId: "${songIds[0]}",
                                 coverURI: "${env.S3_URI}/violin.mp3",
                                 position: VIOLIN
+                            },
+                            filter: {
+                                syncDelay: -1.1
                             }
                         }
                     ){
