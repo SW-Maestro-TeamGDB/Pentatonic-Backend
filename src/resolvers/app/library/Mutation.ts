@@ -7,7 +7,7 @@ import {
 } from "resolvers/app/library/models"
 import { Context } from "config/types"
 import { ApolloError } from "apollo-server-express"
-import { uploadS3, getAudioDuration, denoiseFilter } from "lib"
+import { uploadS3, getAudioDuration, denoiseFilter, remakeAudio } from "lib"
 import { ObjectID } from "mongodb"
 
 const isValidAudio = (name: string) => {
@@ -46,9 +46,13 @@ export const uploadCover = async (
     if (type === null) {
         throw new ApolloError("올바르지 않은 songId 입니다")
     }
-    if (position !== "DRUM") {
-        coverURI.href = (await denoiseFilter(coverURI.href)) as string
-    }
+    coverURI.href = (await remakeAudio({
+        position,
+        audioURI: coverURI.href,
+        syncDelay: args.input.filter.syncDelay,
+        echoDecays: args.input.filter.echoDecays,
+        echoDelay: args.input.filter.echoDelay,
+    })) as string
     const coverBy = context.user.id
     return context.db
         .collection("library")

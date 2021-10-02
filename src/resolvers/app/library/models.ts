@@ -38,6 +38,11 @@ export interface UploadCoverInput {
             coverURI: URL
             position: SessionType
         }
+        filter: {
+            syncDelay: number
+            echoDelay: number
+            echoDecays: number
+        }
     }
 }
 
