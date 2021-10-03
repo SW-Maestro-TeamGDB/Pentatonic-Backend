@@ -1,13 +1,4 @@
-interface BandInterface {
-    bandId: ObjectID!
-    name: String!
-    introduce: String!
-    backGroundURI: URL!
-    session: [Session]
-    creator: User!
-}
-
-type Band implements BandInterface {
+type Band {
     bandId: ObjectID!
     song: Song!
     name: String!
@@ -18,6 +9,7 @@ type Band implements BandInterface {
     session: [Session]
     isSoloBand: Boolean!
     isFreeBand: Boolean!
+    viewCount: Int!
 }
 
 type Session {
