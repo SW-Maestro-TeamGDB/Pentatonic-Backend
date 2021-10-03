@@ -21,6 +21,9 @@ const connectDB = () => {
                     { createdAt: 1 },
                     { expireAfterSeconds: 60 * 60 * 24 * 7 }
                 )
+            await _db
+                .collection("view")
+                .createIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 30 })
             return _db
         } catch (e) {
             console.log(e)
