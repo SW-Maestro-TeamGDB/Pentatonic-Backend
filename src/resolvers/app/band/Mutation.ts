@@ -46,6 +46,7 @@ export const createBand = async (
             isFreeBand: song.isFreeSong === true ? true : false,
             createDate: new Date(),
             isSoloBand: args.input.band.isSoloBand,
+            viewCount: 0,
         })
         .then(({ ops }) => ops[0])
 }

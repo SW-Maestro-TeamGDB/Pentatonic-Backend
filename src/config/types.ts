@@ -41,6 +41,7 @@ export interface Context extends Loaders {
     user: JWTUser
     db: Db
     redis: Redis
+    ip: string
 }
 
 export interface Cursor {

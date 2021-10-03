@@ -39,8 +39,34 @@ export const queryBand = async (
     return context.db.collection("band").find(query).sort({ _id }).toArray()
 }
 
-export const getBand = (parent: void, args: GetBandInput, context: Context) =>
-    context.db.collection("band").findOne({ _id: new ObjectID(args.bandId) })
+export const getBand = async (
+    parent: void,
+    args: GetBandInput,
+    context: Context
+) => {
+    const bandId = new ObjectID(args.bandId)
+    const view = await context.db
+        .collection("view")
+        .findOneAndUpdate(
+            { bandId: bandId },
+            { $setOnInsert: { ip: context.ip, bandId: bandId } },
+            { upsert: true, returnOriginal: true }
+        )
+        .then(({ value }) => value)
+    if (view === null) {
+        return context.db
+            .collection("band")
+            .findOneAndUpdate(
+                { _id: bandId },
+                { $inc: { viewCount: 1 } },
+                { returnDocument: "after" }
+            )
+            .then(({ value }) => value)
+    }
+    return await context.db
+        .collection("band")
+        .findOne({ _id: new ObjectID(args.bandId) })
+}
 
 export const getRankedBands = async (
     parent: void,

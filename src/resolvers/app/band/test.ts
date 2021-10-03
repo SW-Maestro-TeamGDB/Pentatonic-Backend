@@ -966,12 +966,13 @@ describe("Band services test", () => {
         })
     })
     describe("Query getBand", () => {
-        it("Search for bands with band ID", async () => {
+        it("Search for bands with band ID - 1", async () => {
             const query = `
                 query{
                     getBand(bandId: "${bandIds[0]}"){
                         name
                         likeCount
+                        viewCount
                     }
                 }
             `
@@ -981,6 +982,25 @@ describe("Band services test", () => {
                 .send(JSON.stringify({ query }))
                 .expect(200)
             equal(body.data.getBand.name, "테스트 밴드 업데이트!!")
+            equal(body.data.getBand.viewCount, 1)
+        })
+        it("Search for bands with band ID - 2", async () => {
+            const query = `
+                query{
+                    getBand(bandId: "${bandIds[0]}"){
+                        name
+                        likeCount
+                        viewCount
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.getBand.name, "테스트 밴드 업데이트!!")
+            equal(body.data.getBand.viewCount, 1)
         })
     })
     describe("Query getSong + band test", () => {
