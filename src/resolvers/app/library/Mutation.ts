@@ -7,7 +7,7 @@ import {
 } from "resolvers/app/library/models"
 import { Context } from "config/types"
 import { ApolloError } from "apollo-server-express"
-import { uploadS3, getAudioDuration, denoiseFilter, remakeAudio } from "lib"
+import { uploadS3, getAudioDuration, remakeAudio } from "lib"
 import { ObjectID } from "mongodb"
 
 const isValidAudio = (name: string) => {
