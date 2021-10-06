@@ -60,15 +60,15 @@ input UploadCoverInput {
     cover: UploadCoverAllInput!
     filter: UploadCoverFilterInput! = {
         syncDelay: 0.0
-        echoDelay: 500.0
-        echoDecays: 0.5
+        echoDelay: 0.0
+        echoDecays: 0.0
     }
 }
 
 input UploadCoverFilterInput {
     syncDelay: Float! = 0.0
-    echoDelay: Float! = 500.0
-    echoDecays: Float! = 0.5
+    echoDelay: Float! = 0.0
+    echoDecays: Float! = 0.0
 }
 
 type Cover {
