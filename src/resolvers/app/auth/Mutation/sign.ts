@@ -74,7 +74,7 @@ export const register = async (
             prime: false,
             introduce: "자기소개글이 아직 비어있습니다!",
             profileURI:
-                "https://kr.seaicons.com/wp-content/uploads/2016/05/Letter-P-blue-icon.png",
+                "https://icon-library.com/images/default-user-icon/default-user-icon-7.jpg",
             type,
         }),
     ])

@@ -26,7 +26,7 @@ input SessionConfigInput {
 input CreateBandAllInput {
     name: String!
     introduce: String!
-    backGroundURI: URL! = "https://cdn.wallpapersafari.com/39/72/MF1esV.jpg"
+    backGroundURI: URL
     songId: ObjectID!
     isSoloBand: Boolean!
 }

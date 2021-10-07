@@ -39,3 +39,6 @@ export const shuffle = (array: any[]) => {
     }
     return array
 }
+
+export const rand = (min: number, max: number) =>
+    Math.floor(Math.random() * (max - min)) + min
