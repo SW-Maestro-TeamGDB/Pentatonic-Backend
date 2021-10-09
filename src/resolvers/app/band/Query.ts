@@ -5,39 +5,10 @@ import {
     GetBandInput,
     DefaultBandQuery,
     QueryBandsInput,
+    SongQuery,
 } from "resolvers/app/band/models"
 import { snakeToCamel, shuffle } from "lib"
 import { ObjectID } from "mongodb"
-
-export const queryBand = async (
-    parent: void,
-    args: QueryBandInput,
-    context: Context
-) => {
-    const { type, content, sort } = args.filter
-    const _id = sort === "DATE_ASC" ? 1 : -1
-    const text = new RegExp(content || "", "ig")
-    const query: BandQuery & DefaultBandQuery =
-        type !== "ALL"
-            ? { [snakeToCamel(type)]: { $regex: text } }
-            : {
-                  $or: [
-                      { creatorId: { $regex: text } },
-                      { introduce: { $regex: text } },
-                      { name: { $regex: text } },
-                      {
-                          songId: {
-                              $in: await context.db
-                                  .collection("song")
-                                  .find({ name: { $regex: text } })
-                                  .toArray()
-                                  .then((x) => x.map((y) => y._id)),
-                          },
-                      },
-                  ],
-              }
-    return context.db.collection("band").find(query).sort({ _id }).toArray()
-}
 
 export const getBand = async (
     parent: void,
@@ -128,7 +99,7 @@ export const getTrendBands = async (
     return shuffle(bands)
 }
 
-export const queryBands = async (
+export const queryBand = async (
     parent: void,
     args: QueryBandsInput,
     context: Context
@@ -136,13 +107,50 @@ export const queryBands = async (
     const { first, after, filter } = args
     const _id = filter.sort === "DATE_ASC" ? 1 : -1
     const text = new RegExp(filter.content || "", "ig")
+    const { type, content, sort, isSoloBand, ...songFilter } = args.filter
     const query: BandQuery & DefaultBandQuery = {}
+
     if (after) {
         query._id = { [_id === -1 ? "$lt" : "$gt"]: new ObjectID(after) }
     }
+    if (isSoloBand !== undefined) {
+        query["isSoloBand"] = isSoloBand
+    }
     if (filter.type !== "ALL") {
-        query[snakeToCamel(filter.type) as "name" | "introduce"] = {
-            $regex: text,
+        if (filter.type !== "SONG_NAME") {
+            query[snakeToCamel(filter.type) as "name" | "introduce"] = {
+                $regex: text,
+            }
+            if (
+                songFilter.genre !== undefined ||
+                songFilter.level !== undefined
+            ) {
+                query["songId"] = {
+                    $in: await context.db
+                        .collection("song")
+                        .find({
+                            ...songFilter,
+                        })
+                        .toArray()
+                        .then((x) => x.map((y) => y._id)),
+                }
+            }
+        } else {
+            if (
+                songFilter.genre !== undefined ||
+                songFilter.level !== undefined
+            ) {
+                query["songId"] = {
+                    $in: await context.db
+                        .collection("song")
+                        .find({
+                            ...songFilter,
+                            name: { $regex: text },
+                        })
+                        .toArray()
+                        .then((x) => x.map((y) => y._id)),
+                }
+            }
         }
     } else {
         query["$or"] = [
@@ -153,7 +161,7 @@ export const queryBands = async (
                 songId: {
                     $in: await context.db
                         .collection("song")
-                        .find({ name: { $regex: text } })
+                        .find({ ...songFilter, name: { $regex: text } })
                         .toArray()
                         .then((x) => x.map((y) => y._id)),
                 },

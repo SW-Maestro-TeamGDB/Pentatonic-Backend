@@ -142,7 +142,7 @@ describe("Band services test", () => {
                                 position: DRUM
                             },
                             filter: {
-                                syncDelay: -1.1
+                                syncDelay: -0.01
                             }
                         }
                     ){
@@ -171,7 +171,7 @@ describe("Band services test", () => {
                                 position: VIOLIN
                             },
                             filter: {
-                                syncDelay: -1.1
+                                syncDelay: 1.1
                             }
                         }
                     ){
@@ -805,12 +805,12 @@ describe("Band services test", () => {
             })
         })
     })
-    describe("Query queryBands", () => {
+    describe("Query queryBand", () => {
         let cursor = ""
         it("Success to queryBands first data", async () => {
             const query = `
                 query{
-                    queryBands(
+                    queryBand(
                         filter: {
                             type: ALL
                         },
@@ -832,14 +832,14 @@ describe("Band services test", () => {
                 .set("Authorization", token)
                 .send(JSON.stringify({ query }))
                 .expect(200)
-            equal(body.data.queryBands.pageInfo.hasNextPage, true)
-            equal(body.data.queryBands.bands[0].name, "test band - 3")
-            cursor = body.data.queryBands.pageInfo.endCursor
+            equal(body.data.queryBand.pageInfo.hasNextPage, true)
+            equal(body.data.queryBand.bands[0].name, "test band - 3")
+            cursor = body.data.queryBand.pageInfo.endCursor
         })
-        it("Success to queryBands get second data", async () => {
+        it("Success to queryBand get second data", async () => {
             const query = `
                 query{
-                    queryBands(
+                    queryBand(
                         filter: {
                             type: ALL
                         },
@@ -861,20 +861,22 @@ describe("Band services test", () => {
                 .set("Content-Type", "application/json")
                 .set("Authorization", token)
                 .send(JSON.stringify({ query }))
-            equal(body.data.queryBands.pageInfo.hasNextPage, true)
-            equal(body.data.queryBands.bands[0].name, "test band - 2")
+            equal(body.data.queryBand.pageInfo.hasNextPage, true)
+            equal(body.data.queryBand.bands[0].name, "test band - 2")
         })
-    })
-    describe("Query queryBand", () => {
-        it("Searching by Band Name & sort DATE_DESC", async () => {
+        it("Searching by Band creator & sort DATE_ASC", async () => {
             const query = `
                 query{
                     queryBand(
                         filter: {
-                            type: NAME
+                            type: INTRODUCE,
+                            content: "test",
+                            sort: DATE_ASC
                         }
                     ){
-                        name
+                        bands{ 
+                            name
+                        }
                     }
                 }
             `
@@ -883,7 +885,57 @@ describe("Band services test", () => {
                 .set("Content-Type", "application/json")
                 .send(JSON.stringify({ query }))
                 .expect(200)
-            equal(body.data.queryBand[0].name.includes("test"), true)
+            equal(body.data.queryBand.bands[0].name, "테스트 밴드 업데이트!!")
+        })
+        it("Searching Band by Song name", async () => {
+            const query = `
+                query{
+                    queryBand(
+                        filter: {
+                            type: SONG_NAME,
+                            content: "viva",
+                            sort: DATE_ASC
+                        }
+                    ){
+                        bands{ 
+                            name
+                            song{ 
+                                name
+                            }
+                        }
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.queryBand.bands[0].song.name.includes("Viva"), true)
+        })
+        it("Searching by Band ALL information", async () => {
+            const query = `
+                query{
+                    queryBand(
+                        filter: {
+                            type: ALL,
+                            content: "Viva La Vida"
+                        }
+                    ){
+                        bands{
+                            song{ 
+                                name
+                            }
+                        }
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.queryBand.bands[0].song.name.includes("Viva"), true)
         })
         it("Searching by Band creator & sort DATE_ASC", async () => {
             const query = `
@@ -895,7 +947,9 @@ describe("Band services test", () => {
                             sort: DATE_ASC
                         }
                     ){
-                        name
+                        bands{ 
+                            name
+                        }
                     }
                 }
             `
@@ -904,19 +958,19 @@ describe("Band services test", () => {
                 .set("Content-Type", "application/json")
                 .send(JSON.stringify({ query }))
                 .expect(200)
-            equal(body.data.queryBand.length, 0)
+            equal(body.data.queryBand.bands.length, 0)
         })
-        it("Searching by Band introduce & sort DATE_ASC", async () => {
+        it("Searching by Band Name & sort DATE_DESC", async () => {
             const query = `
                 query{
                     queryBand(
                         filter: {
-                            type: INTRODUCE,
-                            content: "test",
-                            sort: DATE_ASC
+                            type: NAME
                         }
                     ){
-                        name
+                        bands{
+                            name
+                        }
                     }
                 }
             `
@@ -925,18 +979,21 @@ describe("Band services test", () => {
                 .set("Content-Type", "application/json")
                 .send(JSON.stringify({ query }))
                 .expect(200)
-            equal(body.data.queryBand[0].name, "테스트 밴드 업데이트!!")
+            equal(body.data.queryBand.bands[0].name.includes("test"), true)
         })
-        it("Searching by Band ALL information", async () => {
+        it("Searching by Band Song genre", async () => {
             const query = `
                 query{
                     queryBand(
                         filter: {
-                            type: ALL,
-                            content: "Viva La Vida"
+                            type: NAME,
+                            genre: POP,
+                            level: 2
                         }
                     ){
-                        name
+                        bands{
+                            name
+                        }
                     }
                 }
             `
@@ -945,10 +1002,10 @@ describe("Band services test", () => {
                 .set("Content-Type", "application/json")
                 .send(JSON.stringify({ query }))
                 .expect(200)
-            equal(body.data.queryBand[0].name, "test band - 3")
-            equal(body.data.queryBand[1].name, "test band - 2")
+            equal(body.data.queryBand.bands.length, 2)
         })
     })
+
     describe("Query likeStatus", () => {
         it("Get the band likeStatus", async () => {
             const query = `

@@ -97,6 +97,7 @@ extend type Mutation {
 }
 
 enum BandFilter {
+    SONG_NAME
     NAME
     INTRODUCE
     CREATOR_ID
@@ -106,24 +107,24 @@ enum BandFilter {
 input QueryBandInput {
     type: BandFilter!
     content: String
+    isSoloBand: Boolean
+    genre: GENRE_TYPE
+    level: Int
     sort: SORT_OPTION! = DATE_DESC
 }
 
 extend type Query {
-    queryBand(filter: QueryBandInput!): [Band!]
-        @deprecated(reason: "Use queryBands instead")
+    queryBand(
+        filter: QueryBandInput!
+        first: Int! = 10
+        after: String
+    ): BandOutPut
 
     getBand(bandId: ObjectID!): Band
 
     getRankedBands: [Band!]
 
     getTrendBands: [Band!]
-
-    queryBands(
-        filter: QueryBandInput!
-        first: Int! = 10
-        after: String
-    ): BandOutPut
 }
 
 type BandOutPut {

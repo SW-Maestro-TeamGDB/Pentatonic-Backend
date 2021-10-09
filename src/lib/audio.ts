@@ -15,15 +15,16 @@ export const remakeAudio = async (args: RemakeAudioInput) => {
         throw new ApolloError("mp3 파일만 업로드 가능합니다")
     }
     const codec = "libmp3lame"
-    const ss = syncDelay < 0 ? syncDelay * -1 : 0.0
-    const delays = syncDelay > 0 ? syncDelay * 1000 : 0.0
+    const ss = syncDelay < 0 ? ` -ss ${syncDelay * -1}` : ""
+    const delays =
+        syncDelay > 0 ? `adelay=delays=${syncDelay * 1000}:all=1,` : ""
     try {
         await exec(`
-            ffmpeg -i '${audioURI}' -ss ${ss} -af "${
+            ffmpeg -i '${audioURI}' ${ss || `-ss 0.1`} -af "${
             position !== "DRUM" ? "arnndn=m=src/lib/mp.rnnn," : ""
         } \
-            aecho=${0.6}:${0.3}:${echoDelay}:${echoDecays}, \
-            adelay=delays=${delays}:all=1,volume=3" \
+            aecho=${0.6}:${0.3}:${echoDelay || 0.1}:${echoDecays || 0.1}, \
+            ${delays} volume=3" \
             -c:a ${codec} -strict -2 -b:a 192k \
             ${filenameSplit[filenameSplit.length - 2]}.mp3 -y
         `)
@@ -81,7 +82,7 @@ import { getAudioDurationInSeconds } from "get-audio-duration"
 export const getAudioDuration = async (uri: string): Promise<number> => {
     try {
         const duration = await getAudioDurationInSeconds(uri)
-        if (duration < 10) throw ""
+        if (duration < 5) throw ""
         return duration
     } catch {
         throw new ApolloError("음원 파일을 정상적으로 읽지 못했습니다")

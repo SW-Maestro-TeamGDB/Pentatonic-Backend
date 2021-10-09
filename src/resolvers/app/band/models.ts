@@ -128,9 +128,18 @@ export interface DeleteBandInput {
 
 export interface QueryBandInput {
     filter: {
-        type: "NAME" | "INTRODUCE" | "CREATOR_ID" | "ALL"
+        type: "NAME" | "INTRODUCE" | "CREATOR_ID" | "ALL" | "SONG_NAME"
         content?: string
         sort: "DATE_DESC" | "DATE_ASC"
+        isSoloBand?: boolean
+        genre: string // genre
+        level: number
+    }
+}
+
+export interface SongQuery {
+    songId?: {
+        $in: ObjectID[]
     }
 }
 
@@ -144,6 +153,7 @@ export interface BandQuery {
     creatorId?: {
         $regex?: RegExp
     }
+    isSoloBand?: boolean
     songId?: {
         $in: ObjectID[]
     }
