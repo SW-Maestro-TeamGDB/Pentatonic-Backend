@@ -109,7 +109,6 @@ export const queryBand = async (
     const text = new RegExp(filter.content || "", "ig")
     const { type, content, sort, isSoloBand, ...songFilter } = args.filter
     const query: BandQuery & DefaultBandQuery = {}
-
     if (after) {
         query._id = { [_id === -1 ? "$lt" : "$gt"]: new ObjectID(after) }
     }
@@ -157,16 +156,18 @@ export const queryBand = async (
             { creatorId: { $regex: text } },
             { introduce: { $regex: text } },
             { name: { $regex: text } },
-            {
-                songId: {
-                    $in: await context.db
-                        .collection("song")
-                        .find({ ...songFilter, name: { $regex: text } })
-                        .toArray()
-                        .then((x) => x.map((y) => y._id)),
-                },
-            },
         ]
+        if (songFilter.genre !== undefined || songFilter.level !== undefined) {
+            query["songId"] = {
+                $in: await context.db
+                    .collection("song")
+                    .find({
+                        ...songFilter,
+                    })
+                    .toArray()
+                    .then((x) => x.map((y) => y._id)),
+            }
+        }
     }
     const bands = await context.db
         .collection("band")
