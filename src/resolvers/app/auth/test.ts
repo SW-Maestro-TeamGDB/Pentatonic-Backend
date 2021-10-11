@@ -394,6 +394,26 @@ describe("User auth service test", () => {
                 })
             })
         })
+        describe("Query queryUser", () => {
+            describe("Success", () => {
+                it("should be return User", async () => {
+                    const query = `
+                        query {
+                            queryUser(username: "pukuba") {
+                                username
+                            }
+                        }
+                    `
+                    const { body } = await request(app)
+                        .post("/api")
+                        .set({ "Content-Type": "application/json" })
+                        .send(JSON.stringify({ query }))
+                        .expect(200)
+                    console.log(body.data.queryUser)
+                    equal(body.data.queryUser[0].username, "pukuba")
+                })
+            })
+        })
         describe("Mutation login", () => {
             describe("Success", () => {
                 it("If login is successful", async () => {

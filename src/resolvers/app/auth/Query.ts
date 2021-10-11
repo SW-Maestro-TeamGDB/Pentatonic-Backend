@@ -4,6 +4,7 @@ import {
     IsValidUsernameInput,
     FindIdInput,
     GetUserInfoInput,
+    QueryUserInput,
 } from "resolvers/app/auth/models"
 import { Context } from "config/types"
 
@@ -70,4 +71,20 @@ export const checkAuthCode = async (
     const { phoneNumber, authCode } = args
     const result = await context.redis.get(phoneNumber)
     return result === authCode.toString()
+}
+
+export const queryUser = async (
+    parent: void,
+    args: QueryUserInput,
+    context: Context
+) => {
+    const { username } = args
+    const result = await context.db
+        .collection("user")
+        .find({
+            username: { $regex: new RegExp(username, "i") },
+        })
+        .limit(10)
+        .toArray()
+    return result
 }

@@ -26,6 +26,8 @@ type Query {
     isValidUsername(username: Username!): Boolean!
 
     checkAuthCode(phoneNumber: PhoneNumber!, authCode: Int!): Boolean!
+
+    queryUser(username: String!): [User]
 }
 
 type User {

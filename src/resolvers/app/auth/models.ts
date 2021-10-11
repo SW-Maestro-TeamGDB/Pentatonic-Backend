@@ -110,3 +110,7 @@ export interface SendAuthCodeInput {
 export interface GetUserInfoInput {
     userId?: string
 }
+
+export interface QueryUserInput {
+    username: string
+}
