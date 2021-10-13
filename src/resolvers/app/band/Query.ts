@@ -106,7 +106,7 @@ export const queryBand = async (
 ) => {
     const { first, after, filter } = args
     const _id = filter.sort === "DATE_ASC" ? 1 : -1
-    const text = new RegExp(filter.content || "", "ig")
+    const text = new RegExp(filter.content || "", "i")
     const { type, content, sort, isSoloBand, ...songFilter } = args.filter
     const query: BandQuery & DefaultBandQuery = {}
     if (after) {
@@ -124,7 +124,7 @@ export const queryBand = async (
                 songFilter.genre !== undefined ||
                 songFilter.level !== undefined ||
                 songFilter.isFreeSong !== undefined ||
-                songFilter.isWeeklyChallenge !== undefined
+                songFilter.weeklyChallenge !== undefined
             ) {
                 query["songId"] = {
                     $in: await context.db
@@ -141,7 +141,7 @@ export const queryBand = async (
                 songFilter.genre !== undefined ||
                 songFilter.level !== undefined ||
                 songFilter.isFreeSong !== undefined ||
-                songFilter.isWeeklyChallenge !== undefined
+                songFilter.weeklyChallenge !== undefined
             ) {
                 query["songId"] = {
                     $in: await context.db
@@ -165,7 +165,7 @@ export const queryBand = async (
             songFilter.genre !== undefined ||
             songFilter.level !== undefined ||
             songFilter.isFreeSong !== undefined ||
-            songFilter.isWeeklyChallenge !== undefined
+            songFilter.weeklyChallenge !== undefined
         ) {
             query["songId"] = {
                 $in: await context.db

@@ -919,7 +919,7 @@ describe("Band services test", () => {
                     queryBand(
                         filter: {
                             type: ALL,
-                            content: "Viva La Vida"
+                            content: "!!"
                         }
                     ){
                         bands{
@@ -935,6 +935,7 @@ describe("Band services test", () => {
                 .set("Content-Type", "application/json")
                 .send(JSON.stringify({ query }))
                 .expect(200)
+            console.log(body.data.queryBand)
             equal(body.data.queryBand.bands[0].song.name.includes("Viva"), true)
         })
         it("Searching by Band creator & sort DATE_ASC", async () => {
@@ -989,6 +990,29 @@ describe("Band services test", () => {
                             type: NAME,
                             genre: POP,
                             level: 2
+                        }
+                    ){
+                        bands{
+                            name
+                        }
+                    }
+                }
+            `
+            const { body } = await request(app)
+                .post("/api")
+                .set("Content-Type", "application/json")
+                .send(JSON.stringify({ query }))
+                .expect(200)
+            equal(body.data.queryBand.bands.length, 2)
+        })
+        it("Searching by Band Song genre", async () => {
+            const query = `
+                query{
+                    queryBand(
+                        filter: {
+                            type: NAME,
+                            isFreeSong: false,
+                            weeklyChallenge: false
                         }
                     ){
                         bands{
