@@ -172,6 +172,7 @@ export const queryBand = async (
                     .collection("song")
                     .find({
                         ...songFilter,
+                        name: { $regex: text },
                     })
                     .toArray()
                     .then((x) => x.map((y) => y._id)),
