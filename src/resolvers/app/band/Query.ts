@@ -122,7 +122,9 @@ export const queryBand = async (
             }
             if (
                 songFilter.genre !== undefined ||
-                songFilter.level !== undefined
+                songFilter.level !== undefined ||
+                songFilter.isFreeSong !== undefined ||
+                songFilter.isWeeklyChallenge !== undefined
             ) {
                 query["songId"] = {
                     $in: await context.db
@@ -137,7 +139,9 @@ export const queryBand = async (
         } else {
             if (
                 songFilter.genre !== undefined ||
-                songFilter.level !== undefined
+                songFilter.level !== undefined ||
+                songFilter.isFreeSong !== undefined ||
+                songFilter.isWeeklyChallenge !== undefined
             ) {
                 query["songId"] = {
                     $in: await context.db
@@ -157,7 +161,12 @@ export const queryBand = async (
             { introduce: { $regex: text } },
             { name: { $regex: text } },
         ]
-        if (songFilter.genre !== undefined || songFilter.level !== undefined) {
+        if (
+            songFilter.genre !== undefined ||
+            songFilter.level !== undefined ||
+            songFilter.isFreeSong !== undefined ||
+            songFilter.isWeeklyChallenge !== undefined
+        ) {
             query["songId"] = {
                 $in: await context.db
                     .collection("song")

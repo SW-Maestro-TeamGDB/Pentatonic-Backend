@@ -132,6 +132,8 @@ export interface QueryBandInput {
         content?: string
         sort: "DATE_DESC" | "DATE_ASC"
         isSoloBand?: boolean
+        isFreeSong?: boolean
+        isWeeklyChallenge?: boolean
         genre: string // genre
         level: number
     }
