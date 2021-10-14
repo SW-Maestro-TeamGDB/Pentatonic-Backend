@@ -3,8 +3,12 @@ version: "3.7"
 services:
     express:
         deploy:
+            resources:
+                limits:
+                    cpus: "1"
+                    memory: "2g"
             mode: replicated
-            replicas: 5
+            replicas: 2
         healthcheck:
             test:
                 [
@@ -26,11 +30,33 @@ services:
         image: redis:latest
         container_name: redis_db
         restart: "unless-stopped"
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 1s
+            timeout: 3s
+            retries: 30
     proxy:
         image: nginx:latest
         container_name: proxy
         ports:
             - "80:80"
+        deploy:
+            placement:
+                constraints:
+                    - "node.role==manager"
+            resources:
+                limits:
+                    memory: "4g"
+                reservations:
+                    memory: "1g"
+            mode: replicated
+            replicas: 1
         volumes:
             - ./proxy/nginx.conf:/etc/nginx/nginx.conf
         restart: "unless-stopped"
+        healthcheck:
+            test: curl --fail http://localhost/nginx-health || exit 1
+            interval: 10s
+            timeout: 5s
+            retries: 3
+            start_period: 10s
