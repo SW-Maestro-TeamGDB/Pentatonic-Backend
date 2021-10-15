@@ -120,53 +120,16 @@ export const queryBand = async (
             query[snakeToCamel(filter.type) as "name" | "introduce"] = {
                 $regex: text,
             }
-            if (
-                songFilter.genre !== undefined ||
-                songFilter.level !== undefined ||
-                songFilter.isFreeSong !== undefined ||
-                songFilter.weeklyChallenge !== undefined
-            ) {
-                query["songId"] = {
-                    $in: await context.db
-                        .collection("song")
-                        .find({
-                            ...songFilter,
-                        })
-                        .toArray()
-                        .then((x) => x.map((y) => y._id)),
-                }
+            query["songId"] = {
+                $in: await context.db
+                    .collection("song")
+                    .find({
+                        ...songFilter,
+                    })
+                    .toArray()
+                    .then((x) => x.map((y) => y._id)),
             }
         } else {
-            if (
-                songFilter.genre !== undefined ||
-                songFilter.level !== undefined ||
-                songFilter.isFreeSong !== undefined ||
-                songFilter.weeklyChallenge !== undefined
-            ) {
-                query["songId"] = {
-                    $in: await context.db
-                        .collection("song")
-                        .find({
-                            ...songFilter,
-                            name: { $regex: text },
-                        })
-                        .toArray()
-                        .then((x) => x.map((y) => y._id)),
-                }
-            }
-        }
-    } else {
-        query["$or"] = [
-            { creatorId: { $regex: text } },
-            { introduce: { $regex: text } },
-            { name: { $regex: text } },
-        ]
-        if (
-            songFilter.genre !== undefined ||
-            songFilter.level !== undefined ||
-            songFilter.isFreeSong !== undefined ||
-            songFilter.weeklyChallenge !== undefined
-        ) {
             query["songId"] = {
                 $in: await context.db
                     .collection("song")
@@ -178,6 +141,24 @@ export const queryBand = async (
                     .then((x) => x.map((y) => y._id)),
             }
         }
+    } else {
+        query["$or"] = [
+            { creatorId: { $regex: text } },
+            { introduce: { $regex: text } },
+            { name: { $regex: text } },
+            {
+                songId: {
+                    $in: await context.db
+                        .collection("song")
+                        .find({
+                            ...songFilter,
+                            name: { $regex: text },
+                        })
+                        .toArray()
+                        .then((x) => x.map((y) => y._id)),
+                },
+            },
+        ]
     }
     const bands = await context.db
         .collection("band")

@@ -72,7 +72,7 @@ export interface DeleteCoverInput {
 
 export interface CoverQuery {
     coverBy: string
-    isFreeSong: boolean
+    isFreeSong?: boolean
     name?: { $regex?: RegExp }
     songId?: ObjectID
     position?: string
