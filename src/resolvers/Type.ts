@@ -58,7 +58,6 @@ export const User = {
                 .collection("library")
                 .find({
                     coverBy: context.user.id,
-                    isFreeSong: false,
                 })
                 .toArray()
         }
