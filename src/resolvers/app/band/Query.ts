@@ -159,6 +159,15 @@ export const queryBand = async (
                 },
             },
         ]
+        query["songId"] = {
+            $in: await context.db
+                .collection("song")
+                .find({
+                    ...songFilter,
+                })
+                .toArray()
+                .then((x) => x.map((y) => y._id)),
+        }
     }
     const bands = await context.db
         .collection("band")

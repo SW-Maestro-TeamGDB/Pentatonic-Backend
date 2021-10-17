@@ -935,7 +935,6 @@ describe("Band services test", () => {
                 .set("Content-Type", "application/json")
                 .send(JSON.stringify({ query }))
                 .expect(200)
-            console.log(body.data.queryBand)
             equal(body.data.queryBand.bands[0].song.name.includes("Viva"), true)
         })
         it("Searching by Band creator & sort DATE_ASC", async () => {
