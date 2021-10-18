@@ -183,3 +183,28 @@ export const queryBand = async (
         },
     }
 }
+
+export const getRecommendBand = async (
+    parent: void,
+    args: void,
+    context: Context
+) => {
+    const cache = await context.redis.get("getRecommendBand")
+    if (cache) {
+        return JSON.parse(cache)
+    }
+    const bands = await context.db
+        .collection("band")
+        .aggregate([
+            {
+                $sample: { size: 5 },
+            },
+        ])
+        .toArray()
+    await context.redis.setex(
+        "getRecommendBand",
+        60 * 60 * 24,
+        JSON.stringify(bands)
+    )
+    return bands
+}

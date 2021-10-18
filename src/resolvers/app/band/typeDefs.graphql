@@ -127,6 +127,8 @@ extend type Query {
     getRankedBands: [Band!]
 
     getTrendBands: [Band!]
+
+    getRecommendBand: [Band!]
 }
 
 type BandOutPut {
