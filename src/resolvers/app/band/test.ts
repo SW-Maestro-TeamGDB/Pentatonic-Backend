@@ -1029,6 +1029,42 @@ describe("Band services test", () => {
         })
     })
 
+    describe("Query getRecommendBand", () => {
+        it("Get Recommend band", async () => {
+            const res1 = await (async () => {
+                const query = `
+                    query {
+                        getRecommendBand{ 
+                            bandId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                return body
+            })()
+            const res2 = await (async () => {
+                const query = `
+                    query {
+                        getRecommendBand{ 
+                            bandId
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .post("/api")
+                    .set("Content-Type", "application/json")
+                    .send(JSON.stringify({ query }))
+                    .expect(200)
+                return body
+            })()
+            equal(res1, res2)
+        })
+    })
+
     describe("Query likeStatus", () => {
         it("Get the band likeStatus", async () => {
             const query = `
