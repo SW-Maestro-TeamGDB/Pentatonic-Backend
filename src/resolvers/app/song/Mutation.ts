@@ -11,9 +11,9 @@ import {
     UploadFreeSongInput,
 } from "resolvers/app/song/models"
 import { Context } from "config/types"
-import { uploadS3, getAudioDuration } from "lib"
+import { uploadS3, getAudioDuration, getRandomImage } from "lib"
 import { ObjectID } from "mongodb"
-import { ApolloError } from "apollo-server-express"
+
 export const uploadDefaultFile = async (
     parent: void,
     args: UploadDefaultImgInput,
@@ -37,6 +37,7 @@ export const uploadFreeSong = async (
             name: args.input.song.name,
             artist: args.input.song.artist,
             songURI: args.input.song.songURI.href,
+            songImg: args.input.song.songImg?.href || getRandomImage(),
             isFreeSong: true,
             weeklyChallenge: false,
             duration,

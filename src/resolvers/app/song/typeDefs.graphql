@@ -172,6 +172,7 @@ input UploadFreeSongAllInput {
     name: String!
     songURI: URL!
     artist: String!
+    songImg: URL
 }
 
 input UploadFreeSongInput {

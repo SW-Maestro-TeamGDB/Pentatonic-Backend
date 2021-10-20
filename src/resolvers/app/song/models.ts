@@ -23,6 +23,7 @@ export interface UploadFreeSongInput {
             name: string
             songURI: URL
             artist: string
+            songImg?: URL
         }
     }
 }
