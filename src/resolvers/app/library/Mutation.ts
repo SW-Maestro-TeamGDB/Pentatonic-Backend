@@ -112,10 +112,24 @@ export const deleteCover = async (
         })
         .then(({ result }) => result.n === 1)
     if (deleteDocument) {
-        await context.db.collection("join").deleteMany({
-            coverId: new ObjectID(args.input.cover.coverId),
-            userId: context.user.id,
-        })
+        const ids = await context.db
+            .collection("join")
+            .find({
+                coverId: new ObjectID(args.input.cover.coverId),
+                userId: context.user.id,
+            })
+            .toArray()
+            .then((x) => x.map((y) => y.bandId))
+        await Promise.all([
+            context.db.collection("band").deleteMany({
+                isSoloBand: true,
+                _id: { $in: ids },
+            }),
+            context.db.collection("join").deleteMany({
+                coverId: new ObjectID(args.input.cover.coverId),
+                userId: context.user.id,
+            }),
+        ])
         return true
     } else {
         throw new ApolloError("삭제하는데 실패하였습니다")
