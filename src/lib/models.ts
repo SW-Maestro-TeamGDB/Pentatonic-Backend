@@ -10,3 +10,10 @@ export interface RemakeAudioInput {
     echoDelay: number
     echoDecays: number
 }
+
+export interface BandJoinMessageInput {
+    username: string
+    bandname: string
+    bandId: string
+    token: string
+}

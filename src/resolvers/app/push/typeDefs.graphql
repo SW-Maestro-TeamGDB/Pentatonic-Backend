@@ -3,5 +3,5 @@ extend type Mutation {
 }
 
 input UpdateDeviceTokenInput {
-    token: String!
+    deviceToken: String!
 }

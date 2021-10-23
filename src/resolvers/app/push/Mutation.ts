@@ -6,12 +6,12 @@ export const updateDeviceToken = async (
     args: UpdateDeviceTokenInput,
     context: Context
 ) => {
-    const { token } = args.input
+    const { deviceToken } = args.input
     await context.db
         .collection("fcm")
         .updateOne(
             { userId: context.user.id },
-            { $set: { userId: context.user.id, token } },
+            { $set: { userId: context.user.id, deviceToken } },
             { upsert: true }
         )
     return true

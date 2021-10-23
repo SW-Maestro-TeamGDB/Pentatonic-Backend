@@ -1,5 +1,5 @@
 export interface UpdateDeviceTokenInput {
     input: {
-        token: string
+        deviceToken: string
     }
 }
