@@ -95,7 +95,7 @@ const batchLoadSessionFn = async (bandIds: readonly ObjectID[]) => {
     const table = new Map()
     const resultArray: BatchSesssion[][] = Array.from(
         Array(bandIds.length),
-        () => [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+        () => [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
     )
     bandIds.forEach((id, index) => {
         table.set(id.toString(), index)

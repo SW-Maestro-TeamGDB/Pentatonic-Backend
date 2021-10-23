@@ -13,6 +13,7 @@ export interface SessionInformation {
     gayageum?: number
     haegeum?: number
     geomungo?: number
+    free?: number
 }
 
 const SessionDirection = {
@@ -27,6 +28,7 @@ const SessionDirection = {
     GAYAGEUM: "GAYAGEUM",
     HAEGEUM: "HAEGEUM",
     GEOMUNGO: "GEOMUNGO",
+    FREE: "FREE ",
 } as const
 
 export type SessionType = typeof SessionDirection[keyof typeof SessionDirection]

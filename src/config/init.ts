@@ -10,6 +10,7 @@ const sessionMap = {
     gayageum: 8,
     haegeum: 9,
     geomungo: 10,
+    free: 11,
 }
 
 export { sessionMap }
