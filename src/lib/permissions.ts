@@ -126,6 +126,7 @@ export const permissions = shield(
             deleteComment: and(isLogin, isValidInput),
             updateComment: and(isLogin, isValidInput),
             uploadFreeSong: and(isLogin, isValidInput),
+            updateDeviceToken: and(isLogin, isValidInput),
         },
         Query: {
             findId: and(not(isLogin), canSend, isValidInput),

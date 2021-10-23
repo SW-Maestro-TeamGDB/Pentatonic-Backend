@@ -1,0 +1,7 @@
+extend type Mutation {
+    updateDeviceToken(input: UpdateDeviceTokenInput!): Boolean
+}
+
+input UpdateDeviceTokenInput {
+    token: String!
+}
