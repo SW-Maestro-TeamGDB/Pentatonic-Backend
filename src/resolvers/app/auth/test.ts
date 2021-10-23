@@ -409,7 +409,6 @@ describe("User auth service test", () => {
                         .set({ "Content-Type": "application/json" })
                         .send(JSON.stringify({ query }))
                         .expect(200)
-                    console.log(body.data.queryUser)
                     equal(body.data.queryUser[0].username, "pukuba")
                 })
             })
