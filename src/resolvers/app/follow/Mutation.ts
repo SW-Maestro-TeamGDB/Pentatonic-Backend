@@ -1,6 +1,7 @@
 import { Context } from "config/types"
 import { FollowInput } from "resolvers/app/follow/models"
 import { ApolloError } from "apollo-server-express"
+import { followMessage } from "lib"
 
 /**
  * 팔로우 상태 반전
@@ -20,21 +21,30 @@ export const follow = async (
     if (user === null) {
         return new ApolloError("존재하지 않는 유저입니다")
     }
-    const result = await context.db
-        .collection("follow")
-        .find({
-            userId: context.user.id,
-            following: args.input.following,
-        })
-        .count()
-    if (result === 0) {
-        return context.db
-            .collection("follow")
-            .insertOne({
-                userId: context.user.id,
-                following: args.input.following,
-            })
-            .then(({ result }) => result.n === 1)
+    const result = await context.db.collection("follow").findOne({
+        userId: context.user.id,
+        following: args.input.following,
+    })
+    if (result === null) {
+        const [res, user, fcmList] = await Promise.all([
+            context.db
+                .collection("follow")
+                .insertOne({
+                    userId: context.user.id,
+                    following: args.input.following,
+                })
+                .then(({ result }) => result.n === 1),
+            context.db.collection("user").findOne({
+                id: context.user.id,
+            }),
+            context.db.collection("fcm").findOne({
+                userId: args.input.following,
+            }),
+        ])
+        if (res && fcmList !== null) {
+            followMessage(user.username, context.user.id, fcmList.deviceToken)
+        }
+        return res
     } else {
         return context.db
             .collection("follow")
