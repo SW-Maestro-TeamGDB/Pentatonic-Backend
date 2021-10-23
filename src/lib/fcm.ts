@@ -15,9 +15,9 @@ admin.initializeApp({
         project_id: env.FIREBASE_PROJECT_ID,
         private_key_id: env.FIREBASE_PRIVATE_KEY_ID,
         private_key: replaceAll(
-            env.FIREBASE_PRIVATE_KEY as string,
-            "\\n",
-            "\n"
+            replaceAll(env.FIREBASE_PRIVATE_KEY as string, "\\n", "\n"),
+            '"',
+            ""
         ),
         client_email: env.FIREBASE_CLIENT_EMAIL,
         client_id: env.FIREBASE_CLIENT_ID,
