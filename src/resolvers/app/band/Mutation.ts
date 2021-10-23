@@ -8,7 +8,12 @@ import {
     UpdateBandQuery,
     DeleteBandInput,
 } from "resolvers/app/band/models"
-import { sessionParse, snakeToCamel, rand, getRandomImage } from "lib"
+import {
+    sessionParse,
+    snakeToCamel,
+    getRandomImage,
+    bandJoinMessage,
+} from "lib"
 import { ObjectID } from "mongodb"
 import { ApolloError } from "apollo-server-express"
 
@@ -92,7 +97,7 @@ export const joinBand = async (
         ) {
             throw new Error()
         }
-        return context.db
+        const res = await context.db
             .collection("join")
             .insertOne({
                 bandId: new ObjectID(args.input.band.bandId),
@@ -101,6 +106,33 @@ export const joinBand = async (
                 coverId: new ObjectID(args.input.session.coverId),
             })
             .then(({ result }) => result.n === 1)
+        if (res) {
+            const followerList = await context.db
+                .collection("follow")
+                .find({
+                    following: context.user.id,
+                })
+                .toArray()
+            const userIds = followerList.map((user) => user.userId)
+            const [myInfo, fcmList] = await Promise.all([
+                context.db.collection("user").findOne({ id: context.user.id }),
+                context.db
+                    .collection("fcm")
+                    .find({ userId: { $in: userIds } })
+                    .toArray(),
+            ])
+
+            const messages = fcmList.map((info) => {
+                return {
+                    username: myInfo.username,
+                    token: info.deviceToken,
+                    bandId: args.input.band.bandId,
+                    bandname: data[0].name,
+                }
+            })
+            bandJoinMessage(messages)
+        }
+        return res
     } catch {
         throw new ApolloError("세션이 가득찾거나 존재하지 않습니다")
     }
