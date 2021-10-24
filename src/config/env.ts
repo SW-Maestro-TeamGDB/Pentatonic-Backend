@@ -30,6 +30,9 @@ const env = {
     FIREBASE_AUTH_PROVIDER_X509_CERT_URL:
         process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
     FIREBASE_CLIENT_X509_CERT_URL: process.env.FIREBASE_CLIENT_X509_CERT_URL,
+    IMP_KEY: process.env.IMP_KEY,
+    IMP_SECRET: process.env.IMP_SECRET,
+    IMP_ID: process.env.IMP_ID,
 }
 
 export default env

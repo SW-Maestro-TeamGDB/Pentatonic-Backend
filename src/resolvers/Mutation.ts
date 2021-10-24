@@ -7,6 +7,7 @@ import { Mutation as follow } from "resolvers/app/follow"
 import { Mutation as like } from "resolvers/app/like"
 import { Mutation as comment } from "resolvers/app/comment"
 import { Mutation as push } from "resolvers/app/push"
+import { Mutation as payment } from "resolvers/app/payment"
 
 export default {
     ...auth,
@@ -18,4 +19,5 @@ export default {
     ...like,
     ...comment,
     ...push,
+    ...payment,
 }
