@@ -9,8 +9,7 @@ export interface RemakeAudioInput {
     position: string
     audioURI: string
     syncDelay: number
-    echoDelay: number
-    echoDecays: number
+    reverb: number
 }
 
 export interface BandJoinMessageInput {

@@ -38,8 +38,7 @@ describe("Penta-Tonic Song Services", () => {
             describe("Failure", () => {
                 it("If the code is not correct", async () => {
                     const { body } = await fileUpload(
-                        `
-                        mutation($file: Upload!) {
+                        `mutation($file: Upload!) {
                             uploadDefaultFile(
                                 input: {
                                     code: "test-code",

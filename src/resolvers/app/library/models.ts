@@ -40,8 +40,7 @@ export interface UploadCoverInput {
         }
         filter: {
             syncDelay: number
-            echoDelay: number
-            echoDecays: number
+            reverb: number
         }
     }
 }

@@ -50,8 +50,7 @@ export const uploadCover = async (
         position,
         audioURI: coverURI.href,
         syncDelay: args.input.filter.syncDelay,
-        echoDecays: args.input.filter.echoDecays,
-        echoDelay: args.input.filter.echoDelay,
+        reverb: args.input.filter.reverb,
     })) as string
     const coverBy = context.user.id
     return context.db
