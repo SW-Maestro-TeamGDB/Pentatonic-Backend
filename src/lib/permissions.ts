@@ -127,6 +127,7 @@ export const permissions = shield(
             updateComment: and(isLogin, isValidInput),
             uploadFreeSong: and(isLogin, isValidInput),
             updateDeviceToken: and(isLogin, isValidInput),
+            payment: and(isLogin, isValidInput),
         },
         Query: {
             findId: and(not(isLogin), canSend, isValidInput),
