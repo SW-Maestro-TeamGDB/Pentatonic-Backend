@@ -156,6 +156,10 @@ describe("Library services test", () => {
                                     songId: "${songIds[0]}",
                                     coverURI: "${coverURI[0]}",
                                     position: DRUM
+                                },
+                                filter: {
+                                    reverb: 3.2,
+                                    syncDelay: 0.123
                                 }
                             }
                         ){
@@ -196,6 +200,10 @@ describe("Library services test", () => {
                                     songId: "${songIds[0]}",
                                     coverURI: "${coverURI[0]}",
                                     position: DRUM
+                                },
+                                filter: {
+                                    reverb: 3.2,
+                                    syncDelay: -0.123
                                 }
                             }
                         ){
