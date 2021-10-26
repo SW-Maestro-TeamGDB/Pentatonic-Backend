@@ -4,6 +4,7 @@ import env from "config/env"
 import { Db } from "mongodb"
 import { deepStrictEqual as equal } from "assert"
 import DB from "config/connectDB"
+import { Band } from "resolvers/app/band/models"
 import * as Redis from "config/connectRedis"
 import { Cover } from "resolvers/app/library/models"
 
@@ -1061,7 +1062,12 @@ describe("Band services test", () => {
                     .expect(200)
                 return body
             })()
-            equal(res1, res2)
+            for (const item of res1.data.getRecommendBand) {
+                const result = res2.data.getRecommendBand.find(
+                    (item2: any) => item2.bandId === item.bandId
+                )
+                equal(result !== undefined, true)
+            }
         })
     })
 

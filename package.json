@@ -5,7 +5,7 @@
     "main": "src/index.ts",
     "scripts": {
         "test": "export NODE_ENV=test;NODE_PATH=src/ ts-mocha --timeout 10000 -p ./tsconfig.json src/**/*test.ts --exit",
-        "test1": "export NODE_ENV=test;NODE_PATH=src/ ts-mocha --timeout 10000 -p ./tsconfig.json src/resolvers/app/library/test.ts --exit",
+        "test1": "export NODE_ENV=test;NODE_PATH=src/ ts-mocha --timeout 10000 -p ./tsconfig.json src/resolvers/app/band/test.ts --exit",
         "build": "tsc -p .",
         "start": "NODE_PATH=src/ nodemon --exec ts-node src/index.ts",
         "on": "NODE_PATH=dist/ node dist/index.js",

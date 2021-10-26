@@ -44,9 +44,8 @@ const batchLoadInstrumentFn = async (songIds: readonly ObjectID[]) => {
     return resultArray
 }
 
-const batchLoadSongFn = async (songIds: readonly (string | ObjectID)[]) => {
+const batchLoadSongFn = async (songIds: readonly ObjectID[]) => {
     const db = (await DB.get()) as Db
-    songIds = songIds.map((x) => new ObjectID(x))
     const resultArray: Song[] = Array.from(Array(songIds.length))
     const idxTable = generateIdxTable(songIds)
     const songs: Song[] = await db

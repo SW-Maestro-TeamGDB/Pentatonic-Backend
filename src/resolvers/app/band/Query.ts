@@ -6,6 +6,7 @@ import {
     DefaultBandQuery,
     QueryBandsInput,
     SongQuery,
+    Band,
 } from "resolvers/app/band/models"
 import { snakeToCamel, shuffle } from "lib"
 import { ObjectID } from "mongodb"
@@ -191,7 +192,17 @@ export const getRecommendBand = async (
 ) => {
     const cache = await context.redis.get("getRecommendBand")
     if (cache) {
-        return JSON.parse(cache)
+        const data = JSON.parse(cache)
+        const ids = data.map((x: Band) => new ObjectID(x._id))
+        const bands = await context.db
+            .collection("band")
+            .find({ _id: { $in: ids } })
+            .toArray()
+        if (bands.length !== ids.length) {
+            await context.redis.del("getRecommendBand")
+            return bands
+        }
+        return bands
     }
     const bands = await context.db
         .collection("band")
