@@ -15,15 +15,28 @@ const connectDB = () => {
                 }
             )
             const _db = client.db()
-            await _db
-                .collection("trend")
-                .createIndex(
-                    { createdAt: 1 },
-                    { expireAfterSeconds: 60 * 60 * 24 * 7 }
-                )
-            await _db
-                .collection("view")
-                .createIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 30 })
+            await Promise.all([
+                _db
+                    .collection("trend")
+                    .createIndex(
+                        { createdAt: 1 },
+                        { expireAfterSeconds: 60 * 60 * 24 * 7 }
+                    ),
+                _db
+                    .collection("view")
+                    .createIndex(
+                        { createdAt: 1 },
+                        { expireAfterSeconds: 60 * 30 }
+                    ),
+                _db.collection("user").createIndex({ id: 1 }, { unique: true }),
+                _db
+                    .collection("user")
+                    .createIndex({ phoneNumber: 1 }, { unique: true }),
+                _db
+                    .collection("user")
+                    .createIndex({ username: 1 }, { unique: true }),
+            ])
+
             return _db
         } catch (e) {
             console.log(e)
