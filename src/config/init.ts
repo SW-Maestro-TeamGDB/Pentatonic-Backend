@@ -10,7 +10,11 @@ const sessionMap = {
     gayageum: 8,
     haegeum: 9,
     geomungo: 10,
-    free: 11,
+    piano: 11,
+    flute: 12,
+    trumpet: 13,
+    clarinet: 14,
+    free: 15,
 }
 
 export { sessionMap }

@@ -21,6 +21,10 @@ enum SESSION_TYPE {
     GAYAGEUM
     HAEGEUM
     GEOMUNGO
+    PIANO
+    FLUTE
+    TRUMPET
+    CLARIENT
     FREE
 }
 
