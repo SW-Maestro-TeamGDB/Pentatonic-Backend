@@ -130,7 +130,9 @@ export const joinBand = async (
                     bandname: data[0].name,
                 }
             })
-            bandJoinMessage(messages)
+            if (messages[0]?.bandId) {
+                bandJoinMessage(messages)
+            }
         }
         return res
     } catch {
