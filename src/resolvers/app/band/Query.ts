@@ -21,7 +21,13 @@ export const getBand = async (
         .collection("view")
         .findOneAndUpdate(
             { bandId: bandId },
-            { $setOnInsert: { ip: context.ip, bandId: bandId } },
+            {
+                $setOnInsert: {
+                    ip: context.ip,
+                    bandId: bandId,
+                    createdAt: new Date(),
+                },
+            },
             { upsert: true, returnOriginal: true }
         )
         .then(({ value }) => value)
