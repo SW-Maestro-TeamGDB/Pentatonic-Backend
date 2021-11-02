@@ -168,6 +168,8 @@ const SongGenres = {
     DANCE: "DANCE",
     BALLAD: "BALLAD",
     K_POP: "K_POP",
+    FOLK: "FOLK",
+    CHILD_VERSE: "CHILD_VERSE",
 } as const
 
 export type SongGenres = typeof SongGenres[keyof typeof SongGenres]

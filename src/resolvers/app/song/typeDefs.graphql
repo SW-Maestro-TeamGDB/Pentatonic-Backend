@@ -166,6 +166,8 @@ enum GENRE_TYPE {
     DANCE
     BALLAD
     K_POP
+    FOLK
+    CHILD_VERSE
 }
 
 input UploadFreeSongAllInput {
