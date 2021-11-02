@@ -77,6 +77,7 @@ export const uploadSong = async (
             weeklyChallenge,
             level,
             duration,
+            lyrics: args.input.song?.lyrics || null,
         })
         .then(({ ops }) => ops[0])
 }

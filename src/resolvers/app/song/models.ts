@@ -15,6 +15,7 @@ export interface Song {
     weeklyChallenge: boolean
     duration: number
     band: Band
+    lyrics?: string
 }
 
 export interface UploadFreeSongInput {
@@ -56,6 +57,7 @@ export interface UploadSongInput {
             level: number
             releaseDate: Date
             album: string
+            lyrics?: string
         }
     }
 }
@@ -118,6 +120,7 @@ export interface UpdateSongQurey {
         album?: string
         duration?: number
         position?: SessionType
+        lyrics?: string
     }
 }
 
@@ -144,6 +147,7 @@ export interface UpdateSongInput {
             level?: number
             releaseDate?: Date
             album?: string
+            lyrics?: string
         }
     }
 }

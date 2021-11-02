@@ -111,6 +111,7 @@ type Song implements SongInterface {
     instrument: [Instrument!]
     releaseDate: Date
     band: [Band!]!
+    lyrics: String
 }
 
 input UploadSongAllInput {
