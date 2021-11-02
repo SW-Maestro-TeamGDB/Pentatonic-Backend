@@ -24,7 +24,7 @@ enum SESSION_TYPE {
     PIANO
     FLUTE
     TRUMPET
-    CLARIENT
+    CLARINET
     FREE
 }
 

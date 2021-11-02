@@ -28,6 +28,10 @@ const SessionDirection = {
     GAYAGEUM: "GAYAGEUM",
     HAEGEUM: "HAEGEUM",
     GEOMUNGO: "GEOMUNGO",
+    PIANO: "PIANO",
+    FLUTE: "FLUTE",
+    TRUMPET: "TRUMPET",
+    CLARINET: "CLARINET",
     FREE: "FREE ",
 } as const
 
