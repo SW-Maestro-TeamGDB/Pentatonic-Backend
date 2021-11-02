@@ -60,6 +60,7 @@ export const uploadSong = async (
         level,
         releaseDate,
         album,
+        lyrics,
     } = args.input.song
     const { db } = context
     const duration = await getAudioDuration(songURI.href)
@@ -77,7 +78,7 @@ export const uploadSong = async (
             weeklyChallenge,
             level,
             duration,
-            lyrics: args.input.song?.lyrics || null,
+            lyrics: lyrics || null,
         })
         .then(({ ops }) => ops[0])
 }

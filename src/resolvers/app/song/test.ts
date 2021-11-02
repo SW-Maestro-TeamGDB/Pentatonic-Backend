@@ -159,7 +159,8 @@ describe("Penta-Tonic Song Services", () => {
                                         weeklyChallenge: false,
                                         releaseDate: "2019-01-01",
                                         level: 2,
-                                        album: "Viva la Vida or Death and All His Friends"
+                                        album: "Viva la Vida or Death and All His Friends",
+                                        lyrics: "test lyrics~~"
                                     }
                                 }
                             ){
@@ -169,6 +170,7 @@ describe("Penta-Tonic Song Services", () => {
                                 songImg
                                 name
                                 level
+                                lyrics
                             }
                         }`
                     const { body } = await request(app)
@@ -181,6 +183,7 @@ describe("Penta-Tonic Song Services", () => {
                     equal(body.data.uploadSong.songImg, uri[1])
                     equal(body.data.uploadSong.name, "name")
                     equal(body.data.uploadSong.level, 2)
+                    equal(body.data.uploadSong.lyrics, "test lyrics~~")
                     songIds.push(body.data.uploadSong.songId)
                 })
             })

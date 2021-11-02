@@ -124,6 +124,7 @@ input UploadSongAllInput {
     weeklyChallenge: Boolean!
     level: Int!
     releaseDate: Date!
+    lyrics: String
 }
 
 input UploadInstrumentAllInput {
@@ -149,6 +150,7 @@ input UpdateSongAllInput {
     level: Int
     releaseDate: Date
     weeklyChallenge: Boolean
+    lyrics: String
 }
 
 input UpdateSongInput {
