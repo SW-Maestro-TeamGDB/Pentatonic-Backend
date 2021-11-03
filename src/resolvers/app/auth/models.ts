@@ -80,6 +80,12 @@ export interface ChangeProfileInput {
             profileURI?: URL
             introduce?: string
             type?: number
+            social?: {
+                facebook?: URL
+                twitter?: URL
+                instagram?: URL
+                kakao?: URL
+            }
         }
     }
 }
@@ -89,7 +95,15 @@ export interface ChangeProfileQuery {
         username?: string
         introduce?: string
         type?: number
+        social?: Social
     }
+}
+
+export interface Social {
+    facebook?: string
+    twitter?: string
+    instagram?: string
+    kakao?: string
 }
 
 export interface DeleteAccountInput {

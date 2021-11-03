@@ -76,6 +76,12 @@ export const register = async (
             profileURI:
                 "https://icon-library.com/images/default-user-icon/default-user-icon-7.jpg",
             type,
+            social: {
+                facebook: undefined,
+                twitter: undefined,
+                instagram: undefined,
+                kakao: undefined,
+            },
         }),
     ])
     return jwt.sign(

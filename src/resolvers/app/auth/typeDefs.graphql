@@ -42,7 +42,15 @@ type User {
     type: Int!
     band: [Band!]!
     library: [Cover!]
+    social: Social
     position: [PositionRank]
+}
+
+type Social {
+    facebook: URL
+    twitter: URL
+    instagram: URL
+    kakao: URL
 }
 
 type PositionRank {
@@ -111,6 +119,14 @@ input ChangeUserProfileInput {
     profileURI: URL
     introduce: String
     type: Int
+    social: SocialInput
+}
+
+input SocialInput {
+    facebook: URL
+    twitter: URL
+    instagram: URL
+    kakao: URL
 }
 
 input ChangeProfileInput {

@@ -5,6 +5,7 @@ import {
     ChangeProfileInput,
     UploadImageInput,
     ChangeProfileQuery,
+    Social,
 } from "resolvers/app/auth/models"
 import { isValidUsername } from "resolvers/app/auth/Query"
 import { isValidImage, uploadS3 } from "lib"
@@ -28,7 +29,7 @@ export const changeProfile = async (
     if (Object.keys(args.input.user).length === 0) {
         return db.collection("user").findOne({ id: context.user.id })
     }
-    const { profileURI, username, ...user } = args.input.user
+    const { profileURI, username, social, ...user } = args.input.user
     const query: ChangeProfileQuery = {
         $set: user,
     }
@@ -38,6 +39,14 @@ export const changeProfile = async (
     }
     if (profileURI !== undefined) {
         query.$set.profileURI = profileURI.href
+    }
+    if (social !== undefined) {
+        query.$set.social = {
+            facebook: social?.facebook?.href,
+            twitter: social?.twitter?.href,
+            instagram: social?.instagram?.href,
+            kakao: social?.kakao?.href,
+        }
     }
     return db
         .collection("user")

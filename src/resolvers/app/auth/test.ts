@@ -1051,7 +1051,10 @@ describe("User auth service test", () => {
                                 username: "SeungWon",
                                 profileURI: "${uri[0]}",
                                 introduce: "테스트 자기소개 글 입니다!",
-                                type: 3
+                                type: 3,
+                                social: {
+                                    facebook: "https://www.facebook.com/",
+                                }
                             }
                         }
                     ){
@@ -1059,6 +1062,9 @@ describe("User auth service test", () => {
                         username
                         profileURI
                         introduce
+                        social { 
+                            facebook
+                        }
                     }
                 }
             `
@@ -1075,6 +1081,7 @@ describe("User auth service test", () => {
                 equal(result.username, "SeungWon")
                 equal(result.profileURI, uri[0])
                 equal(result.introduce, "테스트 자기소개 글 입니다!")
+                equal(result.social.facebook, "https://www.facebook.com/")
             })
             it("If only some of them were updated", async () => {
                 const query = `
@@ -1209,7 +1216,6 @@ describe("User auth service test", () => {
                     .get(`/api?query=${query}`)
                     .set({ Authorization: token[0] })
                     .expect(200)
-                console.log(body)
                 equal(body.data.getMyInfo.id, "test1234")
                 equal(body.data.getMyInfo.username, "SeungWon")
                 equal(body.data.getMyInfo.type, 3)
