@@ -88,3 +88,8 @@ export const queryUser = async (
         .toArray()
     return result
 }
+
+export const getMyInfo = async (parent: void, args: void, context: Context) => {
+    const { id } = context.user
+    return context.db.collection("user").findOne({ id })
+}

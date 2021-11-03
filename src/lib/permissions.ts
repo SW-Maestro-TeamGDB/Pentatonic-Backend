@@ -144,6 +144,7 @@ export const permissions = shield(
             getFollowerList: isValidInput,
             getFollowingList: isValidInput,
             getRankedUser: isValidInput,
+            getMyInfo: and(isLogin, isValidInput),
         },
     },
     { allowExternalErrors: true }

@@ -17,6 +17,8 @@ type Mutation {
 }
 
 type Query {
+    getMyInfo: User
+
     getUserInfo(userId: Id!): User
 
     findId(phoneNumber: PhoneNumber!, authCode: Int!): FindIdResult

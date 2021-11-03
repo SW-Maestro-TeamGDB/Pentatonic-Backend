@@ -1192,6 +1192,32 @@ describe("User auth service test", () => {
             })
         })
     })
+    describe("Query getMyInfo", () => {
+        describe("Success", () => {
+            it("get informataion getMyInfo", async () => {
+                const query = `
+                    query{
+                        getMyInfo{
+                            id
+                            username
+                            type
+                            phoneNumber
+                        }
+                    }
+                `
+                const { body } = await request(app)
+                    .get(`/api?query=${query}`)
+                    .set({ Authorization: token[0] })
+                    .expect(200)
+                console.log(body)
+                equal(body.data.getMyInfo.id, "test1234")
+                equal(body.data.getMyInfo.username, "SeungWon")
+                equal(body.data.getMyInfo.type, 3)
+                equal(body.data.getMyInfo.phoneNumber, phoneNumber)
+            })
+        })
+    })
+
     describe("Query getUserInfo", () => {
         describe("Success", () => {
             it("Get the information using the getUserInfo query with authorization headers", async () => {
