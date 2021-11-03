@@ -28,14 +28,6 @@ export const remakeAudio = async (args: RemakeAudioInput) => {
     const ss = syncDelay < 0 ? ` -ss ${syncDelay * -1}` : ""
     const noiseFilter =
         position !== "DRUM" ? "arnndn=m=src/lib/mp.rnnn[1];" : ""
-    console.log(`
-    ffmpeg ${ss} -i '${audioURI}' -i src/lib/church.mp3 \
-    -filter_complex '[0] [1] afir=dry=${reverb}:wet=${reverb} [reverb];
-        [0] [reverb] amix=inputs=2:weights=1;
-        ${noiseFilter} [0] volume=3[0]' \
-    -c:a libmp3lame -strict -2 -b:a 360k \
-    ${filenameSplit[filenameSplit.length - 2]}.mp3 -y
-`)
     try {
         await exec(`
             ffmpeg ${ss} -i '${audioURI}' -i src/lib/church.mp3 \
