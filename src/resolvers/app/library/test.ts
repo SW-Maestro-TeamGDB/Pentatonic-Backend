@@ -159,7 +159,7 @@ describe("Library services test", () => {
                                 },
                                 filter: {
                                     reverb: 3.2,
-                                    syncDelay: 0.123
+                                    syncDelay: -0.123
                                 }
                             }
                         ){

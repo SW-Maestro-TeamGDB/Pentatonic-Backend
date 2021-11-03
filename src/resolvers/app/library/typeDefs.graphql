@@ -62,7 +62,7 @@ input UploadCoverInput {
 }
 
 input UploadCoverFilterInput {
-    syncDelay: Float! = 0.0
+    syncDelay: NonPositiveFloat! = 0.0
     reverb: Float! = 0.0
 }
 
