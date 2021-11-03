@@ -172,7 +172,7 @@ describe("Band services test", () => {
                                 position: VIOLIN
                             },
                             filter: {
-                                syncDelay: 1.1
+                                syncDelay: -1.1
                             }
                         }
                     ){
