@@ -35,7 +35,7 @@ export const followMessage = async (
 ) => {
     const message = {
         notification: {
-            title: `${username}님이 팔로우했습니다`,
+            title: `${username}님이 회원님을 팔로우했습니다`,
             body: `탭 하여 자세히 보기`,
         },
         token: token,
