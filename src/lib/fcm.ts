@@ -39,7 +39,7 @@ export const followMessage = async (
             body: `탭 하여 자세히 보기`,
         },
         token: token,
-        body: {
+        data: {
             userId: userId,
         },
     }
@@ -54,8 +54,8 @@ export const bandJoinMessage = async (args: BandJoinMessageInput[]) => {
                 body: `탭 하여 자세히 보기`,
             },
             token: item.token,
-            body: {
-                bandId: item.bandId,
+            data: {
+                bandId: item.bandId as string,
             },
         }
     })
