@@ -3,10 +3,5 @@ extend type Mutation {
 }
 
 input PaymentInput {
-    cardNumber: String!
-    expiry: String!
-    birth: String!
-    buyerName: String!
-    buyerEmail: String!
-    password2Digit: String!
+    impUid: String
 }
