@@ -22,7 +22,7 @@ export const payment = async (
     })) as any
     const uid = `${Date.now()}-${rand(100000, 999999)}`
     try {
-        const res = await axios({
+        const res = (await axios({
             url: "https://api.iamport.kr/subscribe/payments/onetime",
             method: "POST",
             headers: {
@@ -41,8 +41,8 @@ export const payment = async (
                 buyer_tel: "buyer_tel",
                 pwd_2digit: args.input.password2Digit,
             },
-        })
-        if (res.status === 200) {
+        })) as any
+        if (res.data.code === 0 && res.data.message === null) {
             await context.db.collection("user").updateOne(
                 {
                     id: context.user.id,
@@ -51,6 +51,7 @@ export const payment = async (
             )
             return true
         }
+        return false
     } catch (e) {
         return false
     }
