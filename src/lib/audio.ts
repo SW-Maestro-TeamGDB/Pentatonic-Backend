@@ -70,16 +70,9 @@ export const mergeAudios = async (audios: string[], audioName: string) => {
             } \\
             ${audioName} -y
         `)
-        if (audioName.endsWith(".wav")) {
-            const result = await uploadS3(audioName, audioName, "audio/wav")
-            deleteFile(audioName)
-            return result
-        }
-        if (audioName.endsWith(".mp3")) {
-            const result = await uploadS3(audioName, audioName, "audio/mpeg")
-            deleteFile(audioName)
-            return result
-        }
+        const result = await uploadS3(audioName, audioName, "audio/mpeg")
+        deleteFile(audioName)
+        return result
     } catch (e) {
         deleteFile(audioName)
         return new ApolloError("audio merge error")

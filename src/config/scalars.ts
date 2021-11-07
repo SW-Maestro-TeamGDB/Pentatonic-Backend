@@ -4,6 +4,7 @@ import Hangul from "hangul-js"
 
 const specialCharacters = "\"'\\!@#$%^&*()_-=+/?.><, [{]}|;:"
 
+//커버소개 & 제목
 const isValidName = (value: string) => {
     if (!(2 <= value.length && value.length <= 40)) {
         return new ApolloError("Name의 길이는 2이상 40이하여야 합니다", "400")
